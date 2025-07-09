@@ -14,8 +14,8 @@ const YieldCurveChart = ({ riskLevel, yieldLevel }: YieldCurveChartProps) => {
     for (let i = 0; i <= 100; i += 5) {
       const risk = i;
       // Exponential yield curve with diminishing returns
-      const yield = Math.pow(i / 100, 1.5) * 25 + Math.random() * 2;
-      data.push({ risk, yield });
+      const yieldValue = Math.pow(i / 100, 1.5) * 25 + Math.random() * 2;
+      data.push({ risk, yieldValue });
     }
     return data;
   };
@@ -47,7 +47,7 @@ const YieldCurveChart = ({ riskLevel, yieldLevel }: YieldCurveChartProps) => {
           />
           <Line 
             type="monotone" 
-            dataKey="yield" 
+            dataKey="yieldValue" 
             stroke="#3B82F6" 
             strokeWidth={2}
             dot={false}
