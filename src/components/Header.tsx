@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Wallet, Menu } from 'lucide-react';
+import { Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface HeaderProps {
@@ -11,40 +11,35 @@ interface HeaderProps {
 
 const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
   return (
-    <header className="bg-white border-b border-gray-200 px-4 py-3">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">T</span>
-            </div>
-            <h1 className="text-xl font-bold text-gray-900">Tolkachyield Finance</h1>
+    <header className="border-b border-border">
+      <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="flex items-center space-x-3">
+          <div className="w-6 h-6 bg-foreground rounded flex items-center justify-center">
+            <span className="text-background font-bold text-sm">T</span>
           </div>
+          <h1 className="text-lg font-medium">Tolkachyield</h1>
         </div>
         
-        <nav className="hidden md:flex items-center space-x-6">
-          <a href="#" className="text-gray-600 hover:text-gray-900">Deposit</a>
-          <a href="#" className="text-gray-600 hover:text-gray-900">Stake</a>
-          <a href="#" className="text-gray-600 hover:text-gray-900">Portfolio</a>
+        <nav className="hidden md:flex items-center space-x-8">
+          <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Deposit</a>
+          <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Stake</a>
+          <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Portfolio</a>
         </nav>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center">
           {isConnected ? (
-            <div className="flex items-center space-x-2 bg-gray-100 px-3 py-2 rounded-lg">
-              <Wallet className="w-4 h-4 text-gray-600" />
-              <span className="text-sm text-gray-700">
+            <div className="flex items-center space-x-2 bg-muted px-3 py-2 rounded">
+              <Wallet className="w-4 h-4 text-muted-foreground" />
+              <span className="text-sm">
                 {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-4)}
               </span>
             </div>
           ) : (
-            <Button onClick={onConnect} className="bg-blue-600 hover:bg-blue-700">
+            <Button onClick={onConnect} size="sm">
               <Wallet className="w-4 h-4 mr-2" />
-              Connect Wallet
+              Connect
             </Button>
           )}
-          <Button variant="ghost" size="sm" className="md:hidden">
-            <Menu className="w-4 h-4" />
-          </Button>
         </div>
       </div>
     </header>

@@ -24,72 +24,68 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Header 
         isConnected={isConnected} 
         onConnect={handleConnect}
         walletAddress={walletAddress}
       />
       
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Welcome to Tolkachyield Finance
+      <main className="max-w-4xl mx-auto px-6 py-12">
+        <div className="mb-16 text-center">
+          <h1 className="text-4xl font-light text-foreground mb-4 tracking-tight">
+            Tolkachyield Finance
           </h1>
-          <p className="text-gray-600">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Stake your stablecoins, mint tkchUSD, and earn yield through optimized DeFi strategies
           </p>
         </div>
 
         <StatsOverview />
 
-        <Tabs defaultValue="deposit" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 max-w-md">
-            <TabsTrigger value="deposit">Deposit</TabsTrigger>
-            <TabsTrigger value="stake">Stake</TabsTrigger>
+        <Tabs defaultValue="deposit" className="space-y-12">
+          <TabsList className="grid w-full grid-cols-2 max-w-sm mx-auto bg-muted/50">
+            <TabsTrigger value="deposit" className="text-sm">Deposit</TabsTrigger>
+            <TabsTrigger value="stake" className="text-sm">Stake</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="deposit" className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-1">
-                <DepositCard />
-              </div>
-              <div className="lg:col-span-2">
-                <div className="bg-white rounded-lg p-6 border">
-                  <h3 className="text-lg font-semibold mb-4">How it works</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-start space-x-3">
-                      <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-semibold">
-                        1
-                      </div>
-                      <div>
-                        <h4 className="font-medium">Deposit Stablecoins</h4>
-                        <p className="text-sm text-gray-600">
-                          Deposit your USDT or USDC to start earning yield
-                        </p>
-                      </div>
+          <TabsContent value="deposit" className="space-y-12">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+              <DepositCard />
+              <div className="space-y-8">
+                <h3 className="text-xl font-medium">How it works</h3>
+                <div className="space-y-6">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-6 h-6 bg-foreground text-background rounded-full flex items-center justify-center text-xs font-medium mt-1">
+                      1
                     </div>
-                    <div className="flex items-start space-x-3">
-                      <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-semibold">
-                        2
-                      </div>
-                      <div>
-                        <h4 className="font-medium">Mint tkchUSD</h4>
-                        <p className="text-sm text-gray-600">
-                          Receive tkchUSD tokens 1:1 for your deposited stablecoins
-                        </p>
-                      </div>
+                    <div>
+                      <h4 className="font-medium mb-1">Deposit Stablecoins</h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        Deposit your USDT or USDC to start earning yield
+                      </p>
                     </div>
-                    <div className="flex items-start space-x-3">
-                      <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-semibold">
-                        3
-                      </div>
-                      <div>
-                        <h4 className="font-medium">Auto-Deploy to DeFi</h4>
-                        <p className="text-sm text-gray-600">
-                          Your stablecoins are automatically deployed to optimal DeFi strategies
-                        </p>
-                      </div>
+                  </div>
+                  <div className="flex items-start space-x-4">
+                    <div className="w-6 h-6 bg-foreground text-background rounded-full flex items-center justify-center text-xs font-medium mt-1">
+                      2
+                    </div>
+                    <div>
+                      <h4 className="font-medium mb-1">Mint tkchUSD</h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        Receive tkchUSD tokens 1:1 for your deposited stablecoins
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start space-x-4">
+                    <div className="w-6 h-6 bg-foreground text-background rounded-full flex items-center justify-center text-xs font-medium mt-1">
+                      3
+                    </div>
+                    <div>
+                      <h4 className="font-medium mb-1">Auto-Deploy to DeFi</h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">
+                        Your stablecoins are automatically deployed to optimal DeFi strategies
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -97,32 +93,32 @@ const Index = () => {
             </div>
           </TabsContent>
           
-          <TabsContent value="stake" className="space-y-6">
+          <TabsContent value="stake" className="space-y-12">
             <StakingCard />
             
-            <div className="bg-white rounded-lg p-6 border">
-              <h3 className="text-lg font-semibold mb-4">Staking Strategies</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 border rounded-lg">
+            <div className="space-y-8">
+              <h3 className="text-xl font-medium">Staking Strategies</h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="p-6 border border-border rounded-lg">
                   <h4 className="font-medium text-green-600 mb-2">Conservative</h4>
-                  <p className="text-sm text-gray-600 mb-2">
+                  <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
                     Low risk, stable returns through blue-chip DeFi protocols
                   </p>
-                  <p className="text-xs text-gray-500">Risk: 0-33% | APY: 2-6%</p>
+                  <p className="text-xs text-muted-foreground">Risk: 0-33% | APY: 2-6%</p>
                 </div>
-                <div className="p-4 border rounded-lg">
+                <div className="p-6 border border-border rounded-lg">
                   <h4 className="font-medium text-yellow-600 mb-2">Moderate</h4>
-                  <p className="text-sm text-gray-600 mb-2">
+                  <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
                     Balanced approach with diversified yield farming
                   </p>
-                  <p className="text-xs text-gray-500">Risk: 34-66% | APY: 6-15%</p>
+                  <p className="text-xs text-muted-foreground">Risk: 34-66% | APY: 6-15%</p>
                 </div>
-                <div className="p-4 border rounded-lg">
+                <div className="p-6 border border-border rounded-lg">
                   <h4 className="font-medium text-red-600 mb-2">Aggressive</h4>
-                  <p className="text-sm text-gray-600 mb-2">
+                  <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
                     High-yield strategies with elevated risk exposure
                   </p>
-                  <p className="text-xs text-gray-500">Risk: 67-100% | APY: 15-25%</p>
+                  <p className="text-xs text-muted-foreground">Risk: 67-100% | APY: 15-25%</p>
                 </div>
               </div>
             </div>
