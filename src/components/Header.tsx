@@ -3,6 +3,7 @@ import React from 'react';
 import { Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NavLink } from 'react-router-dom';
+import WalletDropdown from './WalletDropdown';
 
 interface HeaderProps {
   isConnected: boolean;
@@ -33,14 +34,24 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
             Home
           </NavLink>
           {isConnected && (
-            <NavLink 
-              to="/portfolio" 
-              className={({ isActive }) => 
-                `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
-              }
-            >
-              Portfolio
-            </NavLink>
+            <>
+              <NavLink 
+                to="/portfolio" 
+                className={({ isActive }) => 
+                  `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
+                }
+              >
+                Portfolio
+              </NavLink>
+              <NavLink 
+                to="/defi" 
+                className={({ isActive }) => 
+                  `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
+                }
+              >
+                DeFi
+              </NavLink>
+            </>
           )}
           <NavLink 
             to="/faq" 
@@ -53,13 +64,8 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
         </nav>
 
         <div className="flex items-center">
-          {isConnected ? (
-            <div className="flex items-center space-x-2 bg-muted px-3 py-2 rounded">
-              <Wallet className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm">
-                {walletAddress?.slice(0, 6)}...{walletAddress?.slice(-4)}
-              </span>
-            </div>
+          {isConnected && walletAddress ? (
+            <WalletDropdown walletAddress={walletAddress} />
           ) : (
             <Button onClick={onConnect} size="sm">
               <Wallet className="w-4 h-4 mr-2" />

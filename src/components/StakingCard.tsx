@@ -1,16 +1,18 @@
 
 import React, { useState } from 'react';
-import { TrendingUp, Shield, AlertTriangle } from 'lucide-react';
+import { TrendingUp, Shield, AlertTriangle, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
+import { useToast } from '@/hooks/use-toast';
 import YieldCurveChart from './YieldCurveChart';
 
 const StakingCard = () => {
   const [amount, setAmount] = useState('');
   const [riskLevel, setRiskLevel] = useState([30]);
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   // Calculate yield based on risk level
   const calculateYield = (risk: number) => {
@@ -29,11 +31,35 @@ const StakingCard = () => {
   const RiskIcon = riskCategory.icon;
 
   const handleStake = async () => {
+    if (!amount || parseFloat(amount) <= 0) {
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter a valid amount to stake.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      // Simulate staking transaction
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      toast({
+        title: "Staking Successful!",
+        description: `You've staked ${amount} tkchUSD and received ${amount} sttkchUSD tokens.`,
+      });
+      
       setAmount('');
-    }, 2000);
+    } catch (error) {
+      toast({
+        title: "Staking Failed",
+        description: "There was an error processing your stake. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -58,7 +84,7 @@ const StakingCard = () => {
               className="text-lg"
             />
             <p className="text-xs text-gray-500 mt-1">
-              Available: 0.00 tkchUSD
+              Available: 1,250.00 tkchUSD
             </p>
           </div>
 
@@ -101,6 +127,19 @@ const StakingCard = () => {
                 </p>
               </div>
             </div>
+          </div>
+
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
+            <div className="flex items-center space-x-2 mb-2">
+              <Coins className="w-4 h-4 text-green-600" />
+              <p className="text-sm font-medium text-green-800">You will receive</p>
+            </div>
+            <p className="text-lg font-bold text-green-700">
+              {amount || '0'} sttkchUSD
+            </p>
+            <p className="text-xs text-green-600 mt-1">
+              Liquid staking tokens that can be used in DeFi protocols
+            </p>
           </div>
 
           <Button 
