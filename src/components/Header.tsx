@@ -2,6 +2,7 @@
 import React from 'react';
 import { Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { NavLink } from 'react-router-dom';
 
 interface HeaderProps {
   isConnected: boolean;
@@ -12,18 +13,43 @@ interface HeaderProps {
 const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
   return (
     <header className="border-b border-border">
-      <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="w-6 h-6 bg-foreground rounded flex items-center justify-center">
             <span className="text-background font-bold text-sm">T</span>
           </div>
-          <h1 className="text-lg font-medium">Tolkachyield</h1>
+          <NavLink to="/" className="text-lg font-medium hover:text-primary transition-colors">
+            Tolkachyield
+          </NavLink>
         </div>
         
         <nav className="hidden md:flex items-center space-x-8">
-          <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Deposit</a>
-          <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Stake</a>
-          <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Portfolio</a>
+          <NavLink 
+            to="/" 
+            className={({ isActive }) => 
+              `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
+            }
+          >
+            Home
+          </NavLink>
+          {isConnected && (
+            <NavLink 
+              to="/portfolio" 
+              className={({ isActive }) => 
+                `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
+              }
+            >
+              Portfolio
+            </NavLink>
+          )}
+          <NavLink 
+            to="/faq" 
+            className={({ isActive }) => 
+              `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
+            }
+          >
+            FAQ
+          </NavLink>
         </nav>
 
         <div className="flex items-center">
