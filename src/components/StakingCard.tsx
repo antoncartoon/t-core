@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
+import { useWallet } from '@/contexts/WalletContext';
 import YieldCurveChart from './YieldCurveChart';
 
 const StakingCard = () => {
@@ -13,6 +14,9 @@ const StakingCard = () => {
   const [riskLevel, setRiskLevel] = useState([30]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { getAvailableBalance, createStakingPosition } = useWallet();
+
+  const availableBalance = getAvailableBalance('tkchUSD');
 
   // Calculate yield based on risk level
   const calculateYield = (risk: number) => {
@@ -31,10 +35,21 @@ const StakingCard = () => {
   const RiskIcon = riskCategory.icon;
 
   const handleStake = async () => {
-    if (!amount || parseFloat(amount) <= 0) {
+    const stakeAmount = parseFloat(amount);
+    
+    if (!amount || stakeAmount <= 0) {
       toast({
         title: "Invalid Amount",
         description: "Please enter a valid amount to stake.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (stakeAmount > availableBalance) {
+      toast({
+        title: "Insufficient Balance",
+        description: `You only have ${availableBalance.toFixed(2)} tkchUSD available.`,
         variant: "destructive",
       });
       return;
@@ -45,16 +60,18 @@ const StakingCard = () => {
       // Simulate staking transaction
       await new Promise(resolve => setTimeout(resolve, 2000));
       
+      const positionId = createStakingPosition(stakeAmount, riskLevel[0]);
+      
       toast({
-        title: "Staking Successful!",
-        description: `You've staked ${amount} tkchUSD and received ${amount} sttkchUSD tokens.`,
+        title: "NFT Staking Position Created!",
+        description: `Position ${positionId.slice(-6)} created with ${stakeAmount} tkchUSD at ${currentYield.toFixed(2)}% APY.`,
       });
       
       setAmount('');
     } catch (error) {
       toast({
         title: "Staking Failed",
-        description: "There was an error processing your stake. Please try again.",
+        description: "There was an error creating your staking position. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -68,7 +85,7 @@ const StakingCard = () => {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <TrendingUp className="w-5 h-5 text-green-600" />
-            <span>Stake tkchUSD</span>
+            <span>Create NFT Staking Position</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -84,7 +101,7 @@ const StakingCard = () => {
               className="text-lg"
             />
             <p className="text-xs text-gray-500 mt-1">
-              Available: 1,250.00 tkchUSD
+              Available: {availableBalance.toFixed(2)} tkchUSD
             </p>
           </div>
 
@@ -135,25 +152,33 @@ const StakingCard = () => {
               <p className="text-sm font-medium text-green-800">You will receive</p>
             </div>
             <p className="text-lg font-bold text-green-700">
-              {amount || '0'} sttkchUSD
+              NFT Position #{Date.now().toString().slice(-6)}
             </p>
             <p className="text-xs text-green-600 mt-1">
-              Liquid staking tokens that can be used in DeFi protocols
+              Unique NFT with locked parameters: {amount || '0'} tkchUSD, {currentYield.toFixed(2)}% APY, {riskCategory.name} risk
             </p>
+          </div>
+
+          <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+            <p className="font-medium mb-1">Lock Period: {
+              riskLevel[0] <= 33 ? '30 days' : 
+              riskLevel[0] <= 66 ? '90 days' : '180 days'
+            }</p>
+            <p>Your NFT position will be transferable and can be used in DeFi protocols</p>
           </div>
 
           <Button 
             onClick={handleStake} 
-            disabled={!amount || isLoading}
+            disabled={!amount || isLoading || parseFloat(amount) > availableBalance}
             className="w-full bg-green-600 hover:bg-green-700"
           >
             {isLoading ? (
               <div className="flex items-center space-x-2">
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Staking...</span>
+                <span>Creating NFT Position...</span>
               </div>
             ) : (
-              'Stake tkchUSD'
+              'Create NFT Staking Position'
             )}
           </Button>
         </CardContent>
