@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { Wallet, Smartphone, Globe, ArrowRight, Zap } from 'lucide-react';
+import { Wallet, Smartphone, Globe, ArrowRight, Zap, Info, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface WalletConnectProps {
   onConnect: (provider?: string) => void;
@@ -141,49 +142,68 @@ const WalletConnect = ({ onConnect }: WalletConnectProps) => {
           {/* Social Login */}
           <Card className="relative overflow-hidden">
             <CardHeader className="pb-4">
-              <CardTitle className="flex items-center space-x-2">
-                <Smartphone className="w-5 h-5" />
-                <span>Social Login</span>
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center space-x-2">
+                  <Smartphone className="w-5 h-5" />
+                  <span>Social Login</span>
+                </CardTitle>
+                <Badge variant="secondary" className="text-blue-600 border-blue-600">
+                  <Shield className="w-3 h-3 mr-1" />
+                  Embedded Wallet
+                </Badge>
+              </div>
               <p className="text-sm text-muted-foreground">
-                Quick access using your social accounts
+                Creates a secure embedded wallet using Dynamic.xyz
               </p>
             </CardHeader>
-            <CardContent className="space-y-3">
-              {socialOptions.map((option) => {
-                const isConnecting = connecting === option.id;
-                
-                return (
-                  <Button
-                    key={option.id}
-                    variant="outline"
-                    className="w-full justify-start h-auto p-4 hover:bg-muted/50"
-                    onClick={() => handleConnect(option.id)}
-                    disabled={isConnecting}
-                  >
-                    <div className="flex items-center space-x-3 w-full">
-                      <div className="w-5 h-5 rounded bg-muted flex items-center justify-center flex-shrink-0">
-                        <span className="text-xs font-bold">{option.name[0]}</span>
+            <CardContent className="space-y-4">
+              <Alert className="border-blue-200 bg-blue-50/50">
+                <Info className="h-4 w-4" />
+                <AlertDescription className="text-sm">
+                  <strong>Embedded Wallet Technology:</strong> Social login creates a secure crypto wallet automatically through Dynamic.xyz. Your private keys are encrypted and managed securely - no need to handle seed phrases or private keys manually.
+                </AlertDescription>
+              </Alert>
+              
+              <div className="space-y-3">
+                {socialOptions.map((option) => {
+                  const isConnecting = connecting === option.id;
+                  
+                  return (
+                    <Button
+                      key={option.id}
+                      variant="outline"
+                      className="w-full justify-start h-auto p-4 hover:bg-muted/50"
+                      onClick={() => handleConnect(option.id)}
+                      disabled={isConnecting}
+                    >
+                      <div className="flex items-center space-x-3 w-full">
+                        <div className="w-5 h-5 rounded bg-muted flex items-center justify-center flex-shrink-0">
+                          <span className="text-xs font-bold">{option.name[0]}</span>
+                        </div>
+                        <div className="flex-1 text-left">
+                          <p className="font-medium">{option.name}</p>
+                          <p className="text-xs text-muted-foreground">{option.description}</p>
+                        </div>
+                        {isConnecting ? (
+                          <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                        )}
                       </div>
-                      <div className="flex-1 text-left">
-                        <p className="font-medium">{option.name}</p>
-                        <p className="text-xs text-muted-foreground">{option.description}</p>
-                      </div>
-                      {isConnecting ? (
-                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                      ) : (
-                        <ArrowRight className="w-4 h-4 text-muted-foreground" />
-                      )}
-                    </div>
-                  </Button>
-                );
-              })}
+                    </Button>
+                  );
+                })}
+              </div>
             </CardContent>
           </Card>
         </div>
 
-        <div className="mt-8 text-center text-sm text-muted-foreground">
-          <p>New to DeFi? Social login creates a secure wallet for you automatically.</p>
+        <div className="mt-8 text-center text-sm text-muted-foreground space-y-2">
+          <p className="font-medium">How Social Login Works:</p>
+          <p>
+            Social login uses <span className="font-medium text-foreground">Dynamic.xyz</span> technology to automatically create an embedded wallet. 
+            Your private key is encrypted and secured without requiring you to manage seed phrases or technical wallet setup.
+          </p>
         </div>
       </div>
     </div>
