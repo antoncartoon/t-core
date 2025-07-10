@@ -1,101 +1,103 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { StakingPosition, TokenBalance } from '@/types/staking';
+import { StakingPosition } from '@/types/staking';
+
+interface Asset {
+  symbol: string;
+  balance: number;
+  usdValue: number;
+  change?: string;
+}
 
 interface WalletContextType {
-  balances: TokenBalance[];
+  balances: Asset[];
   stakingPositions: StakingPosition[];
-  updateBalance: (symbol: string, newBalance: number) => void;
+  addBalance: (symbol: string, amount: number) => void;
+  mintTkchUSD: (usdcAmount: number) => boolean;
+  getAvailableBalance: (symbol: string) => number;
   createStakingPosition: (amount: number, riskLevel: number) => string;
   withdrawPosition: (positionId: string) => boolean;
-  getPositionById: (positionId: string) => StakingPosition | undefined;
   getTotalStakedValue: () => number;
-  getAvailableBalance: (symbol: string) => number;
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
-export const useWallet = () => {
-  const context = useContext(WalletContext);
-  if (!context) {
-    throw new Error('useWallet must be used within a WalletProvider');
-  }
-  return context;
-};
-
-interface WalletProviderProps {
-  children: ReactNode;
-}
-
-export const WalletProvider = ({ children }: WalletProviderProps) => {
-  const [balances, setBalances] = useState<TokenBalance[]>([
-    { symbol: 'USDT', balance: 5248.50, usdValue: 5248.50, change: '+0.01%' },
-    { symbol: 'USDC', balance: 3156.25, usdValue: 3156.25, change: '+0.02%' },
-    { symbol: 'tkchUSD', balance: 1250.00, usdValue: 1250.00, change: '+0.05%' },
+export const WalletProvider = ({ children }: { children: ReactNode }) => {
+  // Start with zero balances for new users
+  const [balances, setBalances] = useState<Asset[]>([
+    { symbol: 'USDC', balance: 0, usdValue: 0, change: '+0.00%' },
+    { symbol: 'tkchUSD', balance: 0, usdValue: 0, change: '+0.00%' },
   ]);
 
-  const [stakingPositions, setStakingPositions] = useState<StakingPosition[]>([
-    {
-      id: 'pos-001',
-      amount: 3000,
-      riskLevel: 15,
-      riskCategory: 'Conservative',
-      apy: 5.9,
-      createdAt: new Date('2024-01-18'),
-      maturityDate: new Date('2024-02-17'),
-      lockPeriod: 30,
-      status: 'active',
-      earnedAmount: 178.45,
-      currentValue: 3178.45,
-      originalTokenAmount: 3000
-    },
-    {
-      id: 'pos-002',
-      amount: 4500.25,
-      riskLevel: 45,
-      riskCategory: 'Moderate',
-      apy: 9.2,
-      createdAt: new Date('2024-01-22'),
-      maturityDate: new Date('2024-04-22'),
-      lockPeriod: 90,
-      status: 'active',
-      earnedAmount: 412.67,
-      currentValue: 4912.92,
-      originalTokenAmount: 4500.25
-    },
-    {
-      id: 'pos-003',
-      amount: 1400,
-      riskLevel: 78,
-      riskCategory: 'Aggressive',
-      apy: 16.8,
-      createdAt: new Date('2024-01-25'),
-      maturityDate: new Date('2024-07-23'),
-      lockPeriod: 180,
-      status: 'active',
-      earnedAmount: 254.63,
-      currentValue: 1654.63,
-      originalTokenAmount: 1400
-    }
-  ]);
+  const [stakingPositions, setStakingPositions] = useState<StakingPosition[]>([]);
 
-  const updateBalance = (symbol: string, newBalance: number) => {
-    setBalances(prev => prev.map(balance => 
-      balance.symbol === symbol 
-        ? { ...balance, balance: newBalance, usdValue: newBalance }
-        : balance
+  const addBalance = (symbol: string, amount: number) => {
+    setBalances(prev => prev.map(asset => 
+      asset.symbol === symbol 
+        ? { 
+            ...asset, 
+            balance: asset.balance + amount, 
+            usdValue: (asset.balance + amount) * (asset.symbol === 'USDC' || asset.symbol === 'tkchUSD' ? 1 : 0.998)
+          }
+        : asset
     ));
   };
 
+  const mintTkchUSD = (usdcAmount: number): boolean => {
+    const usdcBalance = getAvailableBalance('USDC');
+    if (usdcAmount > usdcBalance) {
+      return false;
+    }
+
+    // Reduce USDC balance
+    setBalances(prev => prev.map(asset => 
+      asset.symbol === 'USDC' 
+        ? { 
+            ...asset, 
+            balance: asset.balance - usdcAmount, 
+            usdValue: (asset.balance - usdcAmount) * 1
+          }
+        : asset
+    ));
+
+    // Add tkchUSD balance (1:1 mint)
+    addBalance('tkchUSD', usdcAmount);
+    
+    return true;
+  };
+
+  const getAvailableBalance = (symbol: string): number => {
+    const asset = balances.find(b => b.symbol === symbol);
+    return asset ? asset.balance : 0;
+  };
+
   const createStakingPosition = (amount: number, riskLevel: number): string => {
-    const getRiskCategory = (risk: number): 'Conservative' | 'Moderate' | 'Aggressive' => {
+    const tkchUSDBalance = getAvailableBalance('tkchUSD');
+    if (amount > tkchUSDBalance) {
+      return '';
+    }
+
+    // Reduce tkchUSD balance
+    setBalances(prev => prev.map(asset => 
+      asset.symbol === 'tkchUSD' 
+        ? { 
+            ...asset, 
+            balance: asset.balance - amount, 
+            usdValue: (asset.balance - amount) * 1
+          }
+        : asset
+    ));
+
+    const positionId = `pos_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    const calculateYield = (risk: number) => {
+      return Math.pow(risk / 100, 1.5) * 25 + 2;
+    };
+
+    const getRiskCategory = (risk: number) => {
       if (risk <= 33) return 'Conservative';
       if (risk <= 66) return 'Moderate';
       return 'Aggressive';
-    };
-
-    const calculateYield = (risk: number) => {
-      return Math.pow(risk / 100, 1.5) * 25 + 2;
     };
 
     const getLockPeriod = (risk: number) => {
@@ -104,33 +106,21 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
       return 180;
     };
 
-    const positionId = `pos-${Date.now()}`;
-    const lockPeriod = getLockPeriod(riskLevel);
-    const apy = calculateYield(riskLevel);
-    const createdAt = new Date();
-    const maturityDate = new Date(createdAt.getTime() + lockPeriod * 24 * 60 * 60 * 1000);
-
     const newPosition: StakingPosition = {
       id: positionId,
-      amount,
+      originalTokenAmount: amount,
+      currentValue: amount * 1.02, // Small initial gain
+      earnedAmount: amount * 0.02,
+      apy: calculateYield(riskLevel),
       riskLevel,
       riskCategory: getRiskCategory(riskLevel),
-      apy,
-      createdAt,
-      maturityDate,
-      lockPeriod,
-      status: 'active',
-      earnedAmount: 0,
-      currentValue: amount,
-      originalTokenAmount: amount
+      lockPeriod: getLockPeriod(riskLevel),
+      createdAt: new Date(),
+      maturityDate: new Date(Date.now() + getLockPeriod(riskLevel) * 24 * 60 * 60 * 1000),
+      status: 'active'
     };
 
     setStakingPositions(prev => [...prev, newPosition]);
-    
-    // Обновляем баланс tkchUSD
-    const currentBalance = getAvailableBalance('tkchUSD');
-    updateBalance('tkchUSD', currentBalance - amount);
-
     return positionId;
   };
 
@@ -140,19 +130,15 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
       return false;
     }
 
-    setStakingPositions(prev => 
-      prev.map(p => p.id === positionId ? { ...p, status: 'withdrawn' as const } : p)
-    );
+    // Add back to tkchUSD balance
+    addBalance('tkchUSD', position.currentValue);
 
-    // Возвращаем токены обратно в кошелек
-    const currentBalance = getAvailableBalance('tkchUSD');
-    updateBalance('tkchUSD', currentBalance + position.currentValue);
+    // Mark position as withdrawn
+    setStakingPositions(prev => prev.map(p => 
+      p.id === positionId ? { ...p, status: 'withdrawn' as const } : p
+    ));
 
     return true;
-  };
-
-  const getPositionById = (positionId: string): StakingPosition | undefined => {
-    return stakingPositions.find(p => p.id === positionId);
   };
 
   const getTotalStakedValue = (): number => {
@@ -161,23 +147,26 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
       .reduce((sum, p) => sum + p.currentValue, 0);
   };
 
-  const getAvailableBalance = (symbol: string): number => {
-    const balance = balances.find(b => b.symbol === symbol);
-    return balance?.balance || 0;
-  };
-
   return (
     <WalletContext.Provider value={{
       balances,
       stakingPositions,
-      updateBalance,
+      addBalance,
+      mintTkchUSD,
+      getAvailableBalance,
       createStakingPosition,
       withdrawPosition,
-      getPositionById,
       getTotalStakedValue,
-      getAvailableBalance
     }}>
       {children}
     </WalletContext.Provider>
   );
+};
+
+export const useWallet = () => {
+  const context = useContext(WalletContext);
+  if (context === undefined) {
+    throw new Error('useWallet must be used within a WalletProvider');
+  }
+  return context;
 };

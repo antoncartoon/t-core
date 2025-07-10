@@ -1,57 +1,191 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Wallet, Smartphone, Globe, ArrowRight, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Chrome, Github, Twitter, Smartphone } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface WalletConnectProps {
-  onConnect: (provider: string) => void;
+  onConnect: (provider?: string) => void;
 }
 
 const WalletConnect = ({ onConnect }: WalletConnectProps) => {
-  const socialProviders = [
-    { name: 'Google', icon: Chrome, provider: 'google' },
-    { name: 'GitHub', icon: Github, provider: 'github' },
-    { name: 'Twitter', icon: Twitter, provider: 'twitter' },
-    { name: 'Phone', icon: Smartphone, provider: 'phone' }
+  const [isWeb3Available, setIsWeb3Available] = useState(false);
+  const [connecting, setConnecting] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check if Web3 provider is available
+    const checkWeb3 = () => {
+      const hasMetaMask = typeof window !== 'undefined' && window.ethereum;
+      const hasWalletConnect = typeof window !== 'undefined' && window.WalletConnect;
+      setIsWeb3Available(hasMetaMask || hasWalletConnect);
+    };
+    
+    checkWeb3();
+  }, []);
+
+  const handleConnect = async (provider: string) => {
+    setConnecting(provider);
+    try {
+      // Simulate connection delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      onConnect(provider);
+    } finally {
+      setConnecting(null);
+    }
+  };
+
+  const web3Options = [
+    {
+      id: 'metamask',
+      name: 'MetaMask',
+      icon: Wallet,
+      description: 'Connect using MetaMask wallet',
+      available: typeof window !== 'undefined' && window.ethereum,
+    },
+    {
+      id: 'walletconnect',
+      name: 'WalletConnect',
+      icon: Smartphone,
+      description: 'Connect using mobile wallet',
+      available: true,
+    },
+    {
+      id: 'coinbase',
+      name: 'Coinbase Wallet',
+      icon: Globe,
+      description: 'Connect using Coinbase Wallet',
+      available: true,
+    }
+  ];
+
+  const socialOptions = [
+    {
+      id: 'google',
+      name: 'Google',
+      description: 'Sign in with Google account',
+    },
+    {
+      id: 'twitter',
+      name: 'Twitter',
+      description: 'Sign in with Twitter account',
+    }
   ];
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-6">
-      <Card className="w-full max-w-md border-border">
-        <CardHeader className="text-center space-y-4">
-          <div className="w-12 h-12 bg-foreground rounded mx-auto flex items-center justify-center">
-            <span className="text-background font-bold text-xl">T</span>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
+      <div className="w-full max-w-4xl">
+        <div className="text-center mb-12">
+          <div className="flex items-center justify-center mb-6">
+            <div className="w-12 h-12 bg-foreground rounded-lg flex items-center justify-center">
+              <span className="text-background font-bold text-xl">T</span>
+            </div>
           </div>
-          <CardTitle className="text-2xl font-light">
-            Welcome to Tolkachyield
-          </CardTitle>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Connect with your social account to create a secure wallet
+          <h1 className="text-4xl font-light mb-4">Welcome to Tolkachyield</h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Connect your wallet to start earning yield through optimized DeFi strategies and NFT staking positions
           </p>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          {socialProviders.map((provider) => {
-            const Icon = provider.icon;
-            return (
-              <Button
-                key={provider.provider}
-                onClick={() => onConnect(provider.provider)}
-                className="w-full"
-                variant="outline"
-                size="lg"
-              >
-                <Icon className="w-4 h-4 mr-3" />
-                Continue with {provider.name}
-              </Button>
-            );
-          })}
-          
-          <p className="text-xs text-muted-foreground text-center mt-6 leading-relaxed">
-            By connecting, you agree to our Terms of Service and Privacy Policy
-          </p>
-        </CardContent>
-      </Card>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Web3 Wallets */}
+          <Card className="relative overflow-hidden">
+            <CardHeader className="pb-4">
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center space-x-2">
+                  <Wallet className="w-5 h-5" />
+                  <span>Web3 Wallets</span>
+                </CardTitle>
+                {isWeb3Available && (
+                  <Badge variant="secondary" className="text-green-600 border-green-600">
+                    <Zap className="w-3 h-3 mr-1" />
+                    Available
+                  </Badge>
+                )}
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Connect using your existing crypto wallet
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {web3Options.map((option) => {
+                const Icon = option.icon;
+                const isConnecting = connecting === option.id;
+                
+                return (
+                  <Button
+                    key={option.id}
+                    variant="outline"
+                    className="w-full justify-start h-auto p-4 hover:bg-muted/50"
+                    onClick={() => handleConnect(option.id)}
+                    disabled={!option.available || isConnecting}
+                  >
+                    <div className="flex items-center space-x-3 w-full">
+                      <Icon className="w-5 h-5 flex-shrink-0" />
+                      <div className="flex-1 text-left">
+                        <p className="font-medium">{option.name}</p>
+                        <p className="text-xs text-muted-foreground">{option.description}</p>
+                      </div>
+                      {isConnecting ? (
+                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                      )}
+                    </div>
+                  </Button>
+                );
+              })}
+            </CardContent>
+          </Card>
+
+          {/* Social Login */}
+          <Card className="relative overflow-hidden">
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center space-x-2">
+                <Smartphone className="w-5 h-5" />
+                <span>Social Login</span>
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Quick access using your social accounts
+              </p>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {socialOptions.map((option) => {
+                const isConnecting = connecting === option.id;
+                
+                return (
+                  <Button
+                    key={option.id}
+                    variant="outline"
+                    className="w-full justify-start h-auto p-4 hover:bg-muted/50"
+                    onClick={() => handleConnect(option.id)}
+                    disabled={isConnecting}
+                  >
+                    <div className="flex items-center space-x-3 w-full">
+                      <div className="w-5 h-5 rounded bg-muted flex items-center justify-center flex-shrink-0">
+                        <span className="text-xs font-bold">{option.name[0]}</span>
+                      </div>
+                      <div className="flex-1 text-left">
+                        <p className="font-medium">{option.name}</p>
+                        <p className="text-xs text-muted-foreground">{option.description}</p>
+                      </div>
+                      {isConnecting ? (
+                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                      )}
+                    </div>
+                  </Button>
+                );
+              })}
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="mt-8 text-center text-sm text-muted-foreground">
+          <p>New to DeFi? Social login creates a secure wallet for you automatically.</p>
+        </div>
+      </div>
     </div>
   );
 };

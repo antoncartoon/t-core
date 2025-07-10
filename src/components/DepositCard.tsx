@@ -1,79 +1,60 @@
 
 import React, { useState } from 'react';
-import { ArrowRight, DollarSign, AlertCircle } from 'lucide-react';
+import { ArrowRight, Coins, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
+import { useWallet } from '@/contexts/WalletContext';
 
 const DepositCard = () => {
   const [amount, setAmount] = useState('');
-  const [selectedToken, setSelectedToken] = useState('USDT');
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
   const { toast } = useToast();
+  const { getAvailableBalance, mintTkchUSD } = useWallet();
 
-  const tokens = [
-    { symbol: 'USDT', name: 'Tether USD', balance: '1,250.00', minDeposit: 10, maxDeposit: 10000 },
-    { symbol: 'USDC', name: 'USD Coin', balance: '890.50', minDeposit: 10, maxDeposit: 10000 }
-  ];
+  const availableUSDC = getAvailableBalance('USDC');
 
-  const selectedTokenData = tokens.find(token => token.symbol === selectedToken);
-  const numericAmount = parseFloat(amount) || 0;
-  const balanceNumeric = parseFloat(selectedTokenData?.balance.replace(',', '') || '0');
+  const handleMint = async () => {
+    const mintAmount = parseFloat(amount);
+    
+    if (!amount || mintAmount <= 0) {
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter a valid amount to mint.",
+        variant: "destructive",
+      });
+      return;
+    }
 
-  const validateAmount = () => {
-    setError('');
-    
-    if (!amount || numericAmount <= 0) {
-      setError('Please enter a valid amount');
-      return false;
+    if (mintAmount > availableUSDC) {
+      toast({
+        title: "Insufficient Balance",
+        description: `You only have ${availableUSDC.toFixed(2)} USDC available.`,
+        variant: "destructive",
+      });
+      return;
     }
-    
-    if (selectedTokenData && numericAmount < selectedTokenData.minDeposit) {
-      setError(`Minimum deposit is $${selectedTokenData.minDeposit}`);
-      return false;
-    }
-    
-    if (selectedTokenData && numericAmount > selectedTokenData.maxDeposit) {
-      setError(`Maximum deposit is $${selectedTokenData.maxDeposit.toLocaleString()}`);
-      return false;
-    }
-    
-    if (numericAmount > balanceNumeric) {
-      setError('Insufficient balance');
-      return false;
-    }
-    
-    return true;
-  };
 
-  const handleDeposit = async () => {
-    if (!validateAmount()) return;
-    
     setIsLoading(true);
-    
     try {
-      // Simulate API call
+      // Simulate minting transaction
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Simulate random success/failure for demo
-      if (Math.random() > 0.8) {
-        throw new Error('Transaction failed');
+      const success = mintTkchUSD(mintAmount);
+      if (success) {
+        toast({
+          title: "Minting Successful!",
+          description: `${mintAmount} tkchUSD has been minted from ${mintAmount} USDC.`,
+        });
+        setAmount('');
+      } else {
+        throw new Error('Minting failed');
       }
-      
-      toast({
-        title: "Deposit Successful",
-        description: `Successfully deposited ${amount} ${selectedToken} and minted ${amount} tkchUSD`,
-      });
-      
-      setAmount('');
     } catch (error) {
       toast({
-        title: "Deposit Failed",
-        description: "Transaction failed. Please try again.",
+        title: "Minting Failed",
+        description: "There was an error minting your tokens. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -81,112 +62,80 @@ const DepositCard = () => {
     }
   };
 
-  const setMaxAmount = () => {
-    const maxAmount = Math.min(balanceNumeric, selectedTokenData?.maxDeposit || 0);
-    setAmount(maxAmount.toString());
-    setError('');
-  };
-
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
-          <DollarSign className="w-5 h-5 text-blue-600" />
-          <span>Deposit Stablecoins</span>
+          <Coins className="w-5 h-5 text-blue-600" />
+          <span>Mint tkchUSD</span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
         <div>
-          <label className="text-sm font-medium text-foreground mb-2 block">
-            Select Token
+          <label className="text-sm font-medium text-muted-foreground mb-2 block">
+            USDC Amount
           </label>
-          <Select value={selectedToken} onValueChange={(value) => {
-            setSelectedToken(value);
-            setError('');
-          }}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {tokens.map((token) => (
-                <SelectItem key={token.symbol} value={token.symbol}>
-                  <div className="flex items-center justify-between w-full">
-                    <span>{token.symbol}</span>
-                    <span className="text-sm text-muted-foreground ml-2">
-                      Balance: {token.balance}
-                    </span>
-                  </div>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="text-sm font-medium text-foreground">
-              Amount
-            </label>
-            <button 
-              onClick={setMaxAmount}
-              className="text-xs text-primary hover:underline"
-            >
-              MAX
-            </button>
-          </div>
           <Input
             type="number"
             placeholder="0.00"
             value={amount}
-            onChange={(e) => {
-              setAmount(e.target.value);
-              setError('');
-            }}
-            onBlur={validateAmount}
+            onChange={(e) => setAmount(e.target.value)}
             className="text-lg"
-            min={selectedTokenData?.minDeposit}
-            max={selectedTokenData?.maxDeposit}
           />
-          {selectedTokenData && (
-            <p className="text-xs text-muted-foreground mt-1">
-              Min: ${selectedTokenData.minDeposit} • Max: ${selectedTokenData.maxDeposit.toLocaleString()}
-            </p>
-          )}
+          <p className="text-xs text-muted-foreground mt-1">
+            Available: {availableUSDC.toFixed(2)} USDC
+          </p>
         </div>
 
-        {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-
-        <div className="bg-muted/50 p-3 rounded-lg">
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-muted-foreground">You will receive:</span>
-            <span className="font-medium">
-              {amount || '0.00'} tkchUSD
-            </span>
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border border-blue-200">
+          <div className="flex items-center space-x-2 mb-3">
+            <ArrowRight className="w-4 h-4 text-blue-600" />
+            <span className="text-sm font-medium text-blue-800">1:1 Minting</span>
           </div>
-          <div className="flex justify-between items-center text-xs text-muted-foreground mt-1">
-            <span>Exchange Rate:</span>
-            <span>1:1</span>
+          <div className="grid grid-cols-2 gap-4 text-center">
+            <div>
+              <p className="text-sm text-muted-foreground">You deposit</p>
+              <p className="text-lg font-bold text-blue-600">
+                {amount || '0'} USDC
+              </p>
+            </div>
+            <div>
+              <p className="text-sm text-muted-foreground">You receive</p>
+              <p className="text-lg font-bold text-green-600">
+                {amount || '0'} tkchUSD
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-2 text-sm text-muted-foreground">
+          <div className="flex items-center space-x-2">
+            <CheckCircle className="w-4 h-4 text-green-600" />
+            <span>1:1 USDC to tkchUSD conversion</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <CheckCircle className="w-4 h-4 text-green-600" />
+            <span>Instant minting with no fees</span>
+          </div>
+          <div className="flex items-center space-x-2">
+            <CheckCircle className="w-4 h-4 text-green-600" />
+            <span>Use tkchUSD for staking and earning yield</span>
           </div>
         </div>
 
         <Button 
-          onClick={handleDeposit} 
-          disabled={!amount || !!error || isLoading}
+          onClick={handleMint} 
+          disabled={!amount || isLoading || parseFloat(amount) > availableUSDC}
           className="w-full bg-blue-600 hover:bg-blue-700"
         >
           {isLoading ? (
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              <span>Processing...</span>
+              <span>Minting...</span>
             </div>
           ) : (
             <div className="flex items-center space-x-2">
-              <span>Deposit & Mint tkchUSD</span>
+              <span>Mint tkchUSD</span>
               <ArrowRight className="w-4 h-4" />
             </div>
           )}
