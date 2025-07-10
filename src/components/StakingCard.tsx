@@ -1,20 +1,23 @@
 
 import React, { useState } from 'react';
-import { TrendingUp, Shield, AlertTriangle, Coins, Info } from 'lucide-react';
+import { TrendingUp, Shield, AlertTriangle, Coins, Info, Users, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Slider } from '@/components/ui/slider';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useWallet } from '@/contexts/WalletContext';
-import { calculateRiskScore, calculatePayoutPriority, riskScoreToCategory } from '@/utils/riskCalculations';
+import { calculateRiskScore, calculatePayoutPriority, riskScoreToCategory, calculateAvailableCapacity } from '@/utils/riskCalculations';
 import YieldCurveChart from './YieldCurveChart';
 
 const StakingCard = () => {
   const [amount, setAmount] = useState('');
-  const [desiredAPY, setDesiredAPY] = useState('12'); // Default 12% APY
+  const [desiredAPY, setDesiredAPY] = useState('10.5'); // Default to average APY
+  const [sliderAPY, setSliderAPY] = useState([10.5]); // Slider state
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { getAvailableBalance, createStakingPosition, poolSettings } = useWallet();
+  const { getAvailableBalance, createStakingPosition, poolSettings, stakingPositions } = useWallet();
 
   const availableBalance = getAvailableBalance('tkchUSD');
   const desiredAPYDecimal = parseFloat(desiredAPY) / 100 || 0;
@@ -24,6 +27,34 @@ const StakingCard = () => {
   const payoutPriority = calculatePayoutPriority(riskScore);
   const riskLevel = Math.round((riskScore / 10000) * 100);
   const riskCategory = riskScoreToCategory(riskScore);
+  
+  // Calculate available capacity
+  const availableCapacity = calculateAvailableCapacity(
+    riskScore, 
+    poolSettings.totalPoolValue || 1000000, // Default pool size
+    stakingPositions.map(p => ({ riskScore: p.riskScore, amount: p.amount }))
+  );
+
+  // Sync slider and input
+  const handleSliderChange = (value: number[]) => {
+    setSliderAPY(value);
+    setDesiredAPY(value[0].toFixed(1));
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setDesiredAPY(value);
+    const numValue = parseFloat(value);
+    if (!isNaN(numValue)) {
+      setSliderAPY([numValue]);
+    }
+  };
+
+  const setMinAPY = () => {
+    const minAPY = poolSettings.baseAPY * 100;
+    setDesiredAPY(minAPY.toFixed(1));
+    setSliderAPY([minAPY]);
+  };
 
   const getRiskIcon = () => {
     switch (riskCategory) {
@@ -74,6 +105,15 @@ const StakingCard = () => {
       return;
     }
 
+    if (stakeAmount > availableCapacity) {
+      toast({
+        title: "Pool Capacity Exceeded",
+        description: `Maximum available for this risk level: ${availableCapacity.toFixed(2)} tkchUSD.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (desiredAPYDecimal > poolSettings.maxAPY) {
       toast({
         title: "APY Too High",
@@ -95,7 +135,8 @@ const StakingCard = () => {
       });
       
       setAmount('');
-      setDesiredAPY('12');
+      setDesiredAPY('10.5');
+      setSliderAPY([10.5]);
     } catch (error) {
       toast({
         title: "Staking Failed",
@@ -106,6 +147,8 @@ const StakingCard = () => {
       setIsLoading(false);
     }
   };
+
+  const lockPeriod = riskLevel <= 33 ? '15 days' : riskLevel <= 66 ? '60 days' : '120 days';
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -143,19 +186,44 @@ const StakingCard = () => {
                 <span className="text-sm font-medium">{riskCategory}</span>
               </div>
             </div>
-            <Input
-              type="number"
-              placeholder="12.0"
-              value={desiredAPY}
-              onChange={(e) => setDesiredAPY(e.target.value)}
-              min={poolSettings.baseAPY * 100}
-              max={poolSettings.maxAPY * 100}
-              step="0.1"
-              className="text-lg"
-            />
-            <div className="flex justify-between text-xs text-gray-500 mt-1">
-              <span>Min: {(poolSettings.baseAPY * 100).toFixed(1)}% (Risk-free)</span>
-              <span>Max: {(poolSettings.maxAPY * 100).toFixed(1)}%</span>
+            
+            {/* APY Input */}
+            <div className="flex space-x-2 mb-3">
+              <Input
+                type="number"
+                placeholder="10.5"
+                value={desiredAPY}
+                onChange={handleInputChange}
+                min={poolSettings.baseAPY * 100}
+                max={poolSettings.maxAPY * 100}
+                step="0.1"
+                className="text-lg flex-1"
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={setMinAPY}
+                className="px-3 whitespace-nowrap"
+              >
+                Min APY ({(poolSettings.baseAPY * 100).toFixed(1)}%)
+              </Button>
+            </div>
+
+            {/* APY Slider */}
+            <div className="space-y-2">
+              <Slider
+                value={sliderAPY}
+                onValueChange={handleSliderChange}
+                min={poolSettings.baseAPY * 100}
+                max={poolSettings.maxAPY * 100}
+                step={0.1}
+                className="mb-2"
+              />
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>Min: {(poolSettings.baseAPY * 100).toFixed(1)}% (Risk-free)</span>
+                <span>Average: 10.5%</span>
+                <span>Max: {(poolSettings.maxAPY * 100).toFixed(1)}%</span>
+              </div>
             </div>
           </div>
 
@@ -176,18 +244,36 @@ const StakingCard = () => {
             </div>
           </div>
 
+          {/* Enhanced Priority Explanation */}
           <div className="bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-lg border border-yellow-200">
             <div className="flex items-start space-x-2">
-              <Info className="w-4 h-4 text-yellow-600 mt-0.5" />
+              <Users className="w-4 h-4 text-yellow-600 mt-0.5" />
               <div className="text-sm">
-                <p className="font-medium text-yellow-800 mb-1">Priority Queue System</p>
-                <p className="text-yellow-700">
-                  Higher APY = Lower priority. You'll receive payouts based on your position in the queue. 
-                  Conservative positions get paid first.
+                <p className="font-medium text-yellow-800 mb-1">Payout Priority System</p>
+                <p className="text-yellow-700 mb-2">
+                  In normal conditions, ALL positions receive their expected returns. Priority matters only during stress scenarios.
                 </p>
+                <div className="text-xs text-yellow-600">
+                  <p>• Conservative positions (5-8% APY) get paid first</p>
+                  <p>• Moderate positions (8-15% APY) get paid second</p>
+                  <p>• Aggressive positions (15%+ APY) get paid last</p>
+                </div>
               </div>
             </div>
           </div>
+
+          {/* Available Capacity Warning */}
+          {availableCapacity < 50000 && (
+            <div className="bg-red-50 p-3 rounded-lg border border-red-200">
+              <div className="flex items-center space-x-2">
+                <AlertTriangle className="w-4 h-4 text-red-600" />
+                <p className="text-sm font-medium text-red-800">Limited Capacity</p>
+              </div>
+              <p className="text-xs text-red-700 mt-1">
+                Max available for this risk level: ${availableCapacity.toFixed(2)}
+              </p>
+            </div>
+          )}
 
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
             <div className="flex items-center space-x-2 mb-2">
@@ -203,16 +289,13 @@ const StakingCard = () => {
           </div>
 
           <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
-            <p className="font-medium mb-1">Lock Period: {
-              riskLevel <= 33 ? '30 days' : 
-              riskLevel <= 66 ? '90 days' : '180 days'
-            }</p>
+            <p className="font-medium mb-1">Lock Period: {lockPeriod}</p>
             <p>Your NFT position will be transferable and can be used in DeFi protocols</p>
           </div>
 
           <Button 
             onClick={handleStake} 
-            disabled={!amount || !desiredAPY || isLoading || parseFloat(amount) > availableBalance || desiredAPYDecimal > poolSettings.maxAPY}
+            disabled={!amount || !desiredAPY || isLoading || parseFloat(amount) > availableBalance || desiredAPYDecimal > poolSettings.maxAPY || parseFloat(amount) > availableCapacity}
             className="w-full bg-green-600 hover:bg-green-700"
           >
             {isLoading ? (
@@ -232,7 +315,7 @@ const StakingCard = () => {
           <CardTitle className="text-lg">Risk-Yield Analysis</CardTitle>
         </CardHeader>
         <CardContent>
-          <YieldCurveChart riskLevel={riskLevel} yieldLevel={parseFloat(desiredAPY) || 12} />
+          <YieldCurveChart riskLevel={riskLevel} yieldLevel={parseFloat(desiredAPY) || 10.5} />
           
           <div className="mt-4 space-y-2">
             <div className="flex justify-between text-sm">
@@ -251,9 +334,11 @@ const StakingCard = () => {
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Lock Period:</span>
-              <span className="font-medium">
-                {riskLevel <= 33 ? '30 days' : riskLevel <= 66 ? '90 days' : '180 days'}
-              </span>
+              <span className="font-medium">{lockPeriod}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-600">Available Capacity:</span>
+              <span className="font-medium">${availableCapacity.toFixed(0)}</span>
             </div>
           </div>
         </CardContent>

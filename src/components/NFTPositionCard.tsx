@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Trophy, Calendar, TrendingUp, Lock, Unlock, AlertTriangle, Users } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -40,6 +39,13 @@ const NFTPositionCard = ({ position }: NFTPositionCardProps) => {
     const totalDuration = position.maturityDate.getTime() - position.createdAt.getTime();
     const elapsed = now.getTime() - position.createdAt.getTime();
     return Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
+  };
+
+  const getLockPeriodDisplay = () => {
+    const riskLevel = Math.round((position.riskScore / 10000) * 100);
+    if (riskLevel <= 33) return '15 days';
+    if (riskLevel <= 66) return '60 days';
+    return '120 days';
   };
 
   const handleWithdraw = () => {
@@ -200,7 +206,7 @@ const NFTPositionCard = ({ position }: NFTPositionCardProps) => {
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Lock Period:</span>
-            <span className="font-medium">{position.lockPeriod} days</span>
+            <span className="font-medium">{getLockPeriodDisplay()}</span>
           </div>
         </div>
 

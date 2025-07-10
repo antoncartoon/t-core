@@ -1,8 +1,7 @@
-
 import { PoolSettings } from '@/types/staking';
 
 export const DEFAULT_POOL_SETTINGS: PoolSettings = {
-  baseAPY: 0.05, // 5% T-Bills rate
+  baseAPY: 0.05, // 5% T-Bills rate (minimum)
   maxAPY: 0.25, // 25% maximum possible APY
   lambda: 1.5, // Risk sensitivity coefficient
   totalPoolValue: 0,
@@ -56,18 +55,36 @@ export const riskScoreToCategory = (riskScore: number): 'Conservative' | 'Modera
 };
 
 /**
- * Get lock period based on risk score
+ * Get lock period based on risk score (updated to minimum 15 days)
  */
 export const getLockPeriodFromRisk = (riskScore: number): number => {
   const level = riskScoreToLevel(riskScore);
-  if (level <= 33) return 30; // 30 days for low risk
-  if (level <= 66) return 90; // 90 days for moderate risk
-  return 180; // 180 days for high risk
+  if (level <= 33) return 15; // 15 days for low risk (was 30)
+  if (level <= 66) return 60; // 60 days for moderate risk (was 90)
+  return 120; // 120 days for high risk (was 180)
 };
 
 /**
- * Simulate payout distribution for all positions
+ * Calculate available pool capacity for a given risk level
  */
+export const calculateAvailableCapacity = (
+  riskScore: number,
+  totalPoolValue: number,
+  existingPositions: Array<{ riskScore: number; amount: number }>
+): number => {
+  // For demonstration - in reality this would be more complex
+  // Higher risk = lower capacity due to concentration limits
+  const riskLevel = riskScoreToLevel(riskScore);
+  const maxRiskAllocation = riskLevel <= 33 ? 0.6 : riskLevel <= 66 ? 0.3 : 0.1;
+  
+  const usedCapacityInRiskRange = existingPositions
+    .filter(p => Math.abs(p.riskScore - riskScore) < 1000)
+    .reduce((sum, p) => sum + p.amount, 0);
+  
+  const maxCapacityForRisk = totalPoolValue * maxRiskAllocation;
+  return Math.max(0, maxCapacityForRisk - usedCapacityInRiskRange);
+};
+
 export interface PayoutResult {
   positionId: string;
   expectedPayout: number;
