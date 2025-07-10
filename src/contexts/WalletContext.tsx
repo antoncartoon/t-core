@@ -1,5 +1,14 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { StakingPosition } from '@/types/staking';
+import { StakingPosition, PoolSettings } from '@/types/staking';
+import { 
+  calculateRiskScore, 
+  calculatePayoutPriority, 
+  riskScoreToLevel, 
+  riskScoreToCategory, 
+  getLockPeriodFromRisk,
+  DEFAULT_POOL_SETTINGS
+} from '@/utils/riskCalculations';
 
 interface Asset {
   symbol: string;
@@ -11,24 +20,26 @@ interface Asset {
 interface WalletContextType {
   balances: Asset[];
   stakingPositions: StakingPosition[];
+  poolSettings: PoolSettings;
   addBalance: (symbol: string, amount: number) => void;
   mintTkchUSD: (usdcAmount: number) => boolean;
   getAvailableBalance: (symbol: string) => number;
-  createStakingPosition: (amount: number, riskLevel: number) => string;
+  createStakingPosition: (amount: number, desiredAPY: number) => string;
   withdrawPosition: (positionId: string) => boolean;
   getTotalStakedValue: () => number;
+  updatePoolSettings: (settings: Partial<PoolSettings>) => void;
 }
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 export const WalletProvider = ({ children }: { children: ReactNode }) => {
-  // Start with zero balances for new users
   const [balances, setBalances] = useState<Asset[]>([
     { symbol: 'USDC', balance: 0, usdValue: 0, change: '+0.00%' },
     { symbol: 'tkchUSD', balance: 0, usdValue: 0, change: '+0.00%' },
   ]);
 
   const [stakingPositions, setStakingPositions] = useState<StakingPosition[]>([]);
+  const [poolSettings, setPoolSettings] = useState<PoolSettings>(DEFAULT_POOL_SETTINGS);
 
   const addBalance = (symbol: string, amount: number) => {
     setBalances(prev => prev.map(asset => 
@@ -70,7 +81,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     return asset ? asset.balance : 0;
   };
 
-  const createStakingPosition = (amount: number, riskLevel: number): string => {
+  const createStakingPosition = (amount: number, desiredAPY: number): string => {
     const tkchUSDBalance = getAvailableBalance('tkchUSD');
     if (amount > tkchUSDBalance) {
       return '';
@@ -89,35 +100,40 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
 
     const positionId = `pos_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     
-    const calculateYield = (risk: number) => {
-      return Math.pow(risk / 100, 1.5) * 25 + 2;
-    };
-
-    const getRiskCategory = (risk: number) => {
-      if (risk <= 33) return 'Conservative';
-      if (risk <= 66) return 'Moderate';
-      return 'Aggressive';
-    };
-
-    const getLockPeriod = (risk: number) => {
-      if (risk <= 33) return 30;
-      if (risk <= 66) return 90;
-      return 180;
-    };
+    // Calculate new risk-based values
+    const riskScore = calculateRiskScore(desiredAPY, poolSettings);
+    const payoutPriority = calculatePayoutPriority(riskScore);
+    const riskLevel = riskScoreToLevel(riskScore);
+    const riskCategory = riskScoreToCategory(riskScore);
+    const lockPeriod = getLockPeriodFromRisk(riskScore);
 
     const newPosition: StakingPosition = {
       id: positionId,
       amount: amount,
       originalTokenAmount: amount,
-      currentValue: amount * 1.02, // Small initial gain
-      earnedAmount: amount * 0.02,
-      apy: calculateYield(riskLevel),
+      currentValue: amount * 1.01, // Small initial gain
+      earnedAmount: amount * 0.01,
+      
+      // New APY-based fields
+      desiredAPY,
+      riskScore,
+      payoutPriority,
+      baseAPY: poolSettings.baseAPY,
+      maxAPY: poolSettings.maxAPY,
+      
+      // Legacy fields for backwards compatibility
+      apy: desiredAPY * 100, // Convert to percentage
       riskLevel,
-      riskCategory: getRiskCategory(riskLevel),
-      lockPeriod: getLockPeriod(riskLevel),
+      riskCategory,
+      
+      lockPeriod,
       createdAt: new Date(),
-      maturityDate: new Date(Date.now() + getLockPeriod(riskLevel) * 24 * 60 * 60 * 1000),
-      status: 'active'
+      maturityDate: new Date(Date.now() + lockPeriod * 24 * 60 * 60 * 1000),
+      status: 'active',
+      
+      // New tracking fields
+      missedPayouts: 0,
+      actualAPY: desiredAPY // Start with desired, will be updated based on actual payouts
     };
 
     setStakingPositions(prev => [...prev, newPosition]);
@@ -147,16 +163,22 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       .reduce((sum, p) => sum + p.currentValue, 0);
   };
 
+  const updatePoolSettings = (settings: Partial<PoolSettings>) => {
+    setPoolSettings(prev => ({ ...prev, ...settings }));
+  };
+
   return (
     <WalletContext.Provider value={{
       balances,
       stakingPositions,
+      poolSettings,
       addBalance,
       mintTkchUSD,
       getAvailableBalance,
       createStakingPosition,
       withdrawPosition,
       getTotalStakedValue,
+      updatePoolSettings,
     }}>
       {children}
     </WalletContext.Provider>

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Trophy, Calendar, TrendingUp, Lock, Unlock } from 'lucide-react';
+import { Trophy, Calendar, TrendingUp, Lock, Unlock, AlertTriangle, Users } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -71,6 +71,17 @@ const NFTPositionCard = ({ position }: NFTPositionCardProps) => {
     }
   };
 
+  const getPriorityColor = () => {
+    if (position.payoutPriority > 8000) return 'text-green-600';
+    if (position.payoutPriority > 5000) return 'text-yellow-600';
+    return 'text-red-600';
+  };
+
+  // Calculate APY performance
+  const expectedReturn = (position.desiredAPY * position.originalTokenAmount);
+  const actualReturn = position.earnedAmount;
+  const performance = expectedReturn > 0 ? (actualReturn / expectedReturn) * 100 : 100;
+
   return (
     <Card className="relative overflow-hidden">
       <div className={`absolute top-0 right-0 w-16 h-16 ${
@@ -100,19 +111,53 @@ const NFTPositionCard = ({ position }: NFTPositionCardProps) => {
           </div>
           <div className="text-right">
             <p className="text-2xl font-bold">${position.currentValue.toLocaleString()}</p>
-            <p className="text-sm text-green-600">+${position.earnedAmount.toFixed(2)}</p>
+            <p className={`text-sm ${position.earnedAmount >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {position.earnedAmount >= 0 ? '+' : ''}${position.earnedAmount.toFixed(2)}
+            </p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <p className="text-sm text-muted-foreground">Original Amount</p>
-            <p className="font-semibold">${position.originalTokenAmount.toLocaleString()}</p>
+            <p className="text-sm text-muted-foreground">Desired APY</p>
+            <p className="font-semibold text-blue-600">{(position.desiredAPY * 100).toFixed(2)}%</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">APY</p>
-            <p className="font-semibold text-blue-600">{position.apy.toFixed(2)}%</p>
+            <p className="text-sm text-muted-foreground">Actual APY</p>
+            <p className={`font-semibold ${
+              position.actualAPY >= position.desiredAPY ? 'text-green-600' : 'text-yellow-600'
+            }`}>
+              {(position.actualAPY * 100).toFixed(2)}%
+            </p>
           </div>
+        </div>
+
+        {/* New Priority and Risk Info */}
+        <div className="bg-muted/30 p-3 rounded-lg mb-4">
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground flex items-center">
+                <Users className="w-3 h-3 mr-1" />
+                Queue Priority:
+              </span>
+              <span className={`font-medium ${getPriorityColor()}`}>
+                #{position.payoutPriority.toLocaleString()}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Risk Score:</span>
+              <span className="font-medium">{position.riskScore.toLocaleString()}</span>
+            </div>
+          </div>
+          
+          {position.missedPayouts > 0 && (
+            <div className="mt-2 p-2 bg-red-50 rounded text-sm">
+              <div className="flex items-center text-red-700">
+                <AlertTriangle className="w-3 h-3 mr-1" />
+                Missed payouts: ${position.missedPayouts.toFixed(2)}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="mb-4">
@@ -142,10 +187,16 @@ const NFTPositionCard = ({ position }: NFTPositionCardProps) => {
           </div>
         </div>
 
+        {/* Performance Indicator */}
         <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Risk Level:</span>
-            <span className="font-medium">{position.riskLevel}%</span>
+            <span className="text-muted-foreground">Performance:</span>
+            <span className={`font-medium ${
+              performance >= 90 ? 'text-green-600' : 
+              performance >= 50 ? 'text-yellow-600' : 'text-red-600'
+            }`}>
+              {performance.toFixed(1)}%
+            </span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Lock Period:</span>
