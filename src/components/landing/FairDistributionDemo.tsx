@@ -3,27 +3,84 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Users, DollarSign, TrendingUp, Clock } from 'lucide-react';
+import { Users, DollarSign, TrendingUp, PieChart } from 'lucide-react';
 
 const FairDistributionDemo = () => {
   const [poolYield, setPoolYield] = useState([12]);
   
-  // Demo scenarios showing fair distribution
-  const scenarios = [
-    { apy: 5, position: 1, payout: "First", color: "bg-green-500" },
-    { apy: 8, position: 2, payout: "Second", color: "bg-blue-500" },
-    { apy: 12, position: 3, payout: "Third", color: "bg-yellow-500" },
-    { apy: 18, position: 4, payout: "Fourth", color: "bg-orange-500" },
-    { apy: 25, position: 5, payout: "Last", color: "bg-red-500" }
+  // Tranche system showing different risk levels and capacity
+  const tranches = [
+    { 
+      apy: 5, 
+      maxCapacity: 1000000, 
+      color: "bg-green-500", 
+      risk: "Conservative",
+      description: "Largest capacity, stable returns"
+    },
+    { 
+      apy: 8, 
+      maxCapacity: 500000, 
+      color: "bg-blue-500", 
+      risk: "Moderate",
+      description: "Good balance of capacity and yield"
+    },
+    { 
+      apy: 12, 
+      maxCapacity: 250000, 
+      color: "bg-yellow-500", 
+      risk: "Balanced",
+      description: "Medium capacity, attractive yields"
+    },
+    { 
+      apy: 18, 
+      maxCapacity: 100000, 
+      color: "bg-orange-500", 
+      risk: "Growth",
+      description: "Limited capacity, high efficiency"
+    },
+    { 
+      apy: 25, 
+      maxCapacity: 50000, 
+      color: "bg-red-500", 
+      risk: "Maximum",
+      description: "Smallest capacity, maximum efficiency"
+    }
   ];
 
-  const getCurrentPayouts = () => {
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  const getTotalPoolValue = () => {
+    return tranches.reduce((sum, tranche) => sum + tranche.maxCapacity, 0);
+  };
+
+  const getTrancheAllocation = (tranche: any) => {
+    const totalPool = getTotalPoolValue();
     const currentYield = poolYield[0];
-    return scenarios.map(scenario => ({
-      ...scenario,
-      receiving: currentYield >= scenario.apy,
-      percentage: currentYield >= scenario.apy ? scenario.apy : 0
-    }));
+    
+    // All tranches receive their promised APY when pool yield is sufficient
+    if (currentYield >= tranche.apy) {
+      return {
+        receiving: true,
+        actualYield: tranche.apy,
+        annualReturn: (tranche.maxCapacity * tranche.apy) / 100,
+        utilizationRate: 100
+      };
+    } else {
+      // Even when pool yield is lower, tranches can still receive proportional returns
+      const proportionalYield = Math.max(0, (currentYield / tranche.apy) * tranche.apy);
+      return {
+        receiving: proportionalYield > 0,
+        actualYield: proportionalYield,
+        annualReturn: (tranche.maxCapacity * proportionalYield) / 100,
+        utilizationRate: Math.round((proportionalYield / tranche.apy) * 100)
+      };
+    }
   };
 
   return (
@@ -31,11 +88,11 @@ const FairDistributionDemo = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12 sm:mb-16">
           <h2 className="text-2xl sm:text-4xl font-light text-foreground mb-4 sm:mb-6">
-            Fair Distribution Model
+            Tranche-Based Distribution
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Our transparent queue system ensures everyone gets paid fairly. 
-            Lower APY requests get paid first, higher requests get paid only when there's enough yield.
+            Like concentrated liquidity in AMM pools: higher yield requests have smaller capacity but greater capital efficiency. 
+            Everyone gets paid, but position sizes vary based on risk appetite.
           </p>
         </div>
 
@@ -45,7 +102,7 @@ const FairDistributionDemo = () => {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <TrendingUp className="w-5 h-5" />
-                <span>Interactive Demo</span>
+                <span>Pool Yield Simulator</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -68,43 +125,67 @@ const FairDistributionDemo = () => {
               </div>
 
               <div className="space-y-3">
-                <h4 className="font-medium">Payout Queue Status:</h4>
-                {getCurrentPayouts().map((scenario, index) => (
-                  <div 
-                    key={index}
-                    className={`flex items-center justify-between p-3 rounded-lg border ${
-                      scenario.receiving ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-3 h-3 rounded-full ${scenario.color}`} />
-                      <span className="font-medium">{scenario.apy}% APY Request</span>
-                    </div>
-                    <div className="text-right">
-                      <div className={`text-sm font-medium ${
-                        scenario.receiving ? 'text-green-600' : 'text-gray-500'
-                      }`}>
-                        {scenario.receiving ? `✓ Receiving ${scenario.apy}%` : '⏳ Waiting'}
+                <h4 className="font-medium">Tranche Performance:</h4>
+                {tranches.map((tranche, index) => {
+                  const allocation = getTrancheAllocation(tranche);
+                  return (
+                    <div 
+                      key={index}
+                      className="p-4 rounded-lg border bg-card"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center space-x-3">
+                          <div className={`w-3 h-3 rounded-full ${tranche.color}`} />
+                          <span className="font-medium">{tranche.apy}% APY Tranche</span>
+                        </div>
+                        <div className="text-right">
+                          <div className={`text-sm font-medium ${
+                            allocation.receiving ? 'text-green-600' : 'text-gray-500'
+                          }`}>
+                            {allocation.receiving ? `${allocation.actualYield.toFixed(1)}%` : '0%'}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4 text-xs text-muted-foreground">
+                        <div>
+                          <div>Max Capacity: {formatCurrency(tranche.maxCapacity)}</div>
+                          <div>Annual Return: {formatCurrency(allocation.annualReturn)}</div>
+                        </div>
+                        <div>
+                          <div>Utilization: {allocation.utilizationRate}%</div>
+                          <div className="text-xs text-muted-foreground">{tranche.description}</div>
+                        </div>
                       </div>
                     </div>
+                  );
+                })}
+              </div>
+
+              <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+                <div className="text-sm">
+                  <div className="font-medium mb-1">Total Pool: {formatCurrency(getTotalPoolValue())}</div>
+                  <div className="text-muted-foreground">
+                    Higher APY = Smaller capacity but greater efficiency per dollar invested
                   </div>
-                ))}
+                </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* How It Works */}
+          {/* How Tranching Works */}
           <div className="space-y-6">
             <Card className="border-border">
               <CardContent className="p-6">
                 <div className="flex items-start space-x-4">
                   <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                    <Users className="w-5 h-5 text-blue-600" />
+                    <PieChart className="w-5 h-5 text-blue-600" />
                   </div>
                   <div>
-                    <h3 className="font-medium mb-2">Queue-Based System</h3>
+                    <h3 className="font-medium mb-2">Concentrated Liquidity Principle</h3>
                     <p className="text-sm text-muted-foreground">
-                      Users requesting lower APY get paid first. This ensures conservative users always receive their returns.
+                      Just like Uniswap V3, narrower ranges (higher APY) have less available space but earn more efficiently. 
+                      Your capital works harder in smaller, more focused positions.
                     </p>
                   </div>
                 </div>
@@ -118,9 +199,10 @@ const FairDistributionDemo = () => {
                     <DollarSign className="w-5 h-5 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="font-medium mb-2">Fair Allocation</h3>
+                    <h3 className="font-medium mb-2">Everyone Gets Paid</h3>
                     <p className="text-sm text-muted-foreground">
-                      When pool generates 12% yield, everyone requesting ≤12% gets their full amount. Higher requests wait for better pool performance.
+                      All tranches receive returns proportional to pool performance. Higher APY tranches get full payouts first, 
+                      but even during lower yield periods, all positions receive proportional distributions.
                     </p>
                   </div>
                 </div>
@@ -131,12 +213,13 @@ const FairDistributionDemo = () => {
               <CardContent className="p-6">
                 <div className="flex items-start space-x-4">
                   <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
-                    <Clock className="w-5 h-5 text-purple-600" />
+                    <Users className="w-5 h-5 text-purple-600" />
                   </div>
                   <div>
-                    <h3 className="font-medium mb-2">No Hidden Risks</h3>
+                    <h3 className="font-medium mb-2">Risk = Efficiency Trade-off</h3>
                     <p className="text-sm text-muted-foreground">
-                      Higher yields come from optimization and better pool performance, not from investing in volatile assets or risky protocols.
+                      Higher yields don't mean dangerous investments - they mean accepting smaller position sizes for better capital efficiency. 
+                      All investments remain in stablecoins and proven DeFi protocols.
                     </p>
                   </div>
                 </div>
