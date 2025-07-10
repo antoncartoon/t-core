@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { StakingPosition } from '@/types/staking';
 
@@ -108,6 +107,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
 
     const newPosition: StakingPosition = {
       id: positionId,
+      amount: amount,
       originalTokenAmount: amount,
       currentValue: amount * 1.02, // Small initial gain
       earnedAmount: amount * 0.02,
