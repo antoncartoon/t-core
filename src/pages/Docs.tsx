@@ -4,9 +4,21 @@ import { Book, FileText, Shield, Zap, Users, HelpCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import Header from '@/components/Header';
+import { useWallet } from '@/contexts/WalletContext';
 
 const Docs = () => {
   const [activeSection, setActiveSection] = useState('overview');
+  const { balances } = useWallet();
+  
+  // Mock wallet connection state - you can replace this with actual wallet logic
+  const isConnected = balances.some(balance => balance.balance > 0);
+  const walletAddress = isConnected ? "0x1234...5678" : undefined;
+
+  const handleConnect = () => {
+    // Mock connect function - replace with actual wallet connection logic
+    console.log('Connect wallet clicked');
+  };
 
   const sections = [
     { id: 'overview', title: 'Overview', icon: Book },
@@ -19,6 +31,12 @@ const Docs = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Header 
+        isConnected={isConnected}
+        onConnect={handleConnect}
+        walletAddress={walletAddress}
+      />
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         {/* Header */}
         <div className="mb-8">
