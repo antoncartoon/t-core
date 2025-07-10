@@ -1,0 +1,143 @@
+
+import React, { useState, useEffect } from 'react';
+import { Slider } from '@/components/ui/slider';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { TrendingUp, Shield, AlertTriangle, BarChart3 } from 'lucide-react';
+
+interface RangeSelectorProps {
+  value: [number, number];
+  onChange: (range: [number, number]) => void;
+  liquidityData?: Array<{ risk: number; liquidity: number }>;
+  className?: string;
+}
+
+const RangeSelector = ({ value, onChange, liquidityData = [], className = "" }: RangeSelectorProps) => {
+  const [localValue, setLocalValue] = useState(value);
+
+  useEffect(() => {
+    setLocalValue(value);
+  }, [value]);
+
+  const handleChange = (newValue: number[]) => {
+    const range: [number, number] = [newValue[0], newValue[1]];
+    setLocalValue(range);
+    onChange(range);
+  };
+
+  const getRangeCategory = (min: number, max: number) => {
+    const avg = (min + max) / 2;
+    if (avg <= 25) return { name: 'Conservative', color: 'bg-green-100 text-green-700', icon: Shield };
+    if (avg <= 60) return { name: 'Moderate', color: 'bg-yellow-100 text-yellow-700', icon: TrendingUp };
+    return { name: 'Aggressive', color: 'bg-red-100 text-red-700', icon: AlertTriangle };
+  };
+
+  const category = getRangeCategory(localValue[0], localValue[1]);
+  const CategoryIcon = category.icon;
+  const rangeSize = localValue[1] - localValue[0];
+  const efficiency = Math.round(100 / Math.max(1, rangeSize / 5)); // Capital efficiency score
+
+  return (
+    <Card className={className}>
+      <CardContent className="p-6">
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold">Risk Range Selection</h3>
+            <Badge className={category.color}>
+              <CategoryIcon className="w-3 h-3 mr-1" />
+              {category.name}
+            </Badge>
+          </div>
+
+          {/* Range Display */}
+          <div className="text-center space-y-2">
+            <div className="text-3xl font-bold text-primary">
+              {localValue[0]} - {localValue[1]}
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Risk Level Range (0 = Risk-free, 100 = Maximum Risk)
+            </p>
+          </div>
+
+          {/* Slider */}
+          <div className="space-y-4">
+            <Slider
+              value={localValue}
+              onValueChange={handleChange}
+              min={0}
+              max={100}
+              step={5}
+              className="w-full"
+              minStepsBetweenThumbs={1}
+            />
+            
+            {/* Scale Labels */}
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>0 (Risk-free)</span>
+              <span>25</span>
+              <span>50</span>
+              <span>75</span>
+              <span>100 (Max Risk)</span>
+            </div>
+          </div>
+
+          {/* Liquidity Density Visualization */}
+          {liquidityData.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <BarChart3 className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm font-medium">Liquidity Density</span>
+              </div>
+              <div className="h-12 bg-muted rounded relative overflow-hidden">
+                {liquidityData.map((item, index) => (
+                  <div
+                    key={index}
+                    className="absolute bg-blue-500/60 hover:bg-blue-500/80 transition-colors"
+                    style={{
+                      left: `${item.risk}%`,
+                      width: '2%',
+                      height: `${Math.min(100, (item.liquidity / Math.max(...liquidityData.map(d => d.liquidity))) * 100)}%`,
+                      bottom: 0
+                    }}
+                  />
+                ))}
+                {/* Selected Range Overlay */}
+                <div
+                  className="absolute bg-primary/20 border-2 border-primary rounded"
+                  style={{
+                    left: `${localValue[0]}%`,
+                    width: `${localValue[1] - localValue[0]}%`,
+                    height: '100%'
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
+          {/* Range Statistics */}
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="space-y-1">
+              <p className="text-muted-foreground">Range Size</p>
+              <p className="font-semibold">{rangeSize} points</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-muted-foreground">Capital Efficiency</p>
+              <p className="font-semibold text-blue-600">{efficiency}%</p>
+            </div>
+          </div>
+
+          {/* Risk Explanation */}
+          <div className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
+            <p className="font-medium mb-1">How it works:</p>
+            <p>• Yield flows bottom-up: lower risk gets paid first</p>
+            <p>• Losses flow top-down: higher risk takes losses first</p>
+            <p>• Narrower ranges = higher capital efficiency</p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default RangeSelector;

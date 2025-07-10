@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,13 +12,14 @@ import FAQ from "./pages/FAQ";
 import Transparency from "./pages/Transparency";
 import Docs from "./pages/Docs";
 import NotFound from "./pages/NotFound";
+import { RiskRangeProvider } from "@/contexts/RiskRangeContext";
 
 const queryClient = new QueryClient();
 
 const AppRouter = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <WalletProvider>
+      <RiskRangeProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
@@ -34,7 +34,7 @@ const AppRouter = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
-      </WalletProvider>
+      </RiskRangeProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

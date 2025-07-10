@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import LandingHeader from '@/components/landing/LandingHeader';
 import HeroSection from '@/components/landing/HeroSection';
 import ValueProposition from '@/components/landing/ValueProposition';
-import FairDistributionDemo from '@/components/landing/FairDistributionDemo';
+import ConcentratedLiquidityDemo from '@/components/landing/ConcentratedLiquidityDemo';
 import WorkflowSection from '@/components/landing/WorkflowSection';
 import SecurityEmphasis from '@/components/landing/SecurityEmphasis';
 import StatsSection from '@/components/landing/StatsSection';
@@ -20,7 +19,7 @@ const Landing = () => {
       <main>
         <HeroSection />
         <ValueProposition />
-        <FairDistributionDemo />
+        <ConcentratedLiquidityDemo />
         <WorkflowSection />
         <SecurityEmphasis />
         <StatsSection />
