@@ -10,6 +10,7 @@ import Portfolio from "./pages/Portfolio";
 import DeFi from "./pages/DeFi";
 import FAQ from "./pages/FAQ";
 import Transparency from "./pages/Transparency";
+import Docs from "./pages/Docs";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/defi" element={<DeFi />} />
             <Route path="/transparency" element={<Transparency />} />
+            <Route path="/docs" element={<Docs />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

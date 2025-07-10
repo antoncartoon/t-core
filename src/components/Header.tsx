@@ -67,6 +67,14 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
               </>
             )}
             <NavLink 
+              to="/docs" 
+              className={({ isActive }) => 
+                `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
+              }
+            >
+              Docs
+            </NavLink>
+            <NavLink 
               to="/faq" 
               className={({ isActive }) => 
                 `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
