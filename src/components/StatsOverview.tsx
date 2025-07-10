@@ -7,7 +7,7 @@ const StatsOverview = () => {
     { label: 'Total Value Locked', value: '$12.5M', change: '+15.2%' },
     { label: 'Average APY', value: '8.4%', change: '+0.3%' },
     { label: 'Active Stakers', value: '2,847', change: '+12.1%' },
-    { label: 'tkchUSD Minted', value: '8.9M', change: '+8.7%' }
+    { label: 'TDD Minted', value: '8.9M', change: '+8.7%' }
   ];
 
   return (

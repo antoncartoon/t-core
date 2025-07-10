@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { DollarSign, TrendingUp, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -36,7 +35,7 @@ const MobileDepositCard = () => {
       
       toast({
         title: "Deposit Successful!",
-        description: `Deposited ${amount} ${selectedToken} and minted ${amount} tkchUSD.`,
+        description: `Deposited ${amount} ${selectedToken} and minted ${amount} TDD.`,
       });
       
       setAmount('');
@@ -125,7 +124,7 @@ const MobileDepositCard = () => {
         <div className="bg-muted/30 p-3 rounded-lg space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">You will receive:</span>
-            <span className="font-medium">{amount || '0'} tkchUSD</span>
+            <span className="font-medium">{amount || '0'} TDD</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">APY:</span>

@@ -18,7 +18,7 @@ const MobileStakingCard = () => {
   const { toast } = useToast();
   const { getAvailableBalance, createStakingPosition, poolSettings, stakingPositions } = useWallet();
 
-  const availableBalance = getAvailableBalance('tkchUSD');
+  const availableBalance = getAvailableBalance('TDD');
   const desiredAPYDecimal = parseFloat(desiredAPY) / 100 || 0;
 
   // Calculate risk metrics
@@ -79,7 +79,7 @@ const MobileStakingCard = () => {
     if (stakeAmount > availableBalance) {
       toast({
         title: "Insufficient Balance",
-        description: `You only have ${availableBalance.toFixed(2)} tkchUSD available.`,
+        description: `You only have ${availableBalance.toFixed(2)} TDD available.`,
         variant: "destructive",
       });
       return;
@@ -88,7 +88,7 @@ const MobileStakingCard = () => {
     if (stakeAmount > availableCapacity) {
       toast({
         title: "Pool Capacity Exceeded",
-        description: `Max available: ${availableCapacity.toFixed(2)} tkchUSD.`,
+        description: `Max available: ${availableCapacity.toFixed(2)} TDD.`,
         variant: "destructive",
       });
       return;
@@ -144,7 +144,7 @@ const MobileStakingCard = () => {
             className="text-lg h-12"
           />
           <p className="text-xs text-muted-foreground">
-            Available: {availableBalance.toFixed(2)} tkchUSD
+            Available: {availableBalance.toFixed(2)} TDD
           </p>
         </div>
 

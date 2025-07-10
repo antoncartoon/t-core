@@ -11,7 +11,7 @@ const DepositCard = () => {
   const [amount, setAmount] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { getAvailableBalance, mintTkchUSD } = useWallet();
+  const { getAvailableBalance, mintTDD } = useWallet();
 
   const availableUSDC = getAvailableBalance('USDC');
 
@@ -41,11 +41,11 @@ const DepositCard = () => {
       // Simulate minting transaction
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      const success = mintTkchUSD(mintAmount);
+      const success = mintTDD(mintAmount);
       if (success) {
         toast({
           title: "Minting Successful!",
-          description: `${mintAmount} tkchUSD has been minted from ${mintAmount} USDC.`,
+          description: `${mintAmount} TDD has been minted from ${mintAmount} USDC.`,
         });
         setAmount('');
       } else {
@@ -67,7 +67,7 @@ const DepositCard = () => {
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <Coins className="w-5 h-5 text-blue-600" />
-          <span>Mint tkchUSD</span>
+          <span>Mint TDD</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -102,7 +102,7 @@ const DepositCard = () => {
             <div>
               <p className="text-sm text-muted-foreground">You receive</p>
               <p className="text-lg font-bold text-green-600">
-                {amount || '0'} tkchUSD
+                {amount || '0'} TDD
               </p>
             </div>
           </div>
@@ -111,7 +111,7 @@ const DepositCard = () => {
         <div className="space-y-2 text-sm text-muted-foreground">
           <div className="flex items-center space-x-2">
             <CheckCircle className="w-4 h-4 text-green-600" />
-            <span>1:1 USDC to tkchUSD conversion</span>
+            <span>1:1 USDC to TDD conversion</span>
           </div>
           <div className="flex items-center space-x-2">
             <CheckCircle className="w-4 h-4 text-green-600" />
@@ -119,7 +119,7 @@ const DepositCard = () => {
           </div>
           <div className="flex items-center space-x-2">
             <CheckCircle className="w-4 h-4 text-green-600" />
-            <span>Use tkchUSD for staking and earning yield</span>
+            <span>Use TDD for staking and earning yield</span>
           </div>
         </div>
 
@@ -135,7 +135,7 @@ const DepositCard = () => {
             </div>
           ) : (
             <div className="flex items-center space-x-2">
-              <span>Mint tkchUSD</span>
+              <span>Mint TDD</span>
               <ArrowRight className="w-4 h-4" />
             </div>
           )}

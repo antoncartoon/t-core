@@ -21,7 +21,7 @@ const MobileMenu = ({ isOpen, onClose, isConnected }: MobileMenuProps) => {
             <div className="w-5 h-5 bg-foreground rounded flex items-center justify-center">
               <span className="text-background font-bold text-xs">T</span>
             </div>
-            <span className="text-base font-medium">Tolkachyield</span>
+            <span className="text-base font-medium">T-Core</span>
           </div>
           <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
             <X className="w-4 h-4" />

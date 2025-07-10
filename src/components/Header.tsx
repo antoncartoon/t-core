@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Wallet, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -25,7 +26,7 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
               <span className="text-background font-bold text-xs sm:text-sm">T</span>
             </div>
             <NavLink to="/" className="text-base sm:text-lg font-medium hover:text-primary transition-colors">
-              {isMobile ? 'Tolkach' : 'Tolkachyield'}
+              {isMobile ? 'T-Core' : 'T-Core'}
             </NavLink>
           </div>
           

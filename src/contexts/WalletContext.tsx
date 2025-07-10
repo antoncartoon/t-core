@@ -22,7 +22,7 @@ interface WalletContextType {
   stakingPositions: StakingPosition[];
   poolSettings: PoolSettings;
   addBalance: (symbol: string, amount: number) => void;
-  mintTkchUSD: (usdcAmount: number) => boolean;
+  mintTDD: (usdcAmount: number) => boolean;
   getAvailableBalance: (symbol: string) => number;
   createStakingPosition: (amount: number, desiredAPY: number) => string;
   withdrawPosition: (positionId: string) => boolean;
@@ -35,7 +35,7 @@ const WalletContext = createContext<WalletContextType | undefined>(undefined);
 export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const [balances, setBalances] = useState<Asset[]>([
     { symbol: 'USDC', balance: 0, usdValue: 0, change: '+0.00%' },
-    { symbol: 'tkchUSD', balance: 0, usdValue: 0, change: '+0.00%' },
+    { symbol: 'TDD', balance: 0, usdValue: 0, change: '+0.00%' },
   ]);
 
   const [stakingPositions, setStakingPositions] = useState<StakingPosition[]>([]);
@@ -47,13 +47,13 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
         ? { 
             ...asset, 
             balance: asset.balance + amount, 
-            usdValue: (asset.balance + amount) * (asset.symbol === 'USDC' || asset.symbol === 'tkchUSD' ? 1 : 0.998)
+            usdValue: (asset.balance + amount) * (asset.symbol === 'USDC' || asset.symbol === 'TDD' ? 1 : 0.998)
           }
         : asset
     ));
   };
 
-  const mintTkchUSD = (usdcAmount: number): boolean => {
+  const mintTDD = (usdcAmount: number): boolean => {
     const usdcBalance = getAvailableBalance('USDC');
     if (usdcAmount > usdcBalance) {
       return false;
@@ -70,8 +70,8 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
         : asset
     ));
 
-    // Add tkchUSD balance (1:1 mint)
-    addBalance('tkchUSD', usdcAmount);
+    // Add TDD balance (1:1 mint)
+    addBalance('TDD', usdcAmount);
     
     return true;
   };
@@ -82,14 +82,14 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const createStakingPosition = (amount: number, desiredAPY: number): string => {
-    const tkchUSDBalance = getAvailableBalance('tkchUSD');
-    if (amount > tkchUSDBalance) {
+    const tddBalance = getAvailableBalance('TDD');
+    if (amount > tddBalance) {
       return '';
     }
 
-    // Reduce tkchUSD balance
+    // Reduce TDD balance
     setBalances(prev => prev.map(asset => 
-      asset.symbol === 'tkchUSD' 
+      asset.symbol === 'TDD' 
         ? { 
             ...asset, 
             balance: asset.balance - amount, 
@@ -146,8 +146,8 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       return false;
     }
 
-    // Add back to tkchUSD balance
-    addBalance('tkchUSD', position.currentValue);
+    // Add back to TDD balance
+    addBalance('TDD', position.currentValue);
 
     // Mark position as withdrawn
     setStakingPositions(prev => prev.map(p => 
@@ -173,7 +173,7 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       stakingPositions,
       poolSettings,
       addBalance,
-      mintTkchUSD,
+      mintTDD,
       getAvailableBalance,
       createStakingPosition,
       withdrawPosition,

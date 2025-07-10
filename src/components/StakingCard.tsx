@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { TrendingUp, Shield, AlertTriangle, Coins, Info, Users, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -19,7 +18,7 @@ const StakingCard = () => {
   const { toast } = useToast();
   const { getAvailableBalance, createStakingPosition, poolSettings, stakingPositions } = useWallet();
 
-  const availableBalance = getAvailableBalance('tkchUSD');
+  const availableBalance = getAvailableBalance('TDD');
   const desiredAPYDecimal = parseFloat(desiredAPY) / 100 || 0;
 
   // Calculate risk metrics
@@ -99,7 +98,7 @@ const StakingCard = () => {
     if (stakeAmount > availableBalance) {
       toast({
         title: "Insufficient Balance",
-        description: `You only have ${availableBalance.toFixed(2)} tkchUSD available.`,
+        description: `You only have ${availableBalance.toFixed(2)} TDD available.`,
         variant: "destructive",
       });
       return;
@@ -108,7 +107,7 @@ const StakingCard = () => {
     if (stakeAmount > availableCapacity) {
       toast({
         title: "Pool Capacity Exceeded",
-        description: `Maximum available for this risk level: ${availableCapacity.toFixed(2)} tkchUSD.`,
+        description: `Maximum available for this risk level: ${availableCapacity.toFixed(2)} TDD.`,
         variant: "destructive",
       });
       return;
@@ -131,7 +130,7 @@ const StakingCard = () => {
       
       toast({
         title: "NFT Staking Position Created!",
-        description: `Position ${positionId.slice(-6)} created with ${stakeAmount} tkchUSD at ${desiredAPY}% APY. Priority: ${payoutPriority.toLocaleString()}.`,
+        description: `Position ${positionId.slice(-6)} created with ${stakeAmount} TDD at ${desiredAPY}% APY. Priority: ${payoutPriority.toLocaleString()}.`,
       });
       
       setAmount('');
@@ -172,7 +171,7 @@ const StakingCard = () => {
               className="text-lg"
             />
             <p className="text-xs text-gray-500 mt-1">
-              Available: {availableBalance.toFixed(2)} tkchUSD
+              Available: {availableBalance.toFixed(2)} TDD
             </p>
           </div>
 
