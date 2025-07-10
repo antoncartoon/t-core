@@ -1,40 +1,95 @@
 
 import { RiskRange, RiskTick, LiquidityPosition, RangeCalculationResult } from '@/types/riskRange';
 
+export const RISK_SCALE_MIN = 1;
 export const RISK_SCALE_MAX = 100;
-export const GUARANTEED_APY_BASE = 0.05; // 5% T-Bills
-export const GUARANTEED_APY_PREMIUM = 0.20; // +20%
+export const T_BILL_RATE = 0.05; // 5% T-Bills (example)
+export const PREMIUM_RATE = 0.20; // +20% premium
+export const MIN_GUARANTEED_APY = T_BILL_RATE + PREMIUM_RATE; // T-Bill + 20%
+export const MAX_APY = 0.25; // 25% maximum
 
 /**
- * Calculate yield distribution across risk ticks (bottom-up)
+ * Calculate risk level APR using the exact formula from the document:
+ * r_i = r_min + (r_max - r_min) * (i - 1) / 99
+ */
+export const calculateRiskLevelAPR = (riskLevel: number): number => {
+  if (riskLevel < RISK_SCALE_MIN || riskLevel > RISK_SCALE_MAX) {
+    return MIN_GUARANTEED_APY;
+  }
+  
+  return MIN_GUARANTEED_APY + (MAX_APY - MIN_GUARANTEED_APY) * (riskLevel - 1) / 99;
+};
+
+/**
+ * Find the coverage level k - the highest risk level that gets full expected yield
+ * Based on: Find largest k such that sum(S_i * r_i) <= Y_est for i=1 to k
+ */
+export const findCoverageLevel = (
+  totalExpectedYield: number,
+  riskTicks: RiskTick[]
+): number => {
+  let cumulativeYieldNeeded = 0;
+  
+  for (let riskLevel = RISK_SCALE_MIN; riskLevel <= RISK_SCALE_MAX; riskLevel++) {
+    const tick = riskTicks.find(t => t.riskLevel === riskLevel);
+    const liquidity = tick?.totalLiquidity || 0;
+    const expectedAPR = calculateRiskLevelAPR(riskLevel);
+    
+    cumulativeYieldNeeded += liquidity * expectedAPR;
+    
+    if (cumulativeYieldNeeded > totalExpectedYield) {
+      return Math.max(RISK_SCALE_MIN, riskLevel - 1);
+    }
+  }
+  
+  return RISK_SCALE_MAX;
+};
+
+/**
+ * Distribute yield bottom-up using the waterfall model from the document
  */
 export const distributeYieldBottomUp = (
   totalYield: number,
   riskTicks: RiskTick[]
 ): RiskTick[] => {
-  const sortedTicks = [...riskTicks].sort((a, b) => a.riskLevel - b.riskLevel);
+  const coverageLevel = findCoverageLevel(totalYield, riskTicks);
   let remainingYield = totalYield;
   
-  return sortedTicks.map(tick => {
-    if (remainingYield <= 0 || tick.totalLiquidity === 0) {
-      return { ...tick, availableYield: 0, apr: 0 };
+  return riskTicks.map(tick => {
+    const { riskLevel, totalLiquidity } = tick;
+    
+    if (riskLevel <= coverageLevel && totalLiquidity > 0) {
+      const expectedAPR = calculateRiskLevelAPR(riskLevel);
+      const tickYield = Math.min(remainingYield, totalLiquidity * expectedAPR);
+      remainingYield -= tickYield;
+      
+      return {
+        ...tick,
+        availableYield: tickYield,
+        apr: tickYield / totalLiquidity
+      };
+    } else if (riskLevel === coverageLevel + 1 && remainingYield > 0 && totalLiquidity > 0) {
+      // Partial coverage for level k+1
+      const tickYield = Math.min(remainingYield, totalLiquidity * calculateRiskLevelAPR(riskLevel));
+      remainingYield -= tickYield;
+      
+      return {
+        ...tick,
+        availableYield: tickYield,
+        apr: tickYield / totalLiquidity
+      };
     }
-    
-    const tickYield = Math.min(remainingYield, tick.totalLiquidity * 0.25); // Max 25% APY per tick
-    remainingYield -= tickYield;
-    
-    const apr = tick.totalLiquidity > 0 ? tickYield / tick.totalLiquidity : 0;
     
     return {
       ...tick,
-      availableYield: tickYield,
-      apr: apr
+      availableYield: 0,
+      apr: 0
     };
   });
 };
 
 /**
- * Calculate losses top-down distribution
+ * Calculate losses top-down distribution (high risk levels absorb losses first)
  */
 export const calculateLossDistribution = (
   totalLoss: number,
@@ -59,6 +114,14 @@ export const calculateLossDistribution = (
 };
 
 /**
+ * Calculate user's normalized risk using the formula: r_norm = (average_risk_level - 1) / 99
+ */
+export const calculateNormalizedRisk = (riskRange: RiskRange): number => {
+  const averageRiskLevel = (riskRange.min + riskRange.max) / 2;
+  return (averageRiskLevel - 1) / 99;
+};
+
+/**
  * Calculate user's position APR in a risk range
  */
 export const calculateRangeAPR = (
@@ -73,13 +136,13 @@ export const calculateRangeAPR = (
   if (relevantTicks.length === 0) return 0;
   
   const rangeSize = riskRange.max - riskRange.min + 1;
-  const amountPerTick = userAmount / rangeSize;
+  const amountPerLevel = userAmount / rangeSize;
   
   let totalYield = 0;
   
   for (const tick of relevantTicks) {
     if (tick.totalLiquidity > 0) {
-      const userShareInTick = amountPerTick / (tick.totalLiquidity + amountPerTick);
+      const userShareInTick = amountPerLevel / (tick.totalLiquidity + amountPerLevel);
       totalYield += tick.availableYield * userShareInTick;
     }
   }
@@ -95,47 +158,33 @@ export const calculateCapitalEfficiency = (
   riskTicks: RiskTick[]
 ): number => {
   const rangeSize = riskRange.max - riskRange.min + 1;
-  const maxPossibleSize = RISK_SCALE_MAX + 1;
+  const maxPossibleSize = RISK_SCALE_MAX - RISK_SCALE_MIN + 1;
   
   // Narrower ranges are more capital efficient
   const sizeEfficiency = maxPossibleSize / rangeSize;
   
   // Higher risk ranges have potential for higher efficiency
   const avgRisk = (riskRange.min + riskRange.max) / 2;
-  const riskMultiplier = 1 + (avgRisk / RISK_SCALE_MAX) * 0.5;
+  const riskMultiplier = 1 + ((avgRisk - RISK_SCALE_MIN) / (RISK_SCALE_MAX - RISK_SCALE_MIN)) * 0.5;
   
   return sizeEfficiency * riskMultiplier;
 };
 
 /**
- * Calculate potential losses at different protocol drawdown scenarios
+ * Calculate potential losses using normalized risk
  */
 export const calculatePotentialLoss = (
   userAmount: number,
   riskRange: RiskRange,
   riskTicks: RiskTick[]
 ): { at5Percent: number; at10Percent: number; at20Percent: number } => {
-  const totalTVL = riskTicks.reduce((sum, tick) => sum + tick.totalLiquidity, 0);
+  const normalizedRisk = calculateNormalizedRisk(riskRange);
   
+  // Loss scenarios based on protocol drawdown
   const scenarios = [0.05, 0.10, 0.20];
-  const results = scenarios.map(drawdownPercent => {
-    const totalLoss = totalTVL * drawdownPercent;
-    const lossDistribution = calculateLossDistribution(totalLoss, riskTicks);
-    
-    const relevantTicks = riskTicks.filter(
-      tick => tick.riskLevel >= riskRange.min && tick.riskLevel <= riskRange.max
-    );
-    
-    let userLoss = 0;
-    const rangeSize = riskRange.max - riskRange.min + 1;
-    const amountPerTick = userAmount / rangeSize;
-    
-    for (const tick of relevantTicks) {
-      const lossRate = lossDistribution[tick.riskLevel] || 0;
-      userLoss += amountPerTick * lossRate;
-    }
-    
-    return userLoss;
+  const results = scenarios.map(protocolLoss => {
+    // User loss is proportional to their normalized risk position
+    return userAmount * protocolLoss * normalizedRisk;
   });
   
   return {
@@ -146,17 +195,17 @@ export const calculatePotentialLoss = (
 };
 
 /**
- * Generate initial risk ticks for the protocol
+ * Generate risk ticks for all levels 1-100
  */
 export const generateInitialRiskTicks = (): RiskTick[] => {
   const ticks: RiskTick[] = [];
   
-  for (let i = 0; i <= RISK_SCALE_MAX; i += 5) {
+  for (let i = RISK_SCALE_MIN; i <= RISK_SCALE_MAX; i++) {
     ticks.push({
       riskLevel: i,
       totalLiquidity: 0,
       availableYield: 0,
-      apr: 0
+      apr: calculateRiskLevelAPR(i)
     });
   }
   
@@ -164,22 +213,33 @@ export const generateInitialRiskTicks = (): RiskTick[] => {
 };
 
 /**
- * Calculate comprehensive range analysis
+ * Calculate historical APY estimate (28-day rolling average)
+ */
+export const calculateHistoricalAPY = (historicalYields: number[]): number => {
+  if (historicalYields.length === 0) return 0.10; // Default 10%
+  
+  const sum = historicalYields.reduce((acc, yield_) => acc + yield_, 0);
+  return sum / historicalYields.length;
+};
+
+/**
+ * Calculate comprehensive range analysis using exact formulas from document
  */
 export const analyzeRiskRange = (
   amount: number,
   riskRange: RiskRange,
-  riskTicks: RiskTick[]
+  riskTicks: RiskTick[],
+  historicalAPY?: number
 ): RangeCalculationResult => {
   const estimatedAPR = calculateRangeAPR(amount, riskRange, riskTicks);
   const capitalEfficiency = calculateCapitalEfficiency(riskRange, riskTicks);
-  const avgRisk = (riskRange.min + riskRange.max) / 2;
+  const riskScore = calculateNormalizedRisk(riskRange) * 100; // Convert to 0-100 scale
   const potentialLoss = calculatePotentialLoss(amount, riskRange, riskTicks);
   
   return {
     estimatedAPR,
     capitalEfficiency,
-    riskScore: avgRisk,
+    riskScore,
     potentialLoss
   };
 };

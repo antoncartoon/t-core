@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { TrendingUp, Shield, AlertTriangle, BarChart3 } from 'lucide-react';
+import { TrendingUp, Shield, AlertTriangle, BarChart3, Info } from 'lucide-react';
+import { calculateRiskLevelAPR, MIN_GUARANTEED_APY, MAX_APY, RISK_SCALE_MIN, RISK_SCALE_MAX } from '@/utils/riskRangeCalculations';
 
 interface RangeSelectorProps {
   value: [number, number];
@@ -35,7 +36,11 @@ const RangeSelector = ({ value, onChange, liquidityData = [], className = "" }: 
   const category = getRangeCategory(localValue[0], localValue[1]);
   const CategoryIcon = category.icon;
   const rangeSize = localValue[1] - localValue[0];
-  const efficiency = Math.round(100 / Math.max(1, rangeSize / 5)); // Capital efficiency score
+  const efficiency = Math.round(100 / Math.max(1, rangeSize / 10)); // Capital efficiency score
+
+  // Calculate expected APR range using the exact formula
+  const minAPR = calculateRiskLevelAPR(localValue[0]);
+  const maxAPR = calculateRiskLevelAPR(localValue[1]);
 
   return (
     <Card className={className}>
@@ -56,7 +61,7 @@ const RangeSelector = ({ value, onChange, liquidityData = [], className = "" }: 
               {localValue[0]} - {localValue[1]}
             </div>
             <p className="text-sm text-muted-foreground">
-              Risk Level Range (0 = Risk-free, 100 = Maximum Risk)
+              Risk Level Range ({RISK_SCALE_MIN} = T-Bill +20%, {RISK_SCALE_MAX} = Maximum Risk)
             </p>
           </div>
 
@@ -65,21 +70,35 @@ const RangeSelector = ({ value, onChange, liquidityData = [], className = "" }: 
             <Slider
               value={localValue}
               onValueChange={handleChange}
-              min={0}
-              max={100}
-              step={5}
+              min={RISK_SCALE_MIN}
+              max={RISK_SCALE_MAX}
+              step={1}
               className="w-full"
               minStepsBetweenThumbs={1}
             />
             
             {/* Scale Labels */}
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>0 (Risk-free)</span>
+              <span>1 (T-Bill +20%)</span>
               <span>25</span>
               <span>50</span>
               <span>75</span>
               <span>100 (Max Risk)</span>
             </div>
+          </div>
+
+          {/* Expected APR Range Display */}
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 p-4 rounded-lg">
+            <div className="flex items-center space-x-2 mb-2">
+              <Info className="w-4 h-4 text-blue-600" />
+              <span className="text-sm font-medium">Expected APR Range</span>
+            </div>
+            <div className="text-lg font-bold text-blue-600">
+              {(minAPR * 100).toFixed(1)}% - {(maxAPR * 100).toFixed(1)}%
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Based on formula: r_i = {(MIN_GUARANTEED_APY * 100).toFixed(0)}% + ({(MAX_APY - MIN_GUARANTEED_APY) * 100}.toFixed(0)}% × (i-1)/99)
+            </p>
           </div>
 
           {/* Liquidity Density Visualization */}
@@ -90,24 +109,29 @@ const RangeSelector = ({ value, onChange, liquidityData = [], className = "" }: 
                 <span className="text-sm font-medium">Liquidity Density</span>
               </div>
               <div className="h-12 bg-muted rounded relative overflow-hidden">
-                {liquidityData.map((item, index) => (
-                  <div
-                    key={index}
-                    className="absolute bg-blue-500/60 hover:bg-blue-500/80 transition-colors"
-                    style={{
-                      left: `${item.risk}%`,
-                      width: '2%',
-                      height: `${Math.min(100, (item.liquidity / Math.max(...liquidityData.map(d => d.liquidity))) * 100)}%`,
-                      bottom: 0
-                    }}
-                  />
-                ))}
+                {liquidityData.map((item, index) => {
+                  const isInRange = item.risk >= localValue[0] && item.risk <= localValue[1];
+                  return (
+                    <div
+                      key={index}
+                      className={`absolute transition-colors ${
+                        isInRange ? 'bg-blue-500/80 hover:bg-blue-500' : 'bg-blue-500/40 hover:bg-blue-500/60'
+                      }`}
+                      style={{
+                        left: `${((item.risk - 1) / 99) * 100}%`,
+                        width: '1%',
+                        height: `${Math.min(100, (item.liquidity / Math.max(...liquidityData.map(d => d.liquidity))) * 100)}%`,
+                        bottom: 0
+                      }}
+                    />
+                  );
+                })}
                 {/* Selected Range Overlay */}
                 <div
                   className="absolute bg-primary/20 border-2 border-primary rounded"
                   style={{
-                    left: `${localValue[0]}%`,
-                    width: `${localValue[1] - localValue[0]}%`,
+                    left: `${((localValue[0] - 1) / 99) * 100}%`,
+                    width: `${((localValue[1] - localValue[0]) / 99) * 100}%`,
                     height: '100%'
                   }}
                 />
@@ -119,7 +143,7 @@ const RangeSelector = ({ value, onChange, liquidityData = [], className = "" }: 
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="space-y-1">
               <p className="text-muted-foreground">Range Size</p>
-              <p className="font-semibold">{rangeSize} points</p>
+              <p className="font-semibold">{rangeSize + 1} levels</p>
             </div>
             <div className="space-y-1">
               <p className="text-muted-foreground">Capital Efficiency</p>
@@ -129,10 +153,11 @@ const RangeSelector = ({ value, onChange, liquidityData = [], className = "" }: 
 
           {/* Risk Explanation */}
           <div className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
-            <p className="font-medium mb-1">How it works:</p>
-            <p>• Yield flows bottom-up: lower risk gets paid first</p>
-            <p>• Losses flow top-down: higher risk takes losses first</p>
-            <p>• Narrower ranges = higher capital efficiency</p>
+            <p className="font-medium mb-1">Waterfall Distribution Model:</p>
+            <p>• Yield flows bottom-up: level 1 gets paid first (guaranteed T-Bill +20%)</p>
+            <p>• Losses flow top-down: level 100 takes losses first</p>
+            <p>• Coverage level K depends on 28-day historical protocol APY</p>
+            <p>• Narrower ranges = higher capital efficiency but more concentrated risk</p>
           </div>
         </div>
       </CardContent>

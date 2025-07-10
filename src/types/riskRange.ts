@@ -1,7 +1,7 @@
 
 export interface RiskRange {
-  min: number; // 0-100
-  max: number; // 0-100
+  min: number; // 1-100
+  max: number; // 1-100
 }
 
 export interface LiquidityPosition {
@@ -16,7 +16,7 @@ export interface LiquidityPosition {
 }
 
 export interface RiskTick {
-  riskLevel: number; // 0-100
+  riskLevel: number; // 1-100
   totalLiquidity: number; // Total TDD in this tick
   availableYield: number; // Yield available for this tick
   apr: number; // Current APR at this tick
@@ -28,12 +28,14 @@ export interface ProtocolState {
   guaranteedAPY: number; // T-Bills + 20%
   riskTicks: RiskTick[];
   lastUpdateTimestamp: Date;
+  historicalYields: number[]; // 28-day history
+  estimatedAPY: number; // Based on 28-day average
 }
 
 export interface RangeCalculationResult {
   estimatedAPR: number;
   capitalEfficiency: number;
-  riskScore: number;
+  riskScore: number; // 0-100 normalized risk score
   potentialLoss: {
     at5Percent: number;
     at10Percent: number;

@@ -1,7 +1,14 @@
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { LiquidityPosition, ProtocolState, RiskTick } from '@/types/riskRange';
-import { generateInitialRiskTicks, distributeYieldBottomUp } from '@/utils/riskRangeCalculations';
+import { 
+  generateInitialRiskTicks, 
+  distributeYieldBottomUp,
+  calculateHistoricalAPY,
+  MIN_GUARANTEED_APY,
+  RISK_SCALE_MIN,
+  RISK_SCALE_MAX
+} from '@/utils/riskRangeCalculations';
 
 interface Asset {
   symbol: string;
@@ -33,12 +40,17 @@ export const RiskRangeProvider = ({ children }: { children: ReactNode }) => {
 
   const [liquidityPositions, setLiquidityPositions] = useState<LiquidityPosition[]>([]);
   
+  // Generate mock 28-day historical yields (8-12% range)
+  const mockHistoricalYields = Array.from({ length: 28 }, () => 0.08 + Math.random() * 0.04);
+  
   const [protocolState, setProtocolState] = useState<ProtocolState>({
     totalTVL: 0,
     totalYieldGenerated: 50000, // $50k yield in last 28 days (example)
-    guaranteedAPY: 0.25, // 25% (5% T-Bills + 20%)
+    guaranteedAPY: MIN_GUARANTEED_APY, // T-Bills + 20%
     riskTicks: generateInitialRiskTicks(),
-    lastUpdateTimestamp: new Date()
+    lastUpdateTimestamp: new Date(),
+    historicalYields: mockHistoricalYields,
+    estimatedAPY: calculateHistoricalAPY(mockHistoricalYields)
   });
 
   const addBalance = (symbol: string, amount: number) => {
@@ -86,6 +98,11 @@ export const RiskRangeProvider = ({ children }: { children: ReactNode }) => {
       return '';
     }
 
+    // Validate risk range
+    if (riskMin < RISK_SCALE_MIN || riskMax > RISK_SCALE_MAX || riskMin >= riskMax) {
+      return '';
+    }
+
     // Reduce TDD balance
     setBalances(prev => prev.map(asset => 
       asset.symbol === 'TDD' 
@@ -122,20 +139,20 @@ export const RiskRangeProvider = ({ children }: { children: ReactNode }) => {
     setProtocolState(prev => {
       const newTicks = [...prev.riskTicks];
       const rangeSize = riskMax - riskMin + 1;
-      const amountPerTick = amount / rangeSize;
+      const amountPerLevel = amount / rangeSize;
 
-      // Add liquidity to relevant ticks
-      for (let risk = riskMin; risk <= riskMax; risk += 5) {
+      // Add liquidity to relevant ticks (1-100 scale)
+      for (let risk = riskMin; risk <= riskMax; risk++) {
         const tickIndex = newTicks.findIndex(t => t.riskLevel === risk);
         if (tickIndex >= 0) {
           newTicks[tickIndex] = {
             ...newTicks[tickIndex],
-            totalLiquidity: newTicks[tickIndex].totalLiquidity + amountPerTick
+            totalLiquidity: newTicks[tickIndex].totalLiquidity + amountPerLevel
           };
         }
       }
 
-      // Redistribute yield
+      // Redistribute yield using waterfall model
       const updatedTicks = distributeYieldBottomUp(prev.totalYieldGenerated, newTicks);
 
       return {
@@ -166,10 +183,17 @@ export const RiskRangeProvider = ({ children }: { children: ReactNode }) => {
 
   const updateProtocolYield = (newYield: number) => {
     setProtocolState(prev => {
+      // Update historical yields (rolling 28-day window)
+      const newHistoricalYields = [...prev.historicalYields.slice(1), newYield / prev.totalTVL];
+      const updatedEstimatedAPY = calculateHistoricalAPY(newHistoricalYields);
+      
       const updatedTicks = distributeYieldBottomUp(newYield, prev.riskTicks);
+      
       return {
         ...prev,
         totalYieldGenerated: newYield,
+        historicalYields: newHistoricalYields,
+        estimatedAPY: updatedEstimatedAPY,
         riskTicks: updatedTicks,
         lastUpdateTimestamp: new Date()
       };
