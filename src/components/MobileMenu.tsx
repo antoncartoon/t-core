@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { X } from 'lucide-react';
+import { X, Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface MobileMenuProps {
@@ -16,24 +16,26 @@ const MobileMenu = ({ isOpen, onClose, isConnected }: MobileMenuProps) => {
   return (
     <div className="fixed inset-0 z-50 bg-background/95 backdrop-blur-sm md:hidden">
       <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between p-6 border-b">
-          <div className="flex items-center space-x-3">
-            <div className="w-6 h-6 bg-foreground rounded flex items-center justify-center">
-              <span className="text-background font-bold text-sm">T</span>
+        <div className="flex items-center justify-between p-4 border-b">
+          <div className="flex items-center space-x-2">
+            <div className="w-5 h-5 bg-foreground rounded flex items-center justify-center">
+              <span className="text-background font-bold text-xs">T</span>
             </div>
-            <span className="text-lg font-medium">Tolkachyield</span>
+            <span className="text-base font-medium">Tolkachyield</span>
           </div>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            <X className="w-5 h-5" />
+          <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
+            <X className="w-4 h-4" />
           </Button>
         </div>
         
-        <nav className="flex-1 px-6 py-8 space-y-6">
+        <nav className="flex-1 px-4 py-6 space-y-4">
           <NavLink 
             to="/" 
             onClick={onClose}
             className={({ isActive }) => 
-              `block text-lg transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground'}`
+              `block py-3 px-4 rounded-lg text-base transition-colors touch-manipulation ${
+                isActive ? 'text-foreground font-medium bg-muted' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+              }`
             }
           >
             Home
@@ -44,7 +46,9 @@ const MobileMenu = ({ isOpen, onClose, isConnected }: MobileMenuProps) => {
                 to="/portfolio" 
                 onClick={onClose}
                 className={({ isActive }) => 
-                  `block text-lg transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground'}`
+                  `block py-3 px-4 rounded-lg text-base transition-colors touch-manipulation ${
+                    isActive ? 'text-foreground font-medium bg-muted' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                  }`
                 }
               >
                 Portfolio
@@ -53,7 +57,9 @@ const MobileMenu = ({ isOpen, onClose, isConnected }: MobileMenuProps) => {
                 to="/defi" 
                 onClick={onClose}
                 className={({ isActive }) => 
-                  `block text-lg transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground'}`
+                  `block py-3 px-4 rounded-lg text-base transition-colors touch-manipulation ${
+                    isActive ? 'text-foreground font-medium bg-muted' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                  }`
                 }
               >
                 DeFi
@@ -62,7 +68,9 @@ const MobileMenu = ({ isOpen, onClose, isConnected }: MobileMenuProps) => {
                 to="/transparency" 
                 onClick={onClose}
                 className={({ isActive }) => 
-                  `block text-lg transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground'}`
+                  `block py-3 px-4 rounded-lg text-base transition-colors touch-manipulation ${
+                    isActive ? 'text-foreground font-medium bg-muted' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                  }`
                 }
               >
                 Transparency
@@ -73,12 +81,23 @@ const MobileMenu = ({ isOpen, onClose, isConnected }: MobileMenuProps) => {
             to="/faq" 
             onClick={onClose}
             className={({ isActive }) => 
-              `block text-lg transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground'}`
+              `block py-3 px-4 rounded-lg text-base transition-colors touch-manipulation ${
+                isActive ? 'text-foreground font-medium bg-muted' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+              }`
             }
           >
             FAQ
           </NavLink>
         </nav>
+
+        {!isConnected && (
+          <div className="p-4 border-t">
+            <Button className="w-full h-12 touch-manipulation">
+              <Wallet className="w-4 h-4 mr-2" />
+              Connect Wallet
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
