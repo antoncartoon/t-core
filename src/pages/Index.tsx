@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useMediaQuery } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 import Header from '@/components/Header';
 import StatsOverview from '@/components/StatsOverview';
 import MobileStatsOverview from '@/components/MobileStatsOverview';
@@ -13,7 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 const Index = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useIsMobile();
 
   const handleConnect = (provider?: string) => {
     // Simulate wallet connection

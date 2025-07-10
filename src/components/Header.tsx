@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Wallet, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NavLink } from 'react-router-dom';
-import { useMediaQuery } from '@/hooks/use-mobile';
+import { useIsMobile } from '@/hooks/use-mobile';
 import WalletDropdown from './WalletDropdown';
 import MobileMenu from './MobileMenu';
 
@@ -15,7 +14,7 @@ interface HeaderProps {
 
 const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useIsMobile();
 
   return (
     <>
