@@ -5,7 +5,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { WalletProvider } from "@/contexts/WalletContext";
-import Index from "./pages/Index";
+import Landing from "./pages/Landing";
+import App from "./pages/App";
 import Portfolio from "./pages/Portfolio";
 import DeFi from "./pages/DeFi";
 import FAQ from "./pages/FAQ";
@@ -15,7 +16,7 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const AppRouter = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <WalletProvider>
@@ -23,7 +24,8 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Index />} />
+            <Route path="/" element={<Landing />} />
+            <Route path="/app" element={<App />} />
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/defi" element={<DeFi />} />
             <Route path="/transparency" element={<Transparency />} />
@@ -37,4 +39,4 @@ const App = () => (
   </QueryClientProvider>
 );
 
-export default App;
+export default AppRouter;
