@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Coins, Brain, Eye, Shield } from 'lucide-react';
+import { Coins, Brain, Target, Shield } from 'lucide-react';
 const WhyTCore = () => {
   const benefits = [{
     icon: Coins,
@@ -13,14 +13,14 @@ const WhyTCore = () => {
     description: "Expert team and AI advisor manage allocation across top DeFi and CeFi strategies.",
     color: "text-blue-600"
   }, {
-    icon: Eye,
-    title: "Full Transparency",
-    description: "See every allocation and transaction on-chain. T-Trust and T-Transparency are our core principles.",
+    icon: Target,
+    title: "Risk-based Split",
+    description: "Choose from 100 risk levels (1-100) with waterfall yield distribution. Higher risk tiers get higher yields but absorb losses first.",
     color: "text-purple-600"
   }, {
     icon: Shield,
-    title: "Self-Insured Protocol",
-    description: "Protocol fees flow into highest risk tier, creating additional safety buffer for all participants.",
+    title: "Self-Insurance Pool",
+    description: "Protocol fees automatically flow into highest risk tiers, creating a protective buffer for all participants.",
     color: "text-orange-600"
   }];
   return <section className="py-16 sm:py-24 bg-muted/20">

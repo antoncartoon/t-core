@@ -5,7 +5,6 @@ import HeroSection from '@/components/landing/HeroSection';
 import WhyTCore from '@/components/landing/WhyTCore';
 import RiskSelection from '@/components/landing/RiskSelection';
 import HowItWorks from '@/components/landing/HowItWorks';
-import TTrustArchitecture from '@/components/landing/TTrustArchitecture';
 import StatsSection from '@/components/landing/StatsSection';
 import CTASection from '@/components/landing/CTASection';
 import LandingFooter from '@/components/landing/LandingFooter';
@@ -21,7 +20,6 @@ const Landing = () => {
         <WhyTCore />
         <HowItWorks />
         <RiskSelection />
-        <TTrustArchitecture />
         <StatsSection />
         <CTASection />
       </main>
