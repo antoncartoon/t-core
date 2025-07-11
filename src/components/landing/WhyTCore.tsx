@@ -6,20 +6,20 @@ const WhyTCore = () => {
   const benefits = [
     {
       icon: Coins,
-      title: "Стейблкоины в работе",
-      description: "Превращай USDC, USDT, DAI в источник прибыли. Никаких рисков волатильности - только оптимизированный доход.",
+      title: "Stablecoins at Work",
+      description: "Turn USDC, USDT, DAI into profit sources. No volatility risks - only optimized yields.",
       color: "text-green-600"
     },
     {
       icon: Brain,
-      title: "AI + Профи управляющие",
-      description: "Команда экспертов и AI советник управляют распределением по лучшим DeFi и CeFi стратегиям.",
+      title: "AI + Pro Managers",
+      description: "Expert team and AI advisor manage allocation across top DeFi and CeFi strategies.",
       color: "text-blue-600"
     },
     {
       icon: Eye,
-      title: "Полная прозрачность",
-      description: "Видишь каждую аллокацию и транзакцию on-chain. T-Trust и T-Transparency - наши главные принципы.",
+      title: "Full Transparency",
+      description: "See every allocation and transaction on-chain. T-Trust and T-Transparency are our core principles.",
       color: "text-purple-600"
     }
   ];
@@ -29,10 +29,10 @@ const WhyTCore = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12 sm:mb-16">
           <h2 className="text-2xl sm:text-4xl font-light text-foreground mb-4 sm:mb-6">
-            Почему T-Core?
+            Why T-Core?
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Революционный подход к доходности стейблкоинов с беспрецедентным контролем риска и дохода
+            Revolutionary approach to stablecoin yields with unprecedented risk and return control
           </p>
         </div>
 

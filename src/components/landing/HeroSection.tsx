@@ -19,29 +19,29 @@ const HeroSection = () => {
           </div>
           
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-light text-foreground mb-4 sm:mb-6 tracking-tight">
-            Заставь свои{' '}
+            Make Your{' '}
             <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-              стейблкоины работать
+              Stablecoins Work
             </span>
           </h1>
           
           <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8 sm:mb-12">
-            Лучший yield с крипторынка с оптимизированными рисками. 
-            Внеси стейблы, получи TDD, выбери свой уровень риска и заработай.
+            Best crypto yields with optimized risks. 
+            Deposit stables, get TDD, choose your risk level and earn.
           </p>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mb-12 sm:mb-16">
           <NavLink to="/app">
             <Button size={isMobile ? "default" : "lg"} className="w-full sm:w-auto">
-              Начать
+              Get Started
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </NavLink>
           
           <a href="#how-it-works">
             <Button variant="outline" size={isMobile ? "default" : "lg"} className="w-full sm:w-auto">
-              Узнать больше
+              Learn More
             </Button>
           </a>
         </div>
@@ -49,25 +49,25 @@ const HeroSection = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-4xl mx-auto">
           <div className="flex flex-col items-center text-center p-4 sm:p-6 rounded-lg border border-border bg-card/50">
             <Shield className="w-8 h-8 text-green-600 mb-3" />
-            <h3 className="font-medium mb-2">Только стейблкоины</h3>
+            <h3 className="font-medium mb-2">Stablecoins Only</h3>
             <p className="text-sm text-muted-foreground">
-              Никаких волатильных активов - твой капитал защищен.
+              No volatile assets - your capital is protected.
             </p>
           </div>
           
           <div className="flex flex-col items-center text-center p-4 sm:p-6 rounded-lg border border-border bg-card/50">
             <TrendingUp className="w-8 h-8 text-blue-600 mb-3" />
-            <h3 className="font-medium mb-2">Лучший yield рынка</h3>
+            <h3 className="font-medium mb-2">Best Market Yields</h3>
             <p className="text-sm text-muted-foreground">
-              AI-оптимизация по топовым DeFi и CeFi протоколам.
+              AI-optimized across top DeFi and CeFi protocols.
             </p>
           </div>
           
           <div className="flex flex-col items-center text-center p-4 sm:p-6 rounded-lg border border-border bg-card/50">
             <Lock className="w-8 h-8 text-purple-600 mb-3" />
-            <h3 className="font-medium mb-2">Твой риск - твой доход</h3>
+            <h3 className="font-medium mb-2">Your Risk - Your Yield</h3>
             <p className="text-sm text-muted-foreground">
-              Выбирай уровень риска и получай доход от NFT позиции.
+              Choose risk level and earn from your NFT position.
             </p>
           </div>
         </div>

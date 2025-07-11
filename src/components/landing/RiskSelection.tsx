@@ -10,28 +10,28 @@ const RiskSelection = () => {
     {
       id: 'low',
       icon: Shield,
-      title: 'Низкий риск',
+      title: 'Low Risk',
       apy: '5-8%',
-      description: 'Стабильный доход с минимальными рисками',
-      features: ['T-Bill + 20% гарантия', 'Голубые чипы DeFi', 'Максимальная защита'],
+      description: 'Stable income with minimal risks',
+      features: ['T-Bill + 20% guarantee', 'Blue chip DeFi', 'Maximum protection'],
       color: 'green'
     },
     {
       id: 'medium', 
       icon: TrendingUp,
-      title: 'Средний риск',
+      title: 'Medium Risk',
       apy: '8-15%',
-      description: 'Баланс между доходностью и безопасностью',
-      features: ['Диверсификация стратегий', 'AI оптимизация', 'Хорошая ликвидность'],
+      description: 'Balance between yield and safety',
+      features: ['Strategy diversification', 'AI optimization', 'Good liquidity'],
       color: 'blue'
     },
     {
       id: 'high',
       icon: Zap,
-      title: 'Высокий риск',
+      title: 'High Risk',
       apy: '15-25%',
-      description: 'Максимальный доход для опытных пользователей',
-      features: ['Новые возможности', 'Первые в доходности', 'Больше комиссий'],
+      description: 'Maximum yield for experienced users',
+      features: ['New opportunities', 'First in yields', 'Higher fees'],
       color: 'purple'
     }
   ];
@@ -62,10 +62,10 @@ const RiskSelection = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12 sm:mb-16">
           <h2 className="text-2xl sm:text-4xl font-light text-foreground mb-4 sm:mb-6">
-            Выбери свой уровень риска
+            Choose Your Risk Level
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Ты сам контролируешь баланс между доходностью и безопасностью
+            You control the balance between yield and safety
           </p>
         </div>
 
@@ -112,10 +112,10 @@ const RiskSelection = () => {
 
         <div className="text-center">
           <Button size="lg" className="px-8">
-            Начать с {riskLevels.find(l => l.id === selectedRisk)?.title.toLowerCase()}
+            Start with {riskLevels.find(l => l.id === selectedRisk)?.title.toLowerCase()}
           </Button>
           <p className="text-sm text-muted-foreground mt-4">
-            Ты сможешь изменить уровень риска в любое время
+            You can change your risk level at any time
           </p>
         </div>
       </div>

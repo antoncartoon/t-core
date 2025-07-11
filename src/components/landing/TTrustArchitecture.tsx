@@ -6,28 +6,28 @@ const TTrustArchitecture = () => {
   const architecture = [
     {
       icon: Brain,
-      title: "AI Советник",
-      description: "Анализирует рынки 24/7 и предлагает оптимальные стратегии распределения активов",
-      features: ["Машинное обучение", "Анализ рисков", "Автоматические сигналы"]
+      title: "AI Advisor",
+      description: "Analyzes markets 24/7 and suggests optimal asset allocation strategies",
+      features: ["Machine learning", "Risk analysis", "Automated signals"]
     },
     {
       icon: Users, 
-      title: "Команда управляющих",
-      description: "Профессиональные трейдеры и аналитики с опытом в TradiFi и DeFi",
-      features: ["10+ лет опыта", "Проверенные стратегии", "Управление рисками"]
+      title: "Management Team",
+      description: "Professional traders and analysts with experience in TradiFi and DeFi",
+      features: ["10+ years experience", "Proven strategies", "Risk management"]
     },
     {
       icon: PieChart,
-      title: "Разделение по рискам",
-      description: "Доходы распределяются по waterfall модели - от низкого к высокому риску",
-      features: ["Математическая точность", "Справедливое распределение", "Прозрачные правила"]
+      title: "Risk-based Split",
+      description: "Yields distributed via waterfall model - from low to high risk",
+      features: ["Mathematical precision", "Fair distribution", "Transparent rules"]
     }
   ];
 
   const waterfallFlow = [
-    { level: "Низкий риск", color: "green", allocation: "60%", yield: "5-8%" },
-    { level: "Средний риск", color: "blue", allocation: "30%", yield: "8-15%" },
-    { level: "Высокий риск", color: "purple", allocation: "10%", yield: "15-25%" }
+    { level: "Low Risk", color: "green", allocation: "60%", yield: "5-8%" },
+    { level: "Medium Risk", color: "blue", allocation: "30%", yield: "8-15%" },
+    { level: "High Risk", color: "purple", allocation: "10%", yield: "15-25%" }
   ];
 
   return (
@@ -38,7 +38,7 @@ const TTrustArchitecture = () => {
             T-Trust & T-Transparency
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Архитектура доверия: AI технологии, профессиональная команда и математически точное распределение доходов
+            Trust architecture: AI technology, professional team and mathematically precise yield distribution
           </p>
         </div>
 
@@ -75,22 +75,22 @@ const TTrustArchitecture = () => {
         {/* Waterfall Visualization */}
         <Card className="border-border bg-card/50">
           <CardContent className="p-6 sm:p-8">
-            <div className="text-center mb-8">
-              <div className="flex items-center justify-center space-x-2 mb-4">
-                <Eye className="w-5 h-5 text-primary" />
-                <h3 className="text-xl font-medium">Waterfall распределение доходов</h3>
+              <div className="text-center mb-8">
+                <div className="flex items-center justify-center space-x-2 mb-4">
+                  <Eye className="w-5 h-5 text-primary" />
+                  <h3 className="text-xl font-medium">Waterfall Yield Distribution</h3>
+                </div>
+                <p className="text-muted-foreground">
+                  Protocol yields distributed bottom-up, losses absorbed top-down
+                </p>
               </div>
-              <p className="text-muted-foreground">
-                Доходы протокола распределяются снизу вверх, убытки - сверху вниз
-              </p>
-            </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* Yield Flow */}
               <div>
                 <div className="flex items-center space-x-2 mb-4">
                   <ArrowUp className="w-4 h-4 text-green-600" />
-                  <span className="font-medium text-green-600">Доходы (снизу вверх)</span>
+                  <span className="font-medium text-green-600">Yields (bottom-up)</span>
                 </div>
                 <div className="space-y-3">
                   {waterfallFlow.map((level, index) => {
@@ -106,7 +106,7 @@ const TTrustArchitecture = () => {
                           <span className="font-medium">{level.level}</span>
                           <div className="text-right">
                             <div className="text-sm font-medium">{level.yield}</div>
-                            <div className="text-xs opacity-75">{level.allocation} участников</div>
+                            <div className="text-xs opacity-75">{level.allocation} participants</div>
                           </div>
                         </div>
                       </div>
@@ -119,7 +119,7 @@ const TTrustArchitecture = () => {
               <div>
                 <div className="flex items-center space-x-2 mb-4">
                   <ArrowDown className="w-4 h-4 text-red-600" />
-                  <span className="font-medium text-red-600">Убытки (сверху вниз)</span>
+                  <span className="font-medium text-red-600">Losses (top-down)</span>
                 </div>
                 <div className="space-y-3">
                   {[...waterfallFlow].reverse().map((level, index) => {
@@ -135,10 +135,10 @@ const TTrustArchitecture = () => {
                           <span className="font-medium">{level.level}</span>
                           <div className="text-right">
                             <div className="text-sm font-medium">
-                              {index === 0 ? 'Первые' : index === 1 ? 'Вторые' : 'Защищены'}
+                              {index === 0 ? 'First' : index === 1 ? 'Second' : 'Protected'}
                             </div>
                             <div className="text-xs opacity-75">
-                              {index === 0 ? 'поглощают' : index === 1 ? 'поглощают' : 'от убытков'}
+                              {index === 0 ? 'absorb' : index === 1 ? 'absorb' : 'from losses'}
                             </div>
                           </div>
                         </div>
@@ -151,8 +151,8 @@ const TTrustArchitecture = () => {
 
             <div className="mt-6 p-4 bg-muted/50 rounded-lg">
               <p className="text-sm text-muted-foreground text-center">
-                <strong>Математическая прозрачность:</strong> Все расчеты основаны на точных формулах, 
-                каждая транзакция видна on-chain, справедливое распределение гарантировано кодом.
+                <strong>Mathematical transparency:</strong> All calculations based on precise formulas, 
+                every transaction visible on-chain, fair distribution guaranteed by code.
               </p>
             </div>
           </CardContent>

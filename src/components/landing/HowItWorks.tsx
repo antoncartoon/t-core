@@ -6,27 +6,27 @@ const HowItWorks = () => {
   const steps = [
     {
       icon: Coins,
-      title: "Депозит стейблов",
+      title: "Deposit Stables",
       description: "USDC, USDT, DAI",
-      detail: "Внеси любые стейблкоины в протокол T-Core"
+      detail: "Deposit any stablecoins into T-Core protocol"
     },
     {
       icon: ArrowRightLeft,
-      title: "Получи TDD",
-      description: "1:1 к депозиту",
-      detail: "Заминть TDD стейблкоин в соотношении 1 к 1"
+      title: "Get TDD",
+      description: "1:1 to deposit",
+      detail: "Mint TDD stablecoin in 1:1 ratio"
     },
     {
       icon: Target,
-      title: "Выбери риск",
-      description: "Низкий / Средний / Высокий",
-      detail: "Сам регулируй соотношение риск/доход"
+      title: "Choose Risk",
+      description: "Low / Medium / High",
+      detail: "Control your risk/return ratio yourself"
     },
     {
       icon: Gem,
       title: "NFT + DeFi",
-      description: "Позиция + использование",
-      detail: "Получи NFT позицию и используй на вторичных рынках"
+      description: "Position + Usage",
+      detail: "Get NFT position and use in secondary markets"
     }
   ];
 
@@ -35,10 +35,10 @@ const HowItWorks = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12 sm:mb-16">
           <h2 className="text-2xl sm:text-4xl font-light text-foreground mb-4 sm:mb-6">
-            Как это работает?
+            How It Works?
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Простой 4-шаговый процесс для начала заработка на стейблкоинах
+            Simple 4-step process to start earning on stablecoins
           </p>
         </div>
 
