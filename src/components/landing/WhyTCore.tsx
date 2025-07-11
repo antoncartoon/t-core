@@ -38,7 +38,19 @@ const WhyTCore = () => {
           {benefits.map((benefit, index) => {
           const Icon = benefit.icon;
           return <Card key={index} className="border-border bg-card/50 hover:bg-card/80 transition-colors">
-                
+                <CardContent className="p-6">
+                  <div className="flex flex-col items-center text-center space-y-4">
+                    <div className={`p-3 rounded-full bg-muted/50 ${benefit.color}`}>
+                      <Icon size={24} />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground">
+                      {benefit.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {benefit.description}
+                    </p>
+                  </div>
+                </CardContent>
               </Card>;
         })}
         </div>
