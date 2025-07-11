@@ -13,8 +13,8 @@ const RiskBandVisualization = ({ selectedRange, centerPoint }) => {
       <div className="relative h-16 bg-muted/30 rounded-lg overflow-hidden">
         {/* Color zones */}
         <div className="absolute inset-0 flex">
-          <div className="w-[30%] bg-green-500/20" />
-          <div className="w-[40%] bg-yellow-500/20" />
+          <div className="w-[15%] bg-green-500/20" />
+          <div className="w-[55%] bg-yellow-500/20" />
           <div className="w-[30%] bg-orange-500/20" />
         </div>
         
@@ -50,9 +50,9 @@ const RiskBandVisualization = ({ selectedRange, centerPoint }) => {
       
       {/* Labels */}
       <div className="flex justify-between text-xs text-muted-foreground">
-        <span className="text-green-600 font-medium">Conservative (1-30)</span>
-        <span className="text-yellow-600 font-medium">Balanced (31-70)</span>
-        <span className="text-orange-600 font-medium">Aggressive (71-100)</span>
+        <span className="text-green-600 font-medium">Conservative (1-15)</span>
+        <span className="text-yellow-600 font-medium">Balanced (15-70)</span>
+        <span className="text-orange-600 font-medium">Aggressive (70-100)</span>
       </div>
     </div>
   );
@@ -175,8 +175,8 @@ const WaterfallDistribution = () => {
 
 const RiskSelection = () => {
   // Center + Width approach instead of dual range
-  const [centerPoint, setCenterPoint] = useState(50);
-  const [rangeWidth, setRangeWidth] = useState(20);
+  const [centerPoint, setCenterPoint] = useState(8);
+  const [rangeWidth, setRangeWidth] = useState(14);
   const [isLiteMode, setIsLiteMode] = useState(true);
 
   // Calculate selected range from center and width
@@ -195,9 +195,9 @@ const RiskSelection = () => {
   
   // Preset configurations
   const presets = [
-    { name: 'Conservative', center: 20, width: 20, color: 'green', range: [10, 30] },
-    { name: 'Balanced', center: 50, width: 20, color: 'yellow', range: [40, 60] },
-    { name: 'Aggressive', center: 85, width: 20, color: 'orange', range: [75, 95] }
+    { name: 'Conservative', center: 8, width: 14, color: 'green', range: [1, 15] },
+    { name: 'Balanced', center: 42.5, width: 55, color: 'yellow', range: [15, 70] },
+    { name: 'Aggressive', center: 85, width: 30, color: 'orange', range: [70, 100] }
   ];
 
   const handlePresetClick = (preset) => {
@@ -206,13 +206,13 @@ const RiskSelection = () => {
   };
   
   const getRiskLabel = (risk) => {
-    if (risk < 30) return 'Conservative';
+    if (risk < 15) return 'Conservative';
     if (risk < 70) return 'Balanced';
     return 'Aggressive';
   };
 
   const getRiskColorClass = (risk) => {
-    if (risk < 30) return 'text-green-600';
+    if (risk < 15) return 'text-green-600';
     if (risk < 70) return 'text-yellow-600';
     return 'text-orange-600';
   };
@@ -444,10 +444,10 @@ const RiskSelection = () => {
                 </div>
 
                 {/* Position Description */}
-                <div className="p-4 bg-muted/50 rounded-lg">
+                 <div className="p-4 bg-muted/50 rounded-lg">
                   <h4 className="font-medium mb-2">{getRiskLabel(avgRisk)} Strategy</h4>
                   <p className="text-sm text-muted-foreground">
-                    {avgRisk < 30 
+                    {avgRisk < 15 
                       ? 'Lower volatility, steady returns, protected from most losses'
                       : avgRisk < 70 
                       ? 'Balanced risk-reward, moderate volatility, shared loss protection'
