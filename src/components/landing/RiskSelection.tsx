@@ -13,7 +13,7 @@ const RiskSelection = () => {
       title: 'Low Risk',
       apy: '5-8%',
       description: 'Stable income with minimal risks',
-      features: ['T-Bill + 20% guarantee', 'Blue chip DeFi', 'Maximum protection'],
+      features: ['Guaranteed yield', 'Blue chip DeFi', 'Maximum protection'],
       color: 'green'
     },
     {
