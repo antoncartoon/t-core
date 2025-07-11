@@ -31,14 +31,25 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
           </div>
           
           <nav className="hidden md:flex items-center space-x-8">
-            <NavLink 
-              to="/" 
-              className={({ isActive }) => 
-                `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
-              }
-            >
-              Home
-            </NavLink>
+            {isConnected ? (
+              <NavLink 
+                to="/app" 
+                className={({ isActive }) => 
+                  `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
+                }
+              >
+                Dashboard
+              </NavLink>
+            ) : (
+              <NavLink 
+                to="/" 
+                className={({ isActive }) => 
+                  `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
+                }
+              >
+                Home
+              </NavLink>
+            )}
             {isConnected && (
               <>
                 <NavLink 

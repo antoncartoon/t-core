@@ -29,17 +29,31 @@ const MobileMenu = ({ isOpen, onClose, isConnected }: MobileMenuProps) => {
         </div>
         
         <nav className="flex-1 px-4 py-6 space-y-4">
-          <NavLink 
-            to="/" 
-            onClick={onClose}
-            className={({ isActive }) => 
-              `block py-3 px-4 rounded-lg text-base transition-colors touch-manipulation ${
-                isActive ? 'text-foreground font-medium bg-muted' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-              }`
-            }
-          >
-            Home
-          </NavLink>
+          {isConnected ? (
+            <NavLink 
+              to="/app" 
+              onClick={onClose}
+              className={({ isActive }) => 
+                `block py-3 px-4 rounded-lg text-base transition-colors touch-manipulation ${
+                  isActive ? 'text-foreground font-medium bg-muted' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                }`
+              }
+            >
+              Dashboard
+            </NavLink>
+          ) : (
+            <NavLink 
+              to="/" 
+              onClick={onClose}
+              className={({ isActive }) => 
+                `block py-3 px-4 rounded-lg text-base transition-colors touch-manipulation ${
+                  isActive ? 'text-foreground font-medium bg-muted' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                }`
+              }
+            >
+              Home
+            </NavLink>
+          )}
           {isConnected && (
             <>
               <NavLink 
