@@ -2,10 +2,10 @@ import React from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import LandingHeader from '@/components/landing/LandingHeader';
 import HeroSection from '@/components/landing/HeroSection';
-import ValueProposition from '@/components/landing/ValueProposition';
-import ConcentratedLiquidityDemo from '@/components/landing/ConcentratedLiquidityDemo';
-import WorkflowSection from '@/components/landing/WorkflowSection';
-import SecurityEmphasis from '@/components/landing/SecurityEmphasis';
+import WhyTCore from '@/components/landing/WhyTCore';
+import RiskSelection from '@/components/landing/RiskSelection';
+import HowItWorks from '@/components/landing/HowItWorks';
+import TTrustArchitecture from '@/components/landing/TTrustArchitecture';
 import StatsSection from '@/components/landing/StatsSection';
 import CTASection from '@/components/landing/CTASection';
 import LandingFooter from '@/components/landing/LandingFooter';
@@ -18,10 +18,10 @@ const Landing = () => {
       <LandingHeader />
       <main>
         <HeroSection />
-        <ValueProposition />
-        <ConcentratedLiquidityDemo />
-        <WorkflowSection />
-        <SecurityEmphasis />
+        <WhyTCore />
+        <HowItWorks />
+        <RiskSelection />
+        <TTrustArchitecture />
         <StatsSection />
         <CTASection />
       </main>
