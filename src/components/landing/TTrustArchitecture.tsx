@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Brain, Users, PieChart, Eye, ArrowDown, ArrowUp } from 'lucide-react';
+import { Brain, Users, PieChart, Eye, ArrowDown, ArrowUp, Shield } from 'lucide-react';
 
 const TTrustArchitecture = () => {
   const architecture = [
@@ -21,6 +21,12 @@ const TTrustArchitecture = () => {
       title: "Risk-based Split",
       description: "Yields distributed via waterfall model - from low to high risk",
       features: ["Mathematical precision", "Fair distribution", "Transparent rules"]
+    },
+    {
+      icon: Shield,
+      title: "Protocol Self-Insurance",
+      description: "Protocol fees directed to high-risk pool, creating additional safety buffer",
+      features: ["Aligned interests", "Additional protection", "Risk absorption"]
     }
   ];
 
@@ -43,7 +49,7 @@ const TTrustArchitecture = () => {
         </div>
 
         {/* Architecture Components */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-12">
           {architecture.map((component, index) => {
             const Icon = component.icon;
             return (
@@ -80,9 +86,13 @@ const TTrustArchitecture = () => {
                   <Eye className="w-5 h-5 text-primary" />
                   <h3 className="text-xl font-medium">Waterfall Yield Distribution</h3>
                 </div>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground mb-4">
                   Protocol yields distributed bottom-up, losses absorbed top-down
                 </p>
+                <div className="flex items-center justify-center space-x-2 text-sm text-orange-600 mb-4 p-2 bg-orange-50 dark:bg-orange-950/20 rounded-lg">
+                  <Shield className="w-4 h-4" />
+                  <span className="font-medium">Protocol fees → High Risk Pool (Additional Buffer)</span>
+                </div>
               </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

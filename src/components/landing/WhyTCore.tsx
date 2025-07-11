@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Coins, Brain, Eye } from 'lucide-react';
+import { Coins, Brain, Eye, Shield } from 'lucide-react';
 
 const WhyTCore = () => {
   const benefits = [
@@ -21,6 +21,12 @@ const WhyTCore = () => {
       title: "Full Transparency",
       description: "See every allocation and transaction on-chain. T-Trust and T-Transparency are our core principles.",
       color: "text-purple-600"
+    },
+    {
+      icon: Shield,
+      title: "Self-Insured Protocol",
+      description: "Protocol fees flow into highest risk tier, creating additional safety buffer for all participants.",
+      color: "text-orange-600"
     }
   ];
 
@@ -36,7 +42,7 @@ const WhyTCore = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {benefits.map((benefit, index) => {
             const Icon = benefit.icon;
             return (
