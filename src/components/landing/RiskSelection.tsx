@@ -4,21 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { TrendingUp, Target, DollarSign, Eye, ArrowDown, ArrowUp, Shield } from 'lucide-react';
 
-// Simple Uniswap V3-style risk band visualization
-const RiskBandVisualization = ({ selectedRange, onRangeChange }) => {
-  const getRiskZoneColor = (position) => {
-    if (position < 30) return 'bg-green-500';
-    if (position < 70) return 'bg-yellow-500';
-    return 'bg-orange-500';
-  };
-
-  const getZoneOpacity = (position) => {
-    if (position >= selectedRange[0] && position <= selectedRange[1]) {
-      return 'opacity-80';
-    }
-    return 'opacity-20';
-  };
-
+// Uniswap V3-style risk band visualization with center point
+const RiskBandVisualization = ({ selectedRange, centerPoint }) => {
   return (
     <div className="space-y-6">
       {/* Risk Band */}
@@ -32,20 +19,30 @@ const RiskBandVisualization = ({ selectedRange, onRangeChange }) => {
         
         {/* Selected range highlight */}
         <div 
-          className="absolute top-0 h-full bg-primary/30 border-2 border-primary"
+          className="absolute top-0 h-full bg-primary/30 border-2 border-primary transition-all duration-300"
           style={{
             left: `${selectedRange[0]}%`,
             width: `${selectedRange[1] - selectedRange[0]}%`
           }}
         />
         
-        {/* Range markers */}
+        {/* Center point marker (prominent) */}
         <div 
-          className="absolute top-0 w-1 h-full bg-primary"
+          className="absolute top-0 w-1 h-full bg-primary-foreground shadow-lg z-10 transition-all duration-300"
+          style={{ left: `${centerPoint}%` }}
+        />
+        <div 
+          className="absolute top-1/2 w-3 h-3 bg-primary-foreground rounded-full border-2 border-background shadow-lg transform -translate-x-1/2 -translate-y-1/2 z-20 transition-all duration-300"
+          style={{ left: `${centerPoint}%` }}
+        />
+        
+        {/* Range boundaries */}
+        <div 
+          className="absolute top-0 w-0.5 h-full bg-primary/60 transition-all duration-300"
           style={{ left: `${selectedRange[0]}%` }}
         />
         <div 
-          className="absolute top-0 w-1 h-full bg-primary"
+          className="absolute top-0 w-0.5 h-full bg-primary/60 transition-all duration-300"
           style={{ left: `${selectedRange[1]}%` }}
         />
       </div>
@@ -169,12 +166,36 @@ const WaterfallDistribution = () => {
 };
 
 const RiskSelection = () => {
-  const [selectedRange, setSelectedRange] = useState([40, 60]);
+  // Center + Width approach instead of dual range
+  const [centerPoint, setCenterPoint] = useState(50);
+  const [rangeWidth, setRangeWidth] = useState(20);
+  const [isLiteMode, setIsLiteMode] = useState(true);
 
+  // Calculate selected range from center and width
+  const calculateRange = (center, width) => {
+    const halfWidth = width / 2;
+    const start = Math.max(1, Math.min(center - halfWidth, 100 - width));
+    const end = Math.min(100, start + width);
+    return [Math.round(start), Math.round(end)];
+  };
+
+  const selectedRange = calculateRange(centerPoint, rangeWidth);
+  
   // Calculate metrics for selected range
   const avgRisk = (selectedRange[0] + selectedRange[1]) / 2;
   const estimatedAPY = calculateAPY(avgRisk);
-  const rangeWidth = selectedRange[1] - selectedRange[0];
+  
+  // Preset configurations
+  const presets = [
+    { name: 'Conservative', center: 20, width: 20, color: 'green', range: [10, 30] },
+    { name: 'Balanced', center: 50, width: 20, color: 'yellow', range: [40, 60] },
+    { name: 'Aggressive', center: 85, width: 20, color: 'orange', range: [75, 95] }
+  ];
+
+  const handlePresetClick = (preset) => {
+    setCenterPoint(preset.center);
+    setRangeWidth(preset.width);
+  };
   
   const getRiskLabel = (risk) => {
     if (risk < 30) return 'Conservative';
@@ -209,55 +230,125 @@ const RiskSelection = () => {
               
               <RiskBandVisualization
                 selectedRange={selectedRange}
-                onRangeChange={setSelectedRange}
+                centerPoint={centerPoint}
               />
               
-              {/* Range Controls */}
-              <div className="mt-8 space-y-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Risk Range</label>
-                  <Slider
-                    value={selectedRange}
-                    onValueChange={setSelectedRange}
-                    max={100}
-                    min={1}
-                    step={1}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>{selectedRange[0]}</span>
-                    <span>{selectedRange[1]}</span>
+              {/* Lite Mode - Quick Presets */}
+              {isLiteMode && (
+                <div className="mt-8 space-y-6">
+                  <div className="text-center mb-4">
+                    <h4 className="text-sm font-medium mb-2">Quick Select</h4>
+                    <p className="text-xs text-muted-foreground">Choose your strategy with one click</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 gap-3">
+                    {presets.map((preset) => {
+                      const isActive = Math.abs(centerPoint - preset.center) < 5 && Math.abs(rangeWidth - preset.width) < 5;
+                      const colorClasses = {
+                        green: 'border-green-500 bg-green-50 text-green-700 hover:bg-green-100 dark:bg-green-950/20 dark:text-green-200 dark:hover:bg-green-950/40',
+                        yellow: 'border-yellow-500 bg-yellow-50 text-yellow-700 hover:bg-yellow-100 dark:bg-yellow-950/20 dark:text-yellow-200 dark:hover:bg-yellow-950/40',
+                        orange: 'border-orange-500 bg-orange-50 text-orange-700 hover:bg-orange-100 dark:bg-orange-950/20 dark:text-orange-200 dark:hover:bg-orange-950/40'
+                      };
+                      
+                      return (
+                        <Button
+                          key={preset.name}
+                          variant={isActive ? "default" : "outline"}
+                          size="lg"
+                          onClick={() => handlePresetClick(preset)}
+                          className={`p-4 h-auto justify-between transition-all duration-200 ${
+                            !isActive ? colorClasses[preset.color as keyof typeof colorClasses] : ''
+                          }`}
+                        >
+                          <div className="text-left">
+                            <div className="font-medium">{preset.name}</div>
+                            <div className="text-xs opacity-75">
+                              Range {preset.range[0]}-{preset.range[1]}
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm font-medium">
+                              ~{calculateAPY(preset.center).toFixed(1)}%
+                            </div>
+                            <div className="text-xs opacity-75">APY</div>
+                          </div>
+                        </Button>
+                      );
+                    })}
+                  </div>
+
+                  <div className="text-center">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => setIsLiteMode(false)}
+                      className="text-xs"
+                    >
+                      Advanced Controls →
+                    </Button>
                   </div>
                 </div>
+              )}
 
-                {/* Quick presets */}
-                <div className="grid grid-cols-3 gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSelectedRange([5, 25])}
-                    className="text-xs"
-                  >
-                    Conservative
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSelectedRange([35, 65])}
-                    className="text-xs"
-                  >
-                    Balanced
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSelectedRange([75, 95])}
-                    className="text-xs"
-                  >
-                    Aggressive
-                  </Button>
+              {/* Advanced Mode - Center + Width Controls */}
+              {!isLiteMode && (
+                <div className="mt-8 space-y-6">
+                  <div className="text-center mb-4">
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => setIsLiteMode(true)}
+                      className="text-xs mb-2"
+                    >
+                      ← Back to Quick Select
+                    </Button>
+                    <h4 className="text-sm font-medium">Precise Control</h4>
+                  </div>
+
+                  {/* Center Point Slider */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Center Position</label>
+                    <Slider
+                      value={[centerPoint]}
+                      onValueChange={(value) => setCenterPoint(value[0])}
+                      max={100}
+                      min={1}
+                      step={1}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>Conservative</span>
+                      <span className="font-medium">{centerPoint}</span>
+                      <span>Aggressive</span>
+                    </div>
+                  </div>
+
+                  {/* Range Width Slider */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Range Width</label>
+                    <Slider
+                      value={[rangeWidth]}
+                      onValueChange={(value) => setRangeWidth(value[0])}
+                      max={50}
+                      min={5}
+                      step={1}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>Focused</span>
+                      <span className="font-medium">{rangeWidth} levels</span>
+                      <span>Broad</span>
+                    </div>
+                  </div>
+
+                  {/* Result Display */}
+                  <div className="p-3 bg-muted/50 rounded-lg">
+                    <div className="text-sm text-center">
+                      <span className="font-medium">Resulting Range:</span> {selectedRange[0]} - {selectedRange[1]}
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
 
