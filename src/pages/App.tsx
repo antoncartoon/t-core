@@ -76,6 +76,11 @@ const App = () => {
                         step: 3,
                         title: "Auto-Deploy to DeFi",
                         description: "Your stablecoins are automatically deployed to optimal DeFi strategies"
+                      },
+                      {
+                        step: 4,
+                        title: "Stake TDD & Earn",
+                        description: "Stake your TDD tokens and receive yield based on protocol performance"
                       }
                     ].map((item) => (
                       <div key={item.step} className="flex items-start space-x-3">
@@ -131,6 +136,17 @@ const App = () => {
                         <h4 className="font-medium mb-1">Auto-Deploy to DeFi</h4>
                         <p className="text-sm text-muted-foreground leading-relaxed">
                           Your stablecoins are automatically deployed to optimal DeFi strategies
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start space-x-4">
+                      <div className="w-6 h-6 bg-foreground text-background rounded-full flex items-center justify-center text-xs font-medium mt-1 flex-shrink-0">
+                        4
+                      </div>
+                      <div>
+                        <h4 className="font-medium mb-1">Stake TDD & Earn</h4>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          Stake your TDD tokens and receive yield based on protocol performance
                         </p>
                       </div>
                     </div>
