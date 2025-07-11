@@ -41,6 +41,11 @@ const FAQ = () => {
       answer: 'We charge a small management fee (typically 1-2% annually) and a performance fee (10-15% of profits) to sustain the platform and development. Gas fees for blockchain transactions are separate and depend on network congestion.'
     },
     {
+      id: 'self-insurance-pool',
+      question: 'How does the Self-Insurance Pool work?',
+      answer: 'Self-insurance pool. You are protected by yield generated. Protocol fees (0.5% of all transactions) automatically flow to Level 100 risk tier, creating a community-funded insurance buffer. This pool protects all stakers by absorbing losses before they affect user funds. The more activity on the protocol, the stronger the protection becomes.'
+    },
+    {
       id: 'security-measures',
       question: 'How secure is the platform?',
       answer: 'We use audited smart contracts, multi-signature wallets, and partner only with established DeFi protocols. However, DeFi always carries inherent risks, and we recommend users do their own research.'

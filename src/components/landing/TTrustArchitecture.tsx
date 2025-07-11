@@ -24,9 +24,9 @@ const TTrustArchitecture = () => {
     },
     {
       icon: Shield,
-      title: "Protocol Self-Insurance",
-      description: "Protocol fees directed to high-risk pool, creating additional safety buffer",
-      features: ["Aligned interests", "Additional protection", "Risk absorption"]
+      title: "Self-Insurance Pool",
+      description: "Self-insurance pool. You are protected by yield generated.",
+      features: ["Automatic protection", "Community-funded", "Yield-powered safety"]
     }
   ];
 
@@ -89,9 +89,9 @@ const TTrustArchitecture = () => {
                 <p className="text-muted-foreground mb-4">
                   Protocol yields distributed bottom-up, losses absorbed top-down
                 </p>
-                <div className="flex items-center justify-center space-x-2 text-sm text-orange-600 mb-4 p-2 bg-orange-50 dark:bg-orange-950/20 rounded-lg">
+                <div className="flex items-center justify-center space-x-2 text-sm text-emerald-600 mb-4 p-2 bg-emerald-50 dark:bg-emerald-950/20 rounded-lg">
                   <Shield className="w-4 h-4" />
-                  <span className="font-medium">Protocol fees → High Risk Pool (Additional Buffer)</span>
+                  <span className="font-medium">Self-insurance pool. You are protected by yield generated.</span>
                 </div>
               </div>
 

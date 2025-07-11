@@ -27,9 +27,9 @@ const MobileStatsOverview = () => {
       color: 'text-purple-600'
     },
     {
-      title: 'Security',
-      value: 'AAA',
-      change: 'Audited',
+      title: 'Insurance Pool',
+      value: '$1.2M',
+      change: '+5.3%',
       icon: Shield,
       color: 'text-emerald-600'
     }

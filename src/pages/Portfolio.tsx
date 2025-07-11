@@ -2,6 +2,7 @@
 import React from 'react';
 import Header from '@/components/Header';
 import NFTPositionCard from '@/components/NFTPositionCard';
+import SelfInsuranceWidget from '@/components/SelfInsuranceWidget';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, DollarSign, Percent, Coins, Trophy } from 'lucide-react';
@@ -140,6 +141,11 @@ const Portfolio = () => {
               </CardContent>
             </Card>
           )}
+        </div>
+
+        {/* Self-Insurance Widget */}
+        <div className="mb-12">
+          <SelfInsuranceWidget />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">

@@ -78,10 +78,55 @@ const Transparency = () => {
           <AssetBreakdown />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12">
           <YieldSources />
           <RiskMetrics />
         </div>
+
+        {/* Self-Insurance Section */}
+        <Card className="mb-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="w-5 h-5 text-emerald-600" />
+              Self-Insurance Pool Mechanics
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="text-center p-4 bg-emerald-50 dark:bg-emerald-950/20 rounded-lg">
+                <Shield className="w-8 h-8 mx-auto mb-2 text-emerald-600" />
+                <h3 className="font-medium mb-2">Pool Size</h3>
+                <p className="text-2xl font-light text-emerald-600">$1.2M</p>
+                <p className="text-xs text-muted-foreground">Current Insurance Reserve</p>
+              </div>
+              <div className="text-center p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+                <TrendingUp className="w-8 h-8 mx-auto mb-2 text-blue-600" />
+                <h3 className="font-medium mb-2">Growth Rate</h3>
+                <p className="text-2xl font-light text-blue-600">+5.3%</p>
+                <p className="text-xs text-muted-foreground">Weekly Pool Growth</p>
+              </div>
+              <div className="text-center p-4 bg-purple-50 dark:bg-purple-950/20 rounded-lg">
+                <Activity className="w-8 h-8 mx-auto mb-2 text-purple-600" />
+                <h3 className="font-medium mb-2">Protection</h3>
+                <p className="text-2xl font-light text-purple-600">9.6%</p>
+                <p className="text-xs text-muted-foreground">Coverage Ratio</p>
+              </div>
+            </div>
+            
+            <div className="p-4 bg-muted/50 rounded-lg">
+              <h4 className="font-medium mb-2">How It Works</h4>
+              <p className="text-sm text-muted-foreground mb-3">
+                <strong>Self-insurance pool. You are protected by yield generated.</strong>
+              </p>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• Protocol fees (0.5% of all transactions) automatically flow to Level 100 risk tier</li>
+                <li>• This creates a community-funded insurance buffer that protects all stakers</li>
+                <li>• In case of losses, the self-insurance pool absorbs damage before affecting user funds</li>
+                <li>• The more activity on the protocol, the stronger the protection becomes</li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );
