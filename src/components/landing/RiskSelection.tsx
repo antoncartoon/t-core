@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { TrendingUp, Target, DollarSign, Eye, ArrowDown, ArrowUp, Shield } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { TrendingUp, Target, DollarSign, Eye, ArrowDown, ArrowUp, Shield, Zap, Settings } from 'lucide-react';
 
 // Uniswap V3-style risk band visualization with center point
 const RiskBandVisualization = ({ selectedRange, centerPoint }) => {
@@ -57,20 +58,26 @@ const RiskBandVisualization = ({ selectedRange, centerPoint }) => {
   );
 };
 
-// APY Calculator
-const calculateAPY = (riskLevel) => {
+// Enhanced APY Calculator with concentration bonus
+const calculateAPY = (riskLevel, rangeWidth = 20) => {
   const baseAPY = 5; // T-Bills rate
   const maxAPY = 25;
   const normalizedRisk = riskLevel / 100;
-  return baseAPY + normalizedRisk * (maxAPY - baseAPY);
+  
+  // Concentration bonus: inversely proportional to range width
+  // Narrower ranges get higher APY due to concentrated liquidity
+  const concentrationBonus = Math.max(1, (40 - rangeWidth) / 40 * 0.5 + 1);
+  
+  const riskMultiplier = normalizedRisk * ((maxAPY - baseAPY) / baseAPY);
+  return baseAPY * (1 + riskMultiplier) * concentrationBonus;
 };
 
 // Waterfall Distribution Component
 const WaterfallDistribution = () => {
   const waterfallFlow = [
-    { level: "Conservative", color: "green", allocation: "60%", yield: "5-8%" },
-    { level: "Balanced", color: "yellow", allocation: "30%", yield: "8-15%" },
-    { level: "Aggressive", color: "orange", allocation: "10%", yield: "15-25%" }
+    { level: "Conservative", color: "green", allocation: "60%", yield: "Base APY" },
+    { level: "Balanced", color: "yellow", allocation: "30%", yield: "Enhanced APY" },
+    { level: "Aggressive", color: "orange", allocation: "10%", yield: "Maximum APY" }
   ];
 
   return (
@@ -82,7 +89,8 @@ const WaterfallDistribution = () => {
             <h3 className="text-xl font-medium">Waterfall Risk/Reward Distribution</h3>
           </div>
           <p className="text-muted-foreground mb-4">
-            Protocol yields distributed bottom-up, losses absorbed top-down
+            Protocol yields distributed bottom-up, losses absorbed top-down.<br/>
+            <span className="text-sm font-medium text-amber-600">APY varies with protocol performance</span>
           </p>
           <div className="flex items-center justify-center space-x-2 text-sm text-emerald-600 mb-4 p-2 bg-emerald-50 dark:bg-emerald-950/20 rounded-lg">
             <Shield className="w-4 h-4" />
@@ -183,7 +191,7 @@ const RiskSelection = () => {
   
   // Calculate metrics for selected range
   const avgRisk = (selectedRange[0] + selectedRange[1]) / 2;
-  const estimatedAPY = calculateAPY(avgRisk);
+  const estimatedAPY = calculateAPY(avgRisk, rangeWidth);
   
   // Preset configurations
   const presets = [
@@ -226,7 +234,48 @@ const RiskSelection = () => {
           {/* Left: Simple Visualization */}
           <Card className="border-border bg-card/50">
             <CardContent className="p-6">
-              <h3 className="text-lg font-medium mb-6">Position Selector</h3>
+              <div className="flex items-center justify-center mb-6">
+                {/* Mode Toggle Tabs */}
+                <div className="flex bg-muted rounded-lg p-1 gap-1">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant={isLiteMode ? "default" : "ghost"}
+                          size="sm"
+                          onClick={() => setIsLiteMode(true)}
+                          className="flex items-center gap-2 transition-all duration-200"
+                        >
+                          <Zap className="w-4 h-4" />
+                          Quick Select
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Choose from preset strategies</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant={!isLiteMode ? "default" : "ghost"}
+                          size="sm"
+                          onClick={() => setIsLiteMode(false)}
+                          className="flex items-center gap-2 transition-all duration-200"
+                        >
+                          <Settings className="w-4 h-4" />
+                          Advanced
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Precise control with sliders</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              </div>
               
               <RiskBandVisualization
                 selectedRange={selectedRange}
@@ -236,10 +285,6 @@ const RiskSelection = () => {
               {/* Lite Mode - Quick Presets */}
               {isLiteMode && (
                 <div className="mt-8 space-y-6">
-                  <div className="text-center mb-4">
-                    <h4 className="text-sm font-medium mb-2">Quick Select</h4>
-                    <p className="text-xs text-muted-foreground">Choose your strategy with one click</p>
-                  </div>
                   
                   <div className="grid grid-cols-1 gap-3">
                     {presets.map((preset) => {
@@ -268,46 +313,34 @@ const RiskSelection = () => {
                           </div>
                           <div className="text-right">
                             <div className="text-sm font-medium">
-                              ~{calculateAPY(preset.center).toFixed(1)}%
+                              ~{calculateAPY(preset.center, preset.width).toFixed(1)}%
                             </div>
-                            <div className="text-xs opacity-75">APY</div>
+                            <div className="text-xs opacity-75">Est. APY</div>
                           </div>
                         </Button>
                       );
                     })}
                   </div>
 
-                  <div className="text-center">
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => setIsLiteMode(false)}
-                      className="text-xs"
-                    >
-                      Advanced Controls →
-                    </Button>
-                  </div>
                 </div>
               )}
 
               {/* Advanced Mode - Center + Width Controls */}
               {!isLiteMode && (
                 <div className="mt-8 space-y-6">
-                  <div className="text-center mb-4">
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => setIsLiteMode(true)}
-                      className="text-xs mb-2"
-                    >
-                      ← Back to Quick Select
-                    </Button>
-                    <h4 className="text-sm font-medium">Precise Control</h4>
-                  </div>
 
                   {/* Center Point Slider */}
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Center Position</label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <label className="text-sm font-medium cursor-help">Center Position</label>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Your position's center point on the risk spectrum</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     <Slider
                       value={[centerPoint]}
                       onValueChange={(value) => setCenterPoint(value[0])}
@@ -325,7 +358,16 @@ const RiskSelection = () => {
 
                   {/* Range Width Slider */}
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Range Width</label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <label className="text-sm font-medium cursor-help">Range Width</label>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Narrower ranges get higher APY from concentration bonus</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     <Slider
                       value={[rangeWidth]}
                       onValueChange={(value) => setRangeWidth(value[0])}
@@ -335,16 +377,23 @@ const RiskSelection = () => {
                       className="w-full"
                     />
                     <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>Focused</span>
+                      <span>Focused (+Bonus)</span>
                       <span className="font-medium">{rangeWidth} levels</span>
                       <span>Broad</span>
                     </div>
                   </div>
 
-                  {/* Result Display */}
-                  <div className="p-3 bg-muted/50 rounded-lg">
-                    <div className="text-sm text-center">
-                      <span className="font-medium">Resulting Range:</span> {selectedRange[0]} - {selectedRange[1]}
+                  {/* Live APY Preview */}
+                  <div className="p-4 bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg border border-primary/20">
+                    <div className="text-center space-y-2">
+                      <div className="text-sm font-medium">Live Preview</div>
+                      <div className="text-lg font-bold text-primary">
+                        ~{estimatedAPY.toFixed(1)}% APY
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        Range: {selectedRange[0]} - {selectedRange[1]} 
+                        {rangeWidth < 20 && <span className="text-green-600 ml-2">+Concentration Bonus</span>}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -387,9 +436,9 @@ const RiskSelection = () => {
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Position Efficiency</span>
+                    <span className="text-muted-foreground">Concentration Bonus</span>
                     <span className="font-medium">
-                      {rangeWidth < 20 ? 'High' : rangeWidth < 40 ? 'Medium' : 'Broad'}
+                      {rangeWidth < 20 ? '+High' : rangeWidth < 35 ? '+Medium' : 'None'}
                     </span>
                   </div>
                 </div>
