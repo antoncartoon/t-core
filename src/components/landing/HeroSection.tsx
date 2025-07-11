@@ -60,9 +60,7 @@ const HeroSection = () => {
           <div className="flex flex-col items-center text-center p-4 sm:p-6 rounded-lg border border-border bg-card/50">
             <Lock className="w-8 h-8 text-purple-600 mb-3" />
             <h3 className="font-medium mb-2">Your Risk - Your Yield</h3>
-            <p className="text-sm text-muted-foreground">
-              Choose risk level and earn from your NFT position.
-            </p>
+            <p className="text-sm text-muted-foreground">Choose risk level and earn from your position.</p>
           </div>
         </div>
       </div>
