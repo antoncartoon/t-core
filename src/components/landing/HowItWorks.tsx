@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowRight, Coins, ArrowRightLeft, Target, Gem } from 'lucide-react';
+import { ArrowRight, Coins, ArrowRightLeft, Target, Gem, TrendingUp } from 'lucide-react';
 
 const HowItWorks = () => {
   const steps = [
@@ -23,6 +23,12 @@ const HowItWorks = () => {
       detail: "Control your risk/return ratio yourself"
     },
     {
+      icon: TrendingUp,
+      title: "Stake TDD & Earn",
+      description: "Passive income",
+      detail: "Stake your TDD tokens and receive yield based on your risk selection"
+    },
+    {
       icon: Gem,
       title: "NFT + DeFi",
       description: "Position + Usage",
@@ -38,11 +44,11 @@ const HowItWorks = () => {
             How It Works?
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Simple 4-step process to start earning on stablecoins
+            Simple 5-step process to start earning on stablecoins
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8">
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
