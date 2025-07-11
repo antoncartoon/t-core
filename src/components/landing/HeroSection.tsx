@@ -1,15 +1,11 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { NavLink } from 'react-router-dom';
 import { ArrowRight, Shield, TrendingUp, Lock } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-
 const HeroSection = () => {
   const isMobile = useIsMobile();
-
-  return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20 py-12 sm:py-24">
+  return <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20 py-12 sm:py-24">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
         <div className="mb-8 sm:mb-12">
           <div className="flex items-center justify-center mb-6 sm:mb-8">
@@ -50,9 +46,7 @@ const HeroSection = () => {
           <div className="flex flex-col items-center text-center p-4 sm:p-6 rounded-lg border border-border bg-card/50">
             <Shield className="w-8 h-8 text-green-600 mb-3" />
             <h3 className="font-medium mb-2">Stablecoins Only</h3>
-            <p className="text-sm text-muted-foreground">
-              No volatile assets - your capital is protected.
-            </p>
+            <p className="text-sm text-muted-foreground">No shitcoins - your capital is protected.</p>
           </div>
           
           <div className="flex flex-col items-center text-center p-4 sm:p-6 rounded-lg border border-border bg-card/50">
@@ -72,8 +66,6 @@ const HeroSection = () => {
           </div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroSection;
