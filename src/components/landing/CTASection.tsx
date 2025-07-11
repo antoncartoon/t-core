@@ -1,15 +1,11 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { NavLink } from 'react-router-dom';
 import { ArrowRight, Sparkles } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-
 const CTASection = () => {
   const isMobile = useIsMobile();
-
-  return (
-    <section className="py-16 sm:py-24">
+  return <section className="py-16 sm:py-24">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5 p-8 sm:p-12 border border-primary/20">
           <div className="relative z-10">
@@ -46,10 +42,7 @@ const CTASection = () => {
                 <div className="w-2 h-2 rounded-full bg-green-500" />
                 <span>Stablecoin Only</span>
               </div>
-              <div className="flex items-center justify-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-blue-500" />
-                <span>5% - 25% APY</span>
-              </div>
+              
               <div className="flex items-center justify-center space-x-2">
                 <div className="w-2 h-2 rounded-full bg-purple-500" />
                 <span>Fair Distribution</span>
@@ -62,8 +55,6 @@ const CTASection = () => {
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-primary/10 to-transparent rounded-full translate-y-12 -translate-x-12" />
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default CTASection;
