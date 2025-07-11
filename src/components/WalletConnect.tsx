@@ -1,19 +1,17 @@
-
 import React, { useState, useEffect } from 'react';
 import { Wallet, Smartphone, Globe, ArrowRight, Zap, Info, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-
 interface WalletConnectProps {
   onConnect: (provider?: string) => void;
 }
-
-const WalletConnect = ({ onConnect }: WalletConnectProps) => {
+const WalletConnect = ({
+  onConnect
+}: WalletConnectProps) => {
   const [isWeb3Available, setIsWeb3Available] = useState(false);
   const [connecting, setConnecting] = useState<string | null>(null);
-
   useEffect(() => {
     // Check if Web3 provider is available
     const checkWeb3 = () => {
@@ -21,10 +19,8 @@ const WalletConnect = ({ onConnect }: WalletConnectProps) => {
       const hasWalletConnect = typeof window !== 'undefined' && window.WalletConnect;
       setIsWeb3Available(hasMetaMask || hasWalletConnect);
     };
-    
     checkWeb3();
   }, []);
-
   const handleConnect = async (provider: string) => {
     setConnecting(provider);
     try {
@@ -35,46 +31,35 @@ const WalletConnect = ({ onConnect }: WalletConnectProps) => {
       setConnecting(null);
     }
   };
-
-  const web3Options = [
-    {
-      id: 'metamask',
-      name: 'MetaMask',
-      icon: Wallet,
-      description: 'Connect using MetaMask wallet',
-      available: typeof window !== 'undefined' && window.ethereum,
-    },
-    {
-      id: 'walletconnect',
-      name: 'WalletConnect',
-      icon: Smartphone,
-      description: 'Connect using mobile wallet',
-      available: true,
-    },
-    {
-      id: 'coinbase',
-      name: 'Coinbase Wallet',
-      icon: Globe,
-      description: 'Connect using Coinbase Wallet',
-      available: true,
-    }
-  ];
-
-  const socialOptions = [
-    {
-      id: 'google',
-      name: 'Google',
-      description: 'Sign in with Google account',
-    },
-    {
-      id: 'twitter',
-      name: 'Twitter',
-      description: 'Sign in with Twitter account',
-    }
-  ];
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
+  const web3Options = [{
+    id: 'metamask',
+    name: 'MetaMask',
+    icon: Wallet,
+    description: 'Connect using MetaMask wallet',
+    available: typeof window !== 'undefined' && window.ethereum
+  }, {
+    id: 'walletconnect',
+    name: 'WalletConnect',
+    icon: Smartphone,
+    description: 'Connect using mobile wallet',
+    available: true
+  }, {
+    id: 'coinbase',
+    name: 'Coinbase Wallet',
+    icon: Globe,
+    description: 'Connect using Coinbase Wallet',
+    available: true
+  }];
+  const socialOptions = [{
+    id: 'google',
+    name: 'Google',
+    description: 'Sign in with Google account'
+  }, {
+    id: 'twitter',
+    name: 'Twitter',
+    description: 'Sign in with Twitter account'
+  }];
+  return <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
       <div className="w-full max-w-4xl">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-6">
@@ -82,7 +67,7 @@ const WalletConnect = ({ onConnect }: WalletConnectProps) => {
               <span className="text-background font-bold text-xl">T</span>
             </div>
           </div>
-          <h1 className="text-4xl font-light mb-4">Welcome to Tolkachyield</h1>
+          <h1 className="text-4xl font-light mb-4">Welcome to T-CORE</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Connect your wallet to start earning yield through optimized DeFi strategies and NFT staking positions
           </p>
@@ -97,45 +82,30 @@ const WalletConnect = ({ onConnect }: WalletConnectProps) => {
                   <Wallet className="w-5 h-5" />
                   <span>Web3 Wallets</span>
                 </CardTitle>
-                {isWeb3Available && (
-                  <Badge variant="secondary" className="text-green-600 border-green-600">
+                {isWeb3Available && <Badge variant="secondary" className="text-green-600 border-green-600">
                     <Zap className="w-3 h-3 mr-1" />
                     Available
-                  </Badge>
-                )}
+                  </Badge>}
               </div>
               <p className="text-sm text-muted-foreground">
                 Connect using your existing crypto wallet
               </p>
             </CardHeader>
             <CardContent className="space-y-3">
-              {web3Options.map((option) => {
-                const Icon = option.icon;
-                const isConnecting = connecting === option.id;
-                
-                return (
-                  <Button
-                    key={option.id}
-                    variant="outline"
-                    className="w-full justify-start h-auto p-4 hover:bg-muted/50"
-                    onClick={() => handleConnect(option.id)}
-                    disabled={!option.available || isConnecting}
-                  >
+              {web3Options.map(option => {
+              const Icon = option.icon;
+              const isConnecting = connecting === option.id;
+              return <Button key={option.id} variant="outline" className="w-full justify-start h-auto p-4 hover:bg-muted/50" onClick={() => handleConnect(option.id)} disabled={!option.available || isConnecting}>
                     <div className="flex items-center space-x-3 w-full">
                       <Icon className="w-5 h-5 flex-shrink-0" />
                       <div className="flex-1 text-left">
                         <p className="font-medium">{option.name}</p>
                         <p className="text-xs text-muted-foreground">{option.description}</p>
                       </div>
-                      {isConnecting ? (
-                        <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                      ) : (
-                        <ArrowRight className="w-4 h-4 text-muted-foreground" />
-                      )}
+                      {isConnecting ? <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" /> : <ArrowRight className="w-4 h-4 text-muted-foreground" />}
                     </div>
-                  </Button>
-                );
-              })}
+                  </Button>;
+            })}
             </CardContent>
           </Card>
 
@@ -165,17 +135,9 @@ const WalletConnect = ({ onConnect }: WalletConnectProps) => {
               </Alert>
               
               <div className="space-y-3">
-                {socialOptions.map((option) => {
-                  const isConnecting = connecting === option.id;
-                  
-                  return (
-                    <Button
-                      key={option.id}
-                      variant="outline"
-                      className="w-full justify-start h-auto p-4 hover:bg-muted/50"
-                      onClick={() => handleConnect(option.id)}
-                      disabled={isConnecting}
-                    >
+                {socialOptions.map(option => {
+                const isConnecting = connecting === option.id;
+                return <Button key={option.id} variant="outline" className="w-full justify-start h-auto p-4 hover:bg-muted/50" onClick={() => handleConnect(option.id)} disabled={isConnecting}>
                       <div className="flex items-center space-x-3 w-full">
                         <div className="w-5 h-5 rounded bg-muted flex items-center justify-center flex-shrink-0">
                           <span className="text-xs font-bold">{option.name[0]}</span>
@@ -184,15 +146,10 @@ const WalletConnect = ({ onConnect }: WalletConnectProps) => {
                           <p className="font-medium">{option.name}</p>
                           <p className="text-xs text-muted-foreground">{option.description}</p>
                         </div>
-                        {isConnecting ? (
-                          <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                        ) : (
-                          <ArrowRight className="w-4 h-4 text-muted-foreground" />
-                        )}
+                        {isConnecting ? <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" /> : <ArrowRight className="w-4 h-4 text-muted-foreground" />}
                       </div>
-                    </Button>
-                  );
-                })}
+                    </Button>;
+              })}
               </div>
             </CardContent>
           </Card>
@@ -206,8 +163,6 @@ const WalletConnect = ({ onConnect }: WalletConnectProps) => {
           </p>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default WalletConnect;
