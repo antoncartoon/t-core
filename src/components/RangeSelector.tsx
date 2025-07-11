@@ -97,7 +97,7 @@ const RangeSelector = ({ value, onChange, liquidityData = [], className = "" }: 
               {(minAPR * 100).toFixed(1)}% - {(maxAPR * 100).toFixed(1)}%
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              Based on formula: r_i = {(MIN_GUARANTEED_APY * 100).toFixed(0)}% + ({(MAX_APY - MIN_GUARANTEED_APY) * 100}.toFixed(0)}% × (i-1)/99)
+              Based on formula: r_i = {(MIN_GUARANTEED_APY * 100).toFixed(0)}% + {((MAX_APY - MIN_GUARANTEED_APY) * 100).toFixed(0)}% × (i-1)/99
             </p>
           </div>
 
