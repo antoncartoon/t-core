@@ -19,22 +19,24 @@ const queryClient = new QueryClient();
 const AppRouter = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <RiskRangeProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/app" element={<App />} />
-            <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/defi" element={<DeFi />} />
-            <Route path="/transparency" element={<Transparency />} />
-            <Route path="/docs" element={<Docs />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </RiskRangeProvider>
+      <WalletProvider>
+        <RiskRangeProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Landing />} />
+              <Route path="/app" element={<App />} />
+              <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/defi" element={<DeFi />} />
+              <Route path="/transparency" element={<Transparency />} />
+              <Route path="/docs" element={<Docs />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </RiskRangeProvider>
+      </WalletProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
