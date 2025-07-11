@@ -1,95 +1,136 @@
 import React, { useState } from 'react';
-import { TrendingUp, Shield, AlertTriangle, Coins, Info, Users, Target } from 'lucide-react';
+import { TrendingUp, Shield, AlertTriangle, Coins, Target, Zap, Settings, Eye, ArrowUp, ArrowDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useToast } from '@/hooks/use-toast';
 import { useWallet } from '@/contexts/WalletContext';
-import { calculateRiskScore, calculatePayoutPriority, riskScoreToCategory, calculateAvailableCapacity } from '@/utils/riskCalculations';
+import { 
+  calculateRangeAPR, 
+  calculateCapitalEfficiency, 
+  calculatePotentialLoss, 
+  calculateNormalizedRisk,
+  generateInitialRiskTicks,
+  analyzeRiskRange
+} from '@/utils/riskRangeCalculations';
 import YieldCurveChart from './YieldCurveChart';
 
+// Risk range visualization component (similar to Uniswap V3)
+const RiskRangeVisualization = ({ selectedRange, centerPoint }) => {
+  return (
+    <div className="space-y-4">
+      {/* Risk Band */}
+      <div className="relative h-16 bg-muted/30 rounded-lg overflow-hidden">
+        {/* Color zones */}
+        <div className="absolute inset-0 flex">
+          <div className="w-[15%] bg-green-500/20" />
+          <div className="w-[55%] bg-yellow-500/20" />
+          <div className="w-[30%] bg-orange-500/20" />
+        </div>
+        
+        {/* Selected range highlight */}
+        <div 
+          className="absolute top-0 h-full bg-primary/30 border-2 border-primary transition-all duration-300"
+          style={{
+            left: `${selectedRange[0]}%`,
+            width: `${selectedRange[1] - selectedRange[0]}%`
+          }}
+        />
+        
+        {/* Center point marker */}
+        <div 
+          className="absolute top-0 w-1 h-full bg-primary-foreground shadow-lg z-10 transition-all duration-300"
+          style={{ left: `${centerPoint}%` }}
+        />
+        <div 
+          className="absolute top-1/2 w-3 h-3 bg-primary-foreground rounded-full border-2 border-background shadow-lg transform -translate-x-1/2 -translate-y-1/2 z-20 transition-all duration-300"
+          style={{ left: `${centerPoint}%` }}
+        />
+      </div>
+      
+      {/* Labels */}
+      <div className="flex justify-between text-xs text-muted-foreground">
+        <span className="text-green-600 font-medium">Conservative (1-15)</span>
+        <span className="text-yellow-600 font-medium">Balanced (15-70)</span>
+        <span className="text-orange-600 font-medium">Aggressive (70-100)</span>
+      </div>
+    </div>
+  );
+};
+
 const StakingCard = () => {
+  // Step 1: Amount input, Step 2: Range selection
   const [amount, setAmount] = useState('');
-  const [desiredAPY, setDesiredAPY] = useState('10.5'); // Default to average APY
-  const [sliderAPY, setSliderAPY] = useState([10.5]); // Slider state
+  const [centerPoint, setCenterPoint] = useState(8); // Start Conservative
+  const [rangeWidth, setRangeWidth] = useState(14);
+  const [isQuickMode, setIsQuickMode] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { getAvailableBalance, createStakingPosition, poolSettings, stakingPositions } = useWallet();
+  const { getAvailableBalance, createStakingPosition, poolSettings } = useWallet();
 
   const availableBalance = getAvailableBalance('TDD');
-  const desiredAPYDecimal = parseFloat(desiredAPY) / 100 || 0;
+  const stakeAmount = parseFloat(amount) || 0;
 
-  // Calculate risk metrics
-  const riskScore = calculateRiskScore(desiredAPYDecimal, poolSettings);
-  const payoutPriority = calculatePayoutPriority(riskScore);
-  const riskLevel = Math.round((riskScore / 10000) * 100);
-  const riskCategory = riskScoreToCategory(riskScore);
+  // Calculate selected range from center and width
+  const calculateRange = (center, width) => {
+    const halfWidth = width / 2;
+    const start = Math.max(1, Math.min(center - halfWidth, 100 - width));
+    const end = Math.min(100, start + width);
+    return [Math.round(start), Math.round(end)];
+  };
+
+  const selectedRange = calculateRange(centerPoint, rangeWidth);
+  const riskRange = { min: selectedRange[0], max: selectedRange[1] };
   
-  // Calculate available capacity
-  const availableCapacity = calculateAvailableCapacity(
-    riskScore, 
-    poolSettings.totalPoolValue || 1000000, // Default pool size
-    stakingPositions.map(p => ({ riskScore: p.riskScore, amount: p.amount }))
-  );
+  // Generate risk ticks and analyze the range
+  const riskTicks = generateInitialRiskTicks();
+  const analysis = stakeAmount > 0 ? analyzeRiskRange(stakeAmount, riskRange, riskTicks) : null;
+  
+  // Mock historical APY data (28-day average)
+  const historicalAPY = 0.12; // 12% historical average
 
-  // Sync slider and input
-  const handleSliderChange = (value: number[]) => {
-    setSliderAPY(value);
-    setDesiredAPY(value[0].toFixed(1));
+  // Risk presets (same as landing page)
+  const presets = [
+    { name: 'Conservative', center: 8, width: 14, color: 'green', range: [1, 15] },
+    { name: 'Balanced', center: 42.5, width: 55, color: 'yellow', range: [15, 70] },
+    { name: 'Aggressive', center: 85, width: 30, color: 'orange', range: [70, 100] }
+  ];
+
+  const handlePresetClick = (preset) => {
+    setCenterPoint(preset.center);
+    setRangeWidth(preset.width);
+  };
+  
+  const getRiskLabel = (avgRisk) => {
+    if (avgRisk < 15) return 'Conservative';
+    if (avgRisk < 70) return 'Balanced';
+    return 'Aggressive';
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setDesiredAPY(value);
-    const numValue = parseFloat(value);
-    if (!isNaN(numValue)) {
-      setSliderAPY([numValue]);
-    }
+  const getRiskColorClass = (avgRisk) => {
+    if (avgRisk < 15) return 'text-green-600';
+    if (avgRisk < 70) return 'text-yellow-600';
+    return 'text-orange-600';
   };
 
-  const setMinAPY = () => {
-    const minAPY = poolSettings.baseAPY * 100;
-    setDesiredAPY(minAPY.toFixed(1));
-    setSliderAPY([minAPY]);
-  };
+  const avgRisk = (selectedRange[0] + selectedRange[1]) / 2;
+  const riskLabel = getRiskLabel(avgRisk);
+  const riskColor = getRiskColorClass(avgRisk);
 
-  const getRiskIcon = () => {
-    switch (riskCategory) {
-      case 'Conservative': return Shield;
-      case 'Moderate': return TrendingUp;
-      case 'Aggressive': return AlertTriangle;
-    }
+  // Quick amount buttons
+  const handleQuickAmount = (percentage) => {
+    const quickAmount = (availableBalance * percentage).toFixed(2);
+    setAmount(quickAmount);
   };
-
-  const getRiskColor = () => {
-    switch (riskCategory) {
-      case 'Conservative': return 'text-green-600';
-      case 'Moderate': return 'text-yellow-600';
-      case 'Aggressive': return 'text-red-600';
-    }
-  };
-
-  const RiskIcon = getRiskIcon();
-  const riskColor = getRiskColor();
 
   const handleStake = async () => {
-    const stakeAmount = parseFloat(amount);
-    
     if (!amount || stakeAmount <= 0) {
       toast({
         title: "Invalid Amount",
         description: "Please enter a valid amount to stake.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!desiredAPY || desiredAPYDecimal <= 0) {
-      toast({
-        title: "Invalid APY",
-        description: "Please enter a valid desired APY.",
         variant: "destructive",
       });
       return;
@@ -104,42 +145,27 @@ const StakingCard = () => {
       return;
     }
 
-    if (stakeAmount > availableCapacity) {
-      toast({
-        title: "Pool Capacity Exceeded",
-        description: `Maximum available for this risk level: ${availableCapacity.toFixed(2)} TDD.`,
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (desiredAPYDecimal > poolSettings.maxAPY) {
-      toast({
-        title: "APY Too High",
-        description: `Maximum APY is ${(poolSettings.maxAPY * 100).toFixed(1)}%.`,
-        variant: "destructive",
-      });
-      return;
-    }
-
     setIsLoading(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      const positionId = createStakingPosition(stakeAmount, desiredAPYDecimal);
+      // Create position with range-based APY
+      const estimatedAPY = analysis?.estimatedAPR || 0.10;
+      const positionId = createStakingPosition(stakeAmount, estimatedAPY);
       
       toast({
-        title: "NFT Staking Position Created!",
-        description: `Position ${positionId.slice(-6)} created with ${stakeAmount} TDD at ${desiredAPY}% APY. Priority: ${payoutPriority.toLocaleString()}.`,
+        title: "NFT Liquidity Position Created!",
+        description: `Position ${positionId.slice(-6)} created with ${stakeAmount} TDD in range ${selectedRange[0]}-${selectedRange[1]}. Estimated APY: ${(estimatedAPY * 100).toFixed(1)}%.`,
       });
       
+      // Reset form
       setAmount('');
-      setDesiredAPY('10.5');
-      setSliderAPY([10.5]);
+      setCenterPoint(8);
+      setRangeWidth(14);
     } catch (error) {
       toast({
-        title: "Staking Failed",
-        description: "There was an error creating your staking position. Please try again.",
+        title: "Position Creation Failed",
+        description: "There was an error creating your liquidity position. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -147,21 +173,21 @@ const StakingCard = () => {
     }
   };
 
-  const lockPeriod = riskLevel <= 33 ? '15 days' : riskLevel <= 66 ? '60 days' : '120 days';
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Main Staking Interface */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <TrendingUp className="w-5 h-5 text-green-600" />
-            <span>Create NFT Staking Position</span>
+            <Target className="w-5 h-5 text-primary" />
+            <span>Create Liquidity Position</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Step 1: Amount Input */}
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-2 block">
-              Amount to Stake
+            <label className="text-sm font-medium mb-2 block">
+              Amount to Stake (TDD)
             </label>
             <Input
               type="number"
@@ -170,176 +196,253 @@ const StakingCard = () => {
               onChange={(e) => setAmount(e.target.value)}
               className="text-lg"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-muted-foreground mt-1">
               Available: {availableBalance.toFixed(2)} TDD
             </p>
+            
+            {/* Quick Amount Buttons */}
+            <div className="flex gap-2 mt-2">
+              {[0.25, 0.5, 1].map((percentage, i) => (
+                <Button
+                  key={i}
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleQuickAmount(percentage)}
+                  className="text-xs"
+                >
+                  {percentage === 1 ? 'Max' : `${(percentage * 100)}%`}
+                </Button>
+              ))}
+            </div>
           </div>
 
+          {/* Step 2: Risk Range Selection */}
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <label className="text-sm font-medium text-gray-700">
-                Desired APY (%)
-              </label>
+            <div className="flex items-center justify-between mb-4">
+              <label className="text-sm font-medium">Risk Range Selection</label>
               <div className={`flex items-center space-x-1 ${riskColor}`}>
-                <RiskIcon className="w-4 h-4" />
-                <span className="text-sm font-medium">{riskCategory}</span>
+                <span className="text-sm font-medium">{riskLabel}</span>
               </div>
             </div>
             
-            {/* APY Input */}
-            <div className="flex space-x-2 mb-3">
-              <Input
-                type="number"
-                placeholder="10.5"
-                value={desiredAPY}
-                onChange={handleInputChange}
-                min={poolSettings.baseAPY * 100}
-                max={poolSettings.maxAPY * 100}
-                step="0.1"
-                className="text-lg flex-1"
-              />
+            {/* Mode Toggle */}
+            <div className="flex bg-muted rounded-lg p-1 gap-1 mb-4">
               <Button
-                variant="outline"
+                variant={isQuickMode ? "default" : "ghost"}
                 size="sm"
-                onClick={setMinAPY}
-                className="px-3 whitespace-nowrap"
+                onClick={() => setIsQuickMode(true)}
+                className="flex items-center gap-2"
               >
-                Min APY ({(poolSettings.baseAPY * 100).toFixed(1)}%)
+                <Zap className="w-4 h-4" />
+                Quick
+              </Button>
+              <Button
+                variant={!isQuickMode ? "default" : "ghost"}
+                size="sm"
+                onClick={() => setIsQuickMode(false)}
+                className="flex items-center gap-2"
+              >
+                <Settings className="w-4 h-4" />
+                Advanced
               </Button>
             </div>
-
-            {/* APY Slider */}
-            <div className="space-y-2">
-              <Slider
-                value={sliderAPY}
-                onValueChange={handleSliderChange}
-                min={poolSettings.baseAPY * 100}
-                max={poolSettings.maxAPY * 100}
-                step={0.1}
-                className="mb-2"
-              />
-              <div className="flex justify-between text-xs text-gray-500">
-                <span>Min: {(poolSettings.baseAPY * 100).toFixed(1)}% (Risk-free)</span>
-                <span>Average: 10.5%</span>
-                <span>Max: {(poolSettings.maxAPY * 100).toFixed(1)}%</span>
+            
+            <RiskRangeVisualization
+              selectedRange={selectedRange}
+              centerPoint={centerPoint}
+            />
+            
+            {/* Quick Mode - Presets */}
+            {isQuickMode && (
+              <div className="mt-4 grid grid-cols-1 gap-3">
+                {presets.map((preset) => {
+                  const isActive = Math.abs(centerPoint - preset.center) < 5 && Math.abs(rangeWidth - preset.width) < 5;
+                  const colorClasses = {
+                    green: 'border-green-500 bg-green-50 text-green-700 hover:bg-green-100 dark:bg-green-950/20 dark:text-green-200',
+                    yellow: 'border-yellow-500 bg-yellow-50 text-yellow-700 hover:bg-yellow-100 dark:bg-yellow-950/20 dark:text-yellow-200',
+                    orange: 'border-orange-500 bg-orange-50 text-orange-700 hover:bg-orange-100 dark:bg-orange-950/20 dark:text-orange-200'
+                  };
+                  
+                  return (
+                    <Button
+                      key={preset.name}
+                      variant={isActive ? "default" : "outline"}
+                      size="lg"
+                      onClick={() => handlePresetClick(preset)}
+                      className={`p-4 h-auto justify-between ${
+                        !isActive ? colorClasses[preset.color as keyof typeof colorClasses] : ''
+                      }`}
+                    >
+                      <div className="text-left">
+                        <div className="font-medium">{preset.name}</div>
+                        <div className="text-xs opacity-75">
+                          Range {preset.range[0]}-{preset.range[1]}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium">
+                          {analysis ? `${(analysis.estimatedAPR * 100).toFixed(1)}%` : '~12%'}
+                        </div>
+                        <div className="text-xs opacity-75">Est. APY</div>
+                      </div>
+                    </Button>
+                  );
+                })}
               </div>
-            </div>
+            )}
+            
+            {/* Advanced Mode - Sliders */}
+            {!isQuickMode && (
+              <div className="mt-4 space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Center Position</label>
+                  <Slider
+                    value={[centerPoint]}
+                    onValueChange={(value) => setCenterPoint(value[0])}
+                    max={100}
+                    min={1}
+                    step={1}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Conservative</span>
+                    <span className="font-medium">{centerPoint}</span>
+                    <span>Aggressive</span>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Range Width</label>
+                  <Slider
+                    value={[rangeWidth]}
+                    onValueChange={(value) => setRangeWidth(value[0])}
+                    max={50}
+                    min={5}
+                    step={1}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Focused (+Bonus)</span>
+                    <span className="font-medium">{rangeWidth} levels</span>
+                    <span>Broad</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-gray-600">Risk Score</p>
-                <p className="text-xl font-bold text-blue-600">
-                  {riskScore.toLocaleString()}/10,000
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Payout Priority</p>
-                <p className="text-xl font-bold text-purple-600">
-                  #{payoutPriority.toLocaleString()}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Enhanced Priority Explanation */}
-          <div className="bg-gradient-to-r from-yellow-50 to-orange-50 p-4 rounded-lg border border-yellow-200">
-            <div className="flex items-start space-x-2">
-              <Users className="w-4 h-4 text-yellow-600 mt-0.5" />
-              <div className="text-sm">
-                <p className="font-medium text-yellow-800 mb-1">Payout Priority System</p>
-                <p className="text-yellow-700 mb-2">
-                  In normal conditions, ALL positions receive their expected returns. Priority matters only during stress scenarios.
-                </p>
-                <div className="text-xs text-yellow-600">
-                  <p>• Conservative positions (5-8% APY) get paid first</p>
-                  <p>• Moderate positions (8-15% APY) get paid second</p>
-                  <p>• Aggressive positions (15%+ APY) get paid last</p>
+          {/* Position Preview */}
+          {analysis && stakeAmount > 0 && (
+            <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-4 rounded-lg border border-primary/20">
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-sm">Estimated APY</span>
+                  <span className="font-bold text-primary">
+                    {(analysis.estimatedAPR * 100).toFixed(1)}%
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">Capital Efficiency</span>
+                  <span className="font-medium">
+                    {analysis.capitalEfficiency.toFixed(1)}x
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-sm">Annual Return</span>
+                  <span className="font-medium text-green-600">
+                    ${(stakeAmount * analysis.estimatedAPR).toFixed(2)}
+                  </span>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
-          {/* Available Capacity Warning */}
-          {availableCapacity < 50000 && (
-            <div className="bg-red-50 p-3 rounded-lg border border-red-200">
+          {/* Risk Warning */}
+          {analysis && analysis.riskScore > 50 && (
+            <div className="bg-yellow-50 dark:bg-yellow-950/20 p-3 rounded-lg border border-yellow-200 dark:border-yellow-800">
               <div className="flex items-center space-x-2">
-                <AlertTriangle className="w-4 h-4 text-red-600" />
-                <p className="text-sm font-medium text-red-800">Limited Capacity</p>
+                <AlertTriangle className="w-4 h-4 text-yellow-600" />
+                <p className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
+                  Higher Risk Position
+                </p>
               </div>
-              <p className="text-xs text-red-700 mt-1">
-                Max available for this risk level: ${availableCapacity.toFixed(2)}
+              <p className="text-xs text-yellow-700 dark:text-yellow-300 mt-1">
+                Potential loss in 20% protocol drawdown: ${analysis.potentialLoss.at20Percent.toFixed(2)}
               </p>
             </div>
           )}
 
-          <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
-            <div className="flex items-center space-x-2 mb-2">
-              <Coins className="w-4 h-4 text-green-600" />
-              <p className="text-sm font-medium text-green-800">You will receive</p>
-            </div>
-            <p className="text-lg font-bold text-green-700">
-              NFT Position #{Date.now().toString().slice(-6)}
-            </p>
-            <p className="text-xs text-green-600 mt-1">
-              Annual expected return: ${amount ? (parseFloat(amount) * desiredAPYDecimal).toFixed(2) : '0.00'}
-            </p>
-          </div>
-
-          <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
-            <p className="font-medium mb-1">Lock Period: {lockPeriod}</p>
-            <p>Your NFT position will be transferable and can be used in DeFi protocols</p>
-          </div>
-
           <Button 
             onClick={handleStake} 
-            disabled={!amount || !desiredAPY || isLoading || parseFloat(amount) > availableBalance || desiredAPYDecimal > poolSettings.maxAPY || parseFloat(amount) > availableCapacity}
-            className="w-full bg-green-600 hover:bg-green-700"
+            disabled={!amount || isLoading || stakeAmount > availableBalance || stakeAmount <= 0}
+            className="w-full"
           >
             {isLoading ? (
               <div className="flex items-center space-x-2">
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                <span>Creating NFT Position...</span>
+                <span>Creating Position...</span>
               </div>
             ) : (
-              'Create NFT Staking Position'
+              'Create Liquidity Position'
             )}
           </Button>
         </CardContent>
       </Card>
 
+      {/* Analysis & Visualization */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Risk-Yield Analysis</CardTitle>
+          <CardTitle className="text-lg">Position Analysis</CardTitle>
         </CardHeader>
         <CardContent>
-          <YieldCurveChart riskLevel={riskLevel} yieldLevel={parseFloat(desiredAPY) || 10.5} />
+          <YieldCurveChart 
+            riskLevel={avgRisk} 
+            yieldLevel={analysis ? analysis.estimatedAPR * 100 : 12} 
+          />
           
-          <div className="mt-4 space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Risk Score:</span>
-              <span className={`font-medium ${riskColor}`}>
-                {riskScore.toLocaleString()}/10,000
-              </span>
+          {analysis && (
+            <div className="mt-4 space-y-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Risk Score:</span>
+                <span className={`font-medium ${riskColor}`}>
+                  {analysis.riskScore.toFixed(1)}/100
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Strategy Type:</span>
+                <span className="font-medium">{riskLabel}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Range:</span>
+                <span className="font-medium">{selectedRange[0]} - {selectedRange[1]}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-muted-foreground">Capital Efficiency:</span>
+                <span className="font-medium">{analysis.capitalEfficiency.toFixed(1)}x</span>
+              </div>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Queue Position:</span>
-              <span className="font-medium">#{payoutPriority.toLocaleString()}</span>
+          )}
+          
+          {/* Potential Loss Scenarios */}
+          {analysis && (
+            <div className="mt-4 p-3 bg-muted/50 rounded-lg">
+              <p className="text-sm font-medium mb-2">Potential Loss Scenarios</p>
+              <div className="space-y-1 text-xs">
+                <div className="flex justify-between">
+                  <span>5% protocol drawdown:</span>
+                  <span className="text-red-600">-${analysis.potentialLoss.at5Percent.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>10% protocol drawdown:</span>
+                  <span className="text-red-600">-${analysis.potentialLoss.at10Percent.toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>20% protocol drawdown:</span>
+                  <span className="text-red-600">-${analysis.potentialLoss.at20Percent.toFixed(2)}</span>
+                </div>
+              </div>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Strategy Type:</span>
-              <span className="font-medium">{riskCategory}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Lock Period:</span>
-              <span className="font-medium">{lockPeriod}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Available Capacity:</span>
-              <span className="font-medium">${availableCapacity.toFixed(0)}</span>
-            </div>
-          </div>
+          )}
         </CardContent>
       </Card>
     </div>
