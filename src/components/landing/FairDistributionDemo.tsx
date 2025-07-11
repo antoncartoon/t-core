@@ -65,7 +65,7 @@ const FairDistributionDemo = () => {
   const getRiskCategory = (riskScore: number) => {
     const level = (riskScore / 10000) * 100;
     if (level <= 33) return { name: 'Conservative', color: 'bg-green-500' };
-    if (level <= 66) return { name: 'Moderate', color: 'bg-blue-500' };
+    if (level <= 66) return { name: 'Balanced', color: 'bg-blue-500' };
     return { name: 'Aggressive', color: 'bg-red-500' };
   };
 
