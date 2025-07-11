@@ -19,9 +19,9 @@ export interface StakingPosition {
   apy: number; // Will be same as desiredAPY
   
   createdAt: Date;
-  maturityDate: Date;
-  lockPeriod: number; // в днях
-  status: 'active' | 'matured' | 'withdrawn';
+  nextPayoutDate: Date; // дата следующей выплаты
+  payoutFrequency: number; // частота выплат в днях (7 для еженедельных)
+  status: 'active' | 'withdrawn';
   
   // New tracking fields
   missedPayouts: number; // Amount not received due to low priority

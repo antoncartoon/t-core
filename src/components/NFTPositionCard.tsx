@@ -23,29 +23,27 @@ const NFTPositionCard = ({ position }: NFTPositionCardProps) => {
     });
   };
 
-  const isMatured = () => {
-    return new Date() >= position.maturityDate;
-  };
-
-  const getDaysRemaining = () => {
+  const getDaysUntilNextPayout = () => {
     const now = new Date();
-    const diffTime = position.maturityDate.getTime() - now.getTime();
+    const diffTime = position.nextPayoutDate.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return Math.max(0, diffDays);
   };
 
-  const getProgressPercentage = () => {
+  const getPayoutProgress = () => {
     const now = new Date();
-    const totalDuration = position.maturityDate.getTime() - position.createdAt.getTime();
-    const elapsed = now.getTime() - position.createdAt.getTime();
+    const lastPayoutDate = new Date(position.nextPayoutDate.getTime() - position.payoutFrequency * 24 * 60 * 60 * 1000);
+    const totalDuration = position.nextPayoutDate.getTime() - lastPayoutDate.getTime();
+    const elapsed = now.getTime() - lastPayoutDate.getTime();
     return Math.min(100, Math.max(0, (elapsed / totalDuration) * 100));
   };
 
-  const getLockPeriodDisplay = () => {
-    const riskLevel = Math.round((position.riskScore / 10000) * 100);
-    if (riskLevel <= 33) return '15 days';
-    if (riskLevel <= 66) return '60 days';
-    return '120 days';
+  const getPayoutFrequencyDisplay = () => {
+    const days = position.payoutFrequency;
+    if (days === 7) return 'Weekly';
+    if (days === 14) return 'Bi-weekly';
+    if (days === 30) return 'Monthly';
+    return `Every ${days} days`;
   };
 
   const handleWithdraw = () => {
@@ -169,26 +167,20 @@ const NFTPositionCard = ({ position }: NFTPositionCardProps) => {
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center space-x-2">
-              {isMatured() ? (
-                <Unlock className="w-4 h-4 text-green-600" />
-              ) : (
-                <Lock className="w-4 h-4 text-gray-600" />
-              )}
+              <Calendar className="w-4 h-4 text-blue-600" />
               <span className="text-sm font-medium">
-                {isMatured() ? 'Matured' : `${getDaysRemaining()} days remaining`}
+                Next payout in {getDaysUntilNextPayout()} days
               </span>
             </div>
             <span className="text-xs text-muted-foreground">
-              Maturity: {formatDate(position.maturityDate)}
+              {formatDate(position.nextPayoutDate)}
             </span>
           </div>
           
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div 
-              className={`h-2 rounded-full transition-all duration-500 ${
-                isMatured() ? 'bg-green-500' : 'bg-blue-500'
-              }`}
-              style={{ width: `${getProgressPercentage()}%` }}
+              className="h-2 rounded-full transition-all duration-500 bg-blue-500"
+              style={{ width: `${getPayoutProgress()}%` }}
             />
           </div>
         </div>
@@ -205,8 +197,8 @@ const NFTPositionCard = ({ position }: NFTPositionCardProps) => {
             </span>
           </div>
           <div className="flex justify-between">
-            <span className="text-muted-foreground">Lock Period:</span>
-            <span className="font-medium">{getLockPeriodDisplay()}</span>
+            <span className="text-muted-foreground">Payout Freq:</span>
+            <span className="font-medium">{getPayoutFrequencyDisplay()}</span>
           </div>
         </div>
 
@@ -215,7 +207,6 @@ const NFTPositionCard = ({ position }: NFTPositionCardProps) => {
             variant="outline" 
             size="sm" 
             className="flex-1"
-            disabled={!isMatured()}
           >
             Use in DeFi
           </Button>
@@ -225,7 +216,7 @@ const NFTPositionCard = ({ position }: NFTPositionCardProps) => {
             onClick={handleWithdraw}
             disabled={position.status !== 'active'}
           >
-            {isMatured() ? 'Withdraw' : 'Early Withdraw'}
+            Withdraw
           </Button>
         </div>
       </CardContent>

@@ -55,13 +55,24 @@ export const riskScoreToCategory = (riskScore: number): 'Conservative' | 'Modera
 };
 
 /**
- * Get lock period based on risk score (updated to minimum 15 days)
+ * Calculate next payout date based on payout frequency
  */
-export const getLockPeriodFromRisk = (riskScore: number): number => {
-  const level = riskScoreToLevel(riskScore);
-  if (level <= 33) return 15; // 15 days for low risk (was 30)
-  if (level <= 66) return 60; // 60 days for moderate risk (was 90)
-  return 120; // 120 days for high risk (was 180)
+export const calculateNextPayoutDate = (
+  createdAt: Date, 
+  payoutFrequency: number = 7
+): Date => {
+  const now = new Date();
+  const daysSinceCreation = Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
+  const payoutCycles = Math.floor(daysSinceCreation / payoutFrequency) + 1;
+  
+  return new Date(createdAt.getTime() + payoutCycles * payoutFrequency * 24 * 60 * 60 * 1000);
+};
+
+/**
+ * Get default payout frequency (7 days for weekly)
+ */
+export const getDefaultPayoutFrequency = (): number => {
+  return 7; // Weekly payouts
 };
 
 /**

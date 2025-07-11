@@ -6,7 +6,8 @@ import {
   calculatePayoutPriority, 
   riskScoreToLevel, 
   riskScoreToCategory, 
-  getLockPeriodFromRisk,
+  calculateNextPayoutDate,
+  getDefaultPayoutFrequency,
   DEFAULT_POOL_SETTINGS
 } from '@/utils/riskCalculations';
 
@@ -105,7 +106,8 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     const payoutPriority = calculatePayoutPriority(riskScore);
     const riskLevel = riskScoreToLevel(riskScore);
     const riskCategory = riskScoreToCategory(riskScore);
-    const lockPeriod = getLockPeriodFromRisk(riskScore);
+    const payoutFrequency = getDefaultPayoutFrequency();
+    const createdAt = new Date();
 
     const newPosition: StakingPosition = {
       id: positionId,
@@ -126,9 +128,9 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
       riskLevel,
       riskCategory,
       
-      lockPeriod,
-      createdAt: new Date(),
-      maturityDate: new Date(Date.now() + lockPeriod * 24 * 60 * 60 * 1000),
+      createdAt,
+      nextPayoutDate: calculateNextPayoutDate(createdAt, payoutFrequency),
+      payoutFrequency,
       status: 'active',
       
       // New tracking fields
