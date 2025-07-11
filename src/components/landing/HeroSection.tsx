@@ -53,7 +53,7 @@ const HeroSection = () => {
             <TrendingUp className="w-8 h-8 text-blue-600 mb-3" />
             <h3 className="font-medium mb-2">Best Market Yields</h3>
             <p className="text-sm text-muted-foreground">
-              AI-optimized across top DeFi and CeFi protocols.
+              DeFi protocols and best of CeFi
             </p>
           </div>
           
