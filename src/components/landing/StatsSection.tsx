@@ -80,37 +80,6 @@ const StatsSection = () => {
           })}
         </div>
 
-        {/* Protocol Allocations */}
-        <Card className="border-border bg-card/50">
-          <CardContent className="p-6 sm:p-8">
-            <h3 className="text-xl font-medium text-center mb-6">
-              Current Protocol Allocations
-            </h3>
-            <div className="space-y-4">
-              {protocols.map((protocol, index) => (
-                <div key={index} className="flex items-center justify-between p-4 rounded-lg bg-background/50">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                      <span className="text-sm font-medium text-primary">
-                        {protocol.name[0]}
-                      </span>
-                    </div>
-                    <div>
-                      <div className="font-medium">{protocol.name}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {protocol.allocation} allocation
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="font-medium text-green-600">{protocol.apy}</div>
-                    <div className="text-sm text-muted-foreground">Current APY</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </section>
   );
