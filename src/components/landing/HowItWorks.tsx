@@ -19,7 +19,7 @@ const HowItWorks = () => {
     {
       icon: Target,
       title: "Choose Risk",
-      description: "Low/ Moderate/ Agressive",
+      description: "Conservative / Balanced / Agressive",
       detail: "Control your risk/return ratio yourself"
     },
     {
