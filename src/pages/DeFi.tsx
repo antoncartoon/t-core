@@ -4,6 +4,7 @@ import Header from '@/components/Header';
 import PendleDepositCard from '@/components/PendleDepositCard';
 import PTYTBalance from '@/components/PTYTBalance';
 import FutureYieldChart from '@/components/FutureYieldChart';
+import AAVEIntegrationCard from '@/components/AAVEIntegrationCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, Target, Clock } from 'lucide-react';
 
@@ -16,7 +17,7 @@ const DeFi = () => {
         <div className="mb-12">
           <h1 className="text-3xl font-light mb-2">DeFi Yield Strategies</h1>
           <p className="text-muted-foreground">
-            Maximize your sttkchUSD yield with Pendle's Principal and Yield Token splitting
+            Maximize your TDD yields with advanced DeFi integrations and leverage your NFT positions
           </p>
         </div>
 
@@ -53,8 +54,13 @@ const DeFi = () => {
           <FutureYieldChart />
         </div>
 
-        {/* PT/YT Balances */}
-        <PTYTBalance />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
+          {/* AAVE Integration */}
+          <AAVEIntegrationCard />
+          
+          {/* PT/YT Balances */}
+          <PTYTBalance />
+        </div>
       </main>
     </div>
   );

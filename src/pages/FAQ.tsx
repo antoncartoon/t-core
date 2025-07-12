@@ -6,49 +6,64 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 const FAQ = () => {
   const faqData = [
     {
-      id: 'what-is-tolkachyield',
-      question: 'What is Tolkachyield Finance?',
-      answer: 'Tolkachyield Finance is a DeFi platform that allows you to deposit stablecoins (USDT/USDC), mint tkchUSD tokens, and earn yield through optimized DeFi strategies. Your funds are automatically deployed to various protocols to maximize returns.'
+      id: 'what-is-tcore',
+      question: 'What is T-Core Finance?',
+      answer: 'T-Core Finance is an advanced DeFi yield optimization platform that allows you to deposit TDD tokens into NFT staking positions across 100 different risk tiers. Each risk level (1-100) offers different APY rates based on a non-linear yield curve, allowing precise risk-reward customization.'
     },
     {
-      id: 'how-minting-works',
-      question: 'How does minting tkchUSD work?',
-      answer: 'When you deposit stablecoins, you receive tkchUSD tokens at a 1:1 ratio. These tokens represent your claim on the underlying assets. Your original stablecoins are then deployed to DeFi strategies to generate yield.'
+      id: 'how-nft-staking-works',
+      question: 'How do NFT staking positions work?',
+      answer: 'When you create a staking position, you receive an NFT that represents your stake in specific risk tiers. You can choose single ticks (like Risk Level 95) or ranges (like Risk Level 20-40). Each NFT contains your TDD tokens and earns yield based on the risk profile you selected.'
     },
     {
-      id: 'staking-strategies',
-      question: 'What are the different staking strategies?',
-      answer: 'We offer three strategies: Conservative (0-33% risk, 2-6% APY) focuses on blue-chip protocols, Moderate (34-66% risk, 6-15% APY) uses diversified yield farming, and Aggressive (67-100% risk, 15-25% APY) targets high-yield opportunities with elevated risk.'
+      id: 'risk-tier-system',
+      question: 'How does the 100-level risk tier system work?',
+      answer: 'Risk levels 1-3 are "Safe" (guaranteed 5.016% APY), levels 4-24 are "Conservative", levels 25-80 are "Balanced", and levels 81-100 are "T-Core HERO" with the highest yields. The APY follows a non-linear curve (k=2), meaning higher risk levels offer exponentially higher rewards.'
     },
     {
-      id: 'risks-involved',
-      question: 'What are the risks involved?',
-      answer: 'DeFi involves smart contract risk, protocol risk, and market volatility. Higher yield strategies carry proportionally higher risks. We recommend starting with conservative strategies and only investing what you can afford to lose.'
+      id: 'yield-curve-explanation',
+      question: 'What is the non-linear yield curve (k=2)?',
+      answer: 'The yield curve uses a power function where APY = Base_APY × (Risk_Level/100)^k, with k=2. This means Risk Level 50 doesn\'t give 50% of max yield, but 25% (50²/100² = 0.25). Risk Level 90 gives 81% of max yield. This creates exponential reward growth for taking higher risks.'
     },
     {
-      id: 'withdrawal-process',
-      question: 'How do I withdraw my funds?',
-      answer: 'You can unstake your tkchUSD tokens at any time. The withdrawal process typically takes 24-48 hours as we need to withdraw funds from underlying DeFi protocols. There may be small fees depending on network congestion.'
+      id: 'tdd-token-explanation',
+      question: 'What are TDD tokens?',
+      answer: 'TDD (T-Core Diversified Deposit) tokens are the main utility tokens of T-Core Finance. You deposit stablecoins to mint TDD tokens, which you then stake in NFT positions across different risk tiers. TDD tokens represent your proportional share of the protocol\'s yield-generating activities.'
     },
     {
-      id: 'supported-tokens',
-      question: 'Which tokens are supported?',
-      answer: 'Currently, we support USDT and USDC for deposits. We plan to add more stablecoins like DAI and FRAX in future updates based on community demand.'
+      id: 'risk-categories',
+      question: 'What are the different risk categories?',
+      answer: 'Safe (Levels 1-3): Guaranteed 5.016% APY with capital protection. Conservative (4-24): Lower risk DeFi strategies. Balanced (25-80): Diversified medium-risk protocols. T-Core HERO (81-100): Highest risk, highest reward strategies with protocol insurance backing.'
     },
     {
-      id: 'fees-structure',
-      question: 'What are the fees?',
-      answer: 'We charge a small management fee (typically 1-2% annually) and a performance fee (10-15% of profits) to sustain the platform and development. Gas fees for blockchain transactions are separate and depend on network congestion.'
+      id: 'protocol-insurance',
+      question: 'How does T-Core protect my investment?',
+      answer: 'T-Core uses a unique self-insurance model where the protocol itself stakes in Risk Level 100 (highest risk). Protocol fees and treasury funds go to the riskiest tier first, creating a buffer that absorbs losses before affecting user funds. The protocol takes the hit first, users second.'
     },
     {
-      id: 'self-insurance-pool',
-      question: 'How does the Self-Insurance Pool work?',
-      answer: 'Self-insurance pool. You are protected by yield generated. Protocol fees (0.5% of all transactions) automatically flow to Level 100 risk tier, creating a community-funded insurance buffer. This pool protects all stakers by absorbing losses before they affect user funds. The more activity on the protocol, the stronger the protection becomes.'
+      id: 'liquidity-distribution',
+      question: 'How is liquidity distributed across risk levels?',
+      answer: 'Each risk level has its own liquidity pool. When you stake in a range (e.g., 20-40), your TDD is split equally across those 21 risk levels. The protocol calculates weighted average APY based on your distribution and the theoretical APY of each individual risk level.'
     },
     {
-      id: 'security-measures',
-      question: 'How secure is the platform?',
-      answer: 'We use audited smart contracts, multi-signature wallets, and partner only with established DeFi protocols. However, DeFi always carries inherent risks, and we recommend users do their own research.'
+      id: 'position-management',
+      question: 'Can I modify my NFT positions after creation?',
+      answer: 'Once created, NFT positions have fixed risk ranges, but you can trade them, sell them, or use them as collateral for borrowing on AAVE. You can also create multiple positions with different risk profiles to diversify your strategy.'
+    },
+    {
+      id: 'aave-integration',
+      question: 'How does the AAVE integration work?',
+      answer: 'You can use your T-Core NFT staking positions as collateral to borrow assets on AAVE. The borrowing capacity is typically 75% of your NFT position value (Loan-to-Value ratio). This allows you to leverage your T-Core positions while maintaining your yield exposure.'
+    },
+    {
+      id: 'fees-and-rewards',
+      question: 'What are the fees and how are rewards distributed?',
+      answer: 'T-Core charges a 0.5% protocol fee on all transactions, which flows directly to Risk Level 100 to strengthen the insurance pool. There are no management fees. Rewards are distributed based on your risk tier selection and the amount of TDD staked in each level.'
+    },
+    {
+      id: 'getting-started',
+      question: 'How do I get started with T-Core Finance?',
+      answer: 'First, deposit stablecoins (USDT/USDC) to mint TDD tokens. Then choose your risk strategy: start with Safe levels (1-3) for guaranteed returns, or explore higher risk levels for potentially higher yields. Create NFT positions for your chosen risk tiers and start earning immediately.'
     }
   ];
 
@@ -60,7 +75,7 @@ const FAQ = () => {
         <div className="mb-12 text-center">
           <h1 className="text-3xl font-light mb-4">Frequently Asked Questions</h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Everything you need to know about Tolkachyield Finance and DeFi yield strategies
+            Everything you need to know about T-Core Finance, NFT staking positions, and our 100-level risk tier system
           </p>
         </div>
 
