@@ -4,9 +4,9 @@ import { RiskRange, RiskTick, LiquidityPosition, RangeCalculationResult } from '
 export const RISK_SCALE_MIN = 1;
 export const RISK_SCALE_MAX = 100;
 export const T_BILL_RATE = 0.05; // 5% T-Bills (example)
-export const PREMIUM_RATE = 0.20; // +20% premium
-export const MIN_GUARANTEED_APY = T_BILL_RATE + PREMIUM_RATE; // T-Bill + 20%
-export const MAX_APY = 0.25; // 25% maximum
+export const PREMIUM_RATE = 0.20; // +20% premium  
+export const MIN_GUARANTEED_APY = T_BILL_RATE + PREMIUM_RATE; // T-Bill + 20% = 25% for Safe tier
+export const MAX_APY = 0.35; // 35% maximum for T-Core HERO tier
 
 /**
  * Calculate risk level APR using the exact formula from the document:

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, Shield, AlertTriangle, Coins, Target, Zap, Settings, Eye, ArrowUp, ArrowDown } from 'lucide-react';
+import { TrendingUp, Shield, AlertTriangle, Coins, Target, Zap, Settings, Eye, ArrowUp, ArrowDown, Building, Scale, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,11 +25,12 @@ const RiskRangeVisualization = ({ selectedRange, centerPoint }) => {
     <div className="space-y-4">
       {/* Risk Band */}
       <div className="relative h-16 bg-muted/30 rounded-lg overflow-hidden">
-        {/* Color zones */}
+        {/* Color zones - 4 segments */}
         <div className="absolute inset-0 flex">
-          <div className="w-[15%] bg-green-500/20" />
-          <div className="w-[55%] bg-yellow-500/20" />
-          <div className="w-[30%] bg-orange-500/20" />
+          <div className="w-[3%] bg-blue-500/20" />
+          <div className="w-[21%] bg-green-500/20" />
+          <div className="w-[56%] bg-yellow-500/20" />
+          <div className="w-[20%] bg-purple-500/20" />
         </div>
         
         {/* Selected range highlight */}
@@ -54,9 +55,10 @@ const RiskRangeVisualization = ({ selectedRange, centerPoint }) => {
       
       {/* Labels */}
       <div className="flex justify-between text-xs text-muted-foreground">
-        <span className="text-green-600 font-medium">Conservative (1-15)</span>
-        <span className="text-yellow-600 font-medium">Balanced (15-70)</span>
-        <span className="text-orange-600 font-medium">Aggressive (70-100)</span>
+        <span className="text-blue-600 font-medium">Safe (1-3)</span>
+        <span className="text-green-600 font-medium">Conservative (4-24)</span>
+        <span className="text-yellow-600 font-medium">Balanced (25-80)</span>
+        <span className="text-purple-600 font-medium">T-Core HERO (81-100)</span>
       </div>
     </div>
   );
@@ -93,11 +95,48 @@ const StakingCard = () => {
   // Mock historical APY data (28-day average)
   const historicalAPY = 0.12; // 12% historical average
 
-  // Risk presets (same as landing page)
+  // Risk presets - 4 levels with enhanced marketing
   const presets = [
-    { name: 'Conservative', center: 8, width: 14, color: 'green', range: [1, 15] },
-    { name: 'Balanced', center: 42.5, width: 55, color: 'yellow', range: [15, 70] },
-    { name: 'Aggressive', center: 85, width: 30, color: 'orange', range: [70, 100] }
+    { 
+      name: 'Safe', 
+      center: 2, 
+      width: 2, 
+      color: 'blue', 
+      range: [1, 3],
+      icon: Shield,
+      description: 'T-Bill +20% guaranteed, zero loss risk',
+      tagline: 'Guaranteed Protection'
+    },
+    { 
+      name: 'Conservative', 
+      center: 14, 
+      width: 20, 
+      color: 'green', 
+      range: [4, 24],
+      icon: Building,
+      description: 'Stable yield, minimal drawdown risk',
+      tagline: 'Stable Growth'
+    },
+    { 
+      name: 'Balanced', 
+      center: 52.5, 
+      width: 55, 
+      color: 'yellow', 
+      range: [25, 80],
+      icon: Scale,
+      description: 'Optimal risk/reward, diversified exposure',
+      tagline: 'Balanced Returns'
+    },
+    { 
+      name: 'T-Core HERO', 
+      center: 90.5, 
+      width: 19, 
+      color: 'purple', 
+      range: [81, 100],
+      icon: Trophy,
+      description: 'Be the pool\'s insurance - max yield for heroes!',
+      tagline: 'Pool Insurance Provider'
+    }
   ];
 
   const handlePresetClick = (preset) => {
@@ -106,15 +145,17 @@ const StakingCard = () => {
   };
   
   const getRiskLabel = (avgRisk) => {
-    if (avgRisk < 15) return 'Conservative';
-    if (avgRisk < 70) return 'Balanced';
-    return 'Aggressive';
+    if (avgRisk <= 3) return 'Safe';
+    if (avgRisk <= 24) return 'Conservative';
+    if (avgRisk <= 80) return 'Balanced';
+    return 'T-Core HERO';
   };
 
   const getRiskColorClass = (avgRisk) => {
-    if (avgRisk < 15) return 'text-green-600';
-    if (avgRisk < 70) return 'text-yellow-600';
-    return 'text-orange-600';
+    if (avgRisk <= 3) return 'text-blue-600';
+    if (avgRisk <= 24) return 'text-green-600';
+    if (avgRisk <= 80) return 'text-yellow-600';
+    return 'text-purple-600';
   };
 
   const avgRisk = (selectedRange[0] + selectedRange[1]) / 2;
@@ -254,16 +295,19 @@ const StakingCard = () => {
               centerPoint={centerPoint}
             />
             
-            {/* Quick Mode - Presets */}
+            {/* Quick Mode - Enhanced Presets */}
             {isQuickMode && (
               <div className="mt-4 grid grid-cols-1 gap-3">
                 {presets.map((preset) => {
                   const isActive = Math.abs(centerPoint - preset.center) < 5 && Math.abs(rangeWidth - preset.width) < 5;
                   const colorClasses = {
+                    blue: 'border-blue-500 bg-blue-50 text-blue-700 hover:bg-blue-100 dark:bg-blue-950/20 dark:text-blue-200',
                     green: 'border-green-500 bg-green-50 text-green-700 hover:bg-green-100 dark:bg-green-950/20 dark:text-green-200',
                     yellow: 'border-yellow-500 bg-yellow-50 text-yellow-700 hover:bg-yellow-100 dark:bg-yellow-950/20 dark:text-yellow-200',
-                    orange: 'border-orange-500 bg-orange-50 text-orange-700 hover:bg-orange-100 dark:bg-orange-950/20 dark:text-orange-200'
+                    purple: 'border-purple-500 bg-purple-50 text-purple-700 hover:bg-purple-100 dark:bg-purple-950/20 dark:text-purple-200'
                   };
+                  
+                  const IconComponent = preset.icon;
                   
                   return (
                     <Button
@@ -271,14 +315,27 @@ const StakingCard = () => {
                       variant={isActive ? "default" : "outline"}
                       size="lg"
                       onClick={() => handlePresetClick(preset)}
-                      className={`p-4 h-auto justify-between ${
+                      className={`p-4 h-auto justify-between transition-all duration-300 hover:shadow-md ${
                         !isActive ? colorClasses[preset.color as keyof typeof colorClasses] : ''
                       }`}
                     >
-                      <div className="text-left">
-                        <div className="font-medium">{preset.name}</div>
-                        <div className="text-xs opacity-75">
-                          Range {preset.range[0]}-{preset.range[1]}
+                      <div className="flex items-center space-x-3">
+                        <IconComponent className="w-5 h-5" />
+                        <div className="text-left">
+                          <div className="font-medium flex items-center space-x-2">
+                            <span>{preset.name}</span>
+                            {preset.name === 'T-Core HERO' && (
+                              <span className="text-xs bg-gradient-to-r from-purple-600 to-gold-600 bg-clip-text text-transparent font-bold">
+                                🦸
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-xs opacity-75 font-medium">
+                            {preset.tagline}
+                          </div>
+                          <div className="text-xs opacity-60">
+                            Range {preset.range[0]}-{preset.range[1]} • {preset.description}
+                          </div>
                         </div>
                       </div>
                       <div className="text-right">

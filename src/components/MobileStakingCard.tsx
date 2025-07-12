@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { TrendingUp, Shield, AlertTriangle, Trophy, Target, Zap, Settings } from 'lucide-react';
+import { TrendingUp, Shield, AlertTriangle, Trophy, Target, Zap, Settings, Building, Scale } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,11 +19,12 @@ const MobileRiskVisualization = ({ selectedRange, centerPoint }) => {
     <div className="space-y-3">
       {/* Compact Risk Band */}
       <div className="relative h-8 bg-muted/30 rounded-lg overflow-hidden">
-        {/* Color zones */}
+        {/* Color zones - 4 segments */}
         <div className="absolute inset-0 flex">
-          <div className="w-[15%] bg-green-500/20" />
-          <div className="w-[55%] bg-yellow-500/20" />
-          <div className="w-[30%] bg-orange-500/20" />
+          <div className="w-[3%] bg-blue-500/20" />
+          <div className="w-[21%] bg-green-500/20" />
+          <div className="w-[56%] bg-yellow-500/20" />
+          <div className="w-[20%] bg-purple-500/20" />
         </div>
         
         {/* Selected range highlight */}
@@ -44,9 +45,10 @@ const MobileRiskVisualization = ({ selectedRange, centerPoint }) => {
       
       {/* Compact Labels */}
       <div className="flex justify-between text-xs text-muted-foreground">
-        <span className="text-green-600 font-medium">Low</span>
-        <span className="text-yellow-600 font-medium">Med</span>
-        <span className="text-orange-600 font-medium">High</span>
+        <span className="text-blue-600 font-medium">Safe</span>
+        <span className="text-green-600 font-medium">Cons</span>
+        <span className="text-yellow-600 font-medium">Bal</span>
+        <span className="text-purple-600 font-medium">HERO</span>
       </div>
     </div>
   );
@@ -79,11 +81,48 @@ const MobileStakingCard = () => {
   const riskTicks = generateInitialRiskTicks();
   const analysis = stakeAmount > 0 ? analyzeRiskRange(stakeAmount, riskRange, riskTicks) : null;
 
-  // Risk presets (same as main component)
+  // Risk presets - 4 levels with enhanced marketing
   const presets = [
-    { name: 'Conservative', center: 8, width: 14, color: 'green', range: [1, 15] },
-    { name: 'Balanced', center: 42.5, width: 55, color: 'yellow', range: [15, 70] },
-    { name: 'Aggressive', center: 85, width: 30, color: 'orange', range: [70, 100] }
+    { 
+      name: 'Safe', 
+      center: 2, 
+      width: 2, 
+      color: 'blue', 
+      range: [1, 3],
+      icon: Shield,
+      description: 'T-Bill +20%',
+      tagline: 'Zero Risk'
+    },
+    { 
+      name: 'Conservative', 
+      center: 14, 
+      width: 20, 
+      color: 'green', 
+      range: [4, 24],
+      icon: Building,
+      description: 'Stable yield',
+      tagline: 'Low Risk'
+    },
+    { 
+      name: 'Balanced', 
+      center: 52.5, 
+      width: 55, 
+      color: 'yellow', 
+      range: [25, 80],
+      icon: Scale,
+      description: 'Risk/reward',
+      tagline: 'Med Risk'
+    },
+    { 
+      name: 'T-Core HERO', 
+      center: 90.5, 
+      width: 19, 
+      color: 'purple', 
+      range: [81, 100],
+      icon: Trophy,
+      description: 'Pool insurance',
+      tagline: 'Max Yield 🦸'
+    }
   ];
 
   const handlePresetClick = (preset) => {
@@ -92,15 +131,17 @@ const MobileStakingCard = () => {
   };
   
   const getRiskLabel = (avgRisk) => {
-    if (avgRisk < 15) return 'Conservative';
-    if (avgRisk < 70) return 'Balanced';
-    return 'Aggressive';
+    if (avgRisk <= 3) return 'Safe';
+    if (avgRisk <= 24) return 'Conservative';
+    if (avgRisk <= 80) return 'Balanced';
+    return 'T-Core HERO';
   };
 
   const getRiskColorClass = (avgRisk) => {
-    if (avgRisk < 15) return 'text-green-600';
-    if (avgRisk < 70) return 'text-yellow-600';
-    return 'text-orange-600';
+    if (avgRisk <= 3) return 'text-blue-600';
+    if (avgRisk <= 24) return 'text-green-600';
+    if (avgRisk <= 80) return 'text-yellow-600';
+    return 'text-purple-600';
   };
 
   const avgRisk = (selectedRange[0] + selectedRange[1]) / 2;
@@ -238,16 +279,19 @@ const MobileStakingCard = () => {
             centerPoint={centerPoint}
           />
           
-          {/* Quick Mode - Presets */}
+          {/* Quick Mode - Enhanced Presets */}
           {isQuickMode && (
-            <div className="grid grid-cols-1 gap-2">
+            <div className="grid grid-cols-2 gap-2">
               {presets.map((preset) => {
                 const isActive = Math.abs(centerPoint - preset.center) < 5 && Math.abs(rangeWidth - preset.width) < 5;
                 const colorClasses = {
+                  blue: 'border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-950/20 dark:text-blue-200',
                   green: 'border-green-500 bg-green-50 text-green-700 dark:bg-green-950/20 dark:text-green-200',
                   yellow: 'border-yellow-500 bg-yellow-50 text-yellow-700 dark:bg-yellow-950/20 dark:text-yellow-200',
-                  orange: 'border-orange-500 bg-orange-50 text-orange-700 dark:bg-orange-950/20 dark:text-orange-200'
+                  purple: 'border-purple-500 bg-purple-50 text-purple-700 dark:bg-purple-950/20 dark:text-purple-200'
                 };
+                
+                const IconComponent = preset.icon;
                 
                 return (
                   <Button
@@ -255,18 +299,22 @@ const MobileStakingCard = () => {
                     variant={isActive ? "default" : "outline"}
                     size="sm"
                     onClick={() => handlePresetClick(preset)}
-                    className={`h-auto p-3 justify-between text-xs ${
+                    className={`h-auto p-3 flex-col text-xs transition-all duration-300 ${
                       !isActive ? colorClasses[preset.color as keyof typeof colorClasses] : ''
                     }`}
                   >
-                    <div className="text-left">
-                      <div className="font-medium">{preset.name}</div>
-                      <div className="text-xs opacity-75">
-                        Range {preset.range[0]}-{preset.range[1]}
-                      </div>
+                    <div className="flex items-center space-x-1 mb-1">
+                      <IconComponent className="w-3 h-3" />
+                      <span className="font-medium text-xs">{preset.name}</span>
                     </div>
-                    <div className="text-right">
-                      <div className="text-sm font-medium">
+                    <div className="text-center">
+                      <div className="text-xs opacity-75 font-medium">
+                        {preset.tagline}
+                      </div>
+                      <div className="text-xs opacity-60">
+                        {preset.range[0]}-{preset.range[1]}
+                      </div>
+                      <div className="text-xs font-medium mt-1">
                         {analysis ? `${(analysis.estimatedAPR * 100).toFixed(1)}%` : '~12%'}
                       </div>
                     </div>
