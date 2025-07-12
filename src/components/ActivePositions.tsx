@@ -1,12 +1,17 @@
-import React from 'react';
-import { Trophy, Target, Users, TrendingUp, Clock } from 'lucide-react';
+import React, { useState } from 'react';
+import { Trophy, Target, Users, TrendingUp, Clock, Grid, List, ChevronDown, ChevronUp } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useWallet } from '@/contexts/WalletContext';
 import { useDistribution } from '@/contexts/DistributionContext';
+import CompactPositionCard from './CompactPositionCard';
 import NFTPositionCard from './NFTPositionCard';
 
 const ActivePositions = () => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [viewMode, setViewMode] = useState<'compact' | 'detailed'>('compact');
   const { stakingPositions, getTotalStakedValue } = useWallet();
   const { getTotalUnclaimedYield, getFormattedTimeToNext } = useDistribution();
 
@@ -16,52 +21,75 @@ const ActivePositions = () => {
   const timeToNext = getFormattedTimeToNext();
 
   if (activePositions.length === 0) {
-    return (
-      <Card>
-        <CardContent className="p-8 text-center">
-          <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-          <h3 className="text-lg font-semibold mb-2">No Active Positions</h3>
-          <p className="text-muted-foreground">
-            Create your first liquidity position above to start earning yield.
-          </p>
-        </CardContent>
-      </Card>
-    );
+    return null; // Don't show anything when no positions exist
   }
 
   const avgAPY = activePositions.reduce((sum, p) => sum + p.desiredAPY, 0) / activePositions.length;
   const totalEarned = activePositions.reduce((sum, p) => sum + p.earnedAmount, 0);
 
   return (
-    <div className="space-y-6">
-      {/* Overview Stats */}
+    <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Trophy className="w-5 h-5 text-primary" />
-            <span>Active Positions Overview</span>
-            <Badge variant="secondary" className="ml-auto">
-              {activePositions.length} Positions
-            </Badge>
-          </CardTitle>
+          <div className="flex items-center justify-between">
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" className="flex items-center space-x-2 p-0">
+                <Trophy className="w-5 h-5 text-primary" />
+                <span className="text-lg font-semibold">Active Positions</span>
+                <Badge variant="secondary">
+                  {activePositions.length}
+                </Badge>
+                {isExpanded ? (
+                  <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                )}
+              </Button>
+            </CollapsibleTrigger>
+            
+            {isExpanded && (
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant={viewMode === 'compact' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setViewMode('compact')}
+                  className="text-xs"
+                >
+                  <Grid className="w-3 h-3 mr-1" />
+                  Compact
+                </Button>
+                <Button
+                  variant={viewMode === 'detailed' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setViewMode('detailed')}
+                  className="text-xs"
+                >
+                  <List className="w-3 h-3 mr-1" />
+                  Detailed
+                </Button>
+              </div>
+            )}
+          </div>
         </CardHeader>
+        
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-primary">${totalStaked.toLocaleString()}</p>
-              <p className="text-sm text-muted-foreground">Total Staked</p>
+          {/* Quick Overview Stats */}
+          <div className="grid grid-cols-4 gap-4 text-center">
+            <div>
+              <p className="text-lg font-bold text-primary">${totalStaked.toLocaleString()}</p>
+              <p className="text-xs text-muted-foreground">Total Staked</p>
             </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-green-600">${totalEarned.toFixed(2)}</p>
-              <p className="text-sm text-muted-foreground">Total Earned</p>
+            <div>
+              <p className="text-lg font-bold text-green-600">${totalEarned.toFixed(2)}</p>
+              <p className="text-xs text-muted-foreground">Total Earned</p>
             </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-blue-600">{(avgAPY * 100).toFixed(1)}%</p>
-              <p className="text-sm text-muted-foreground">Avg APY</p>
+            <div>
+              <p className="text-lg font-bold text-blue-600">{(avgAPY * 100).toFixed(1)}%</p>
+              <p className="text-xs text-muted-foreground">Avg APY</p>
             </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-orange-600">{totalUnclaimed.toFixed(4)}</p>
-              <p className="text-sm text-muted-foreground">Unclaimed TDD</p>
+            <div>
+              <p className="text-lg font-bold text-orange-600">{totalUnclaimed.toFixed(4)}</p>
+              <p className="text-xs text-muted-foreground">Unclaimed TDD</p>
             </div>
           </div>
 
@@ -83,13 +111,22 @@ const ActivePositions = () => {
         </CardContent>
       </Card>
 
-      {/* Positions Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {activePositions.map((position) => (
-          <NFTPositionCard key={position.id} position={position} />
-        ))}
-      </div>
-    </div>
+      <CollapsibleContent className="space-y-4">
+        {viewMode === 'compact' ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {activePositions.map((position) => (
+              <CompactPositionCard key={position.id} position={position} />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {activePositions.map((position) => (
+              <NFTPositionCard key={position.id} position={position} />
+            ))}
+          </div>
+        )}
+      </CollapsibleContent>
+    </Collapsible>
   );
 };
 

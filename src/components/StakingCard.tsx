@@ -176,9 +176,6 @@ const StakingCard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Active Positions Section */}
-      <ActivePositions />
-      
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Main Staking Interface */}
       <Card>
@@ -451,6 +448,9 @@ const StakingCard = () => {
         </CardContent>
       </Card>
       </div>
+      
+      {/* Active Positions Section - moved to bottom */}
+      <ActivePositions />
     </div>
   );
 };
