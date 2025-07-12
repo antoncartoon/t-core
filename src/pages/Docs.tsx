@@ -44,7 +44,7 @@ const Docs = () => {
             Documentation
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl">
-            Comprehensive guides and API reference to help you get started with Tolkachyield platform
+            Comprehensive guides and API reference to help you get started with T-Core platform
           </p>
         </div>
 
@@ -123,7 +123,7 @@ const Docs = () => {
                         <Badge variant="secondary">Coming Soon</Badge>
                       </CardTitle>
                       <CardDescription>
-                        Learn about Tolkachyield's core features and capabilities
+                        Learn about T-Core's core features and capabilities
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">

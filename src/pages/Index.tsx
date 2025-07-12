@@ -38,7 +38,7 @@ const Index = () => {
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
         <div className="mb-8 sm:mb-16 text-center">
           <h1 className="text-2xl sm:text-4xl font-light text-foreground mb-3 sm:mb-4 tracking-tight">
-            Tolkachyield Finance
+            T-Core Finance
           </h1>
           <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed px-2 sm:px-4">
             Stake your stablecoins, mint tkchUSD, and earn yield through optimized DeFi strategies
