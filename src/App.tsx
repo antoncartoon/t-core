@@ -4,6 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { WalletProvider } from "@/contexts/WalletContext";
+import { RedeemProvider } from "@/contexts/RedeemContext";
+import { DistributionProvider } from "@/contexts/DistributionContext";
 import Landing from "./pages/Landing";
 import App from "./pages/App";
 import Portfolio from "./pages/Portfolio";
@@ -20,7 +22,9 @@ const AppRouter = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <WalletProvider>
-        <RiskRangeProvider>
+        <RedeemProvider>
+          <DistributionProvider>
+            <RiskRangeProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
@@ -35,7 +39,9 @@ const AppRouter = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
-        </RiskRangeProvider>
+            </RiskRangeProvider>
+          </DistributionProvider>
+        </RedeemProvider>
       </WalletProvider>
     </TooltipProvider>
   </QueryClientProvider>
