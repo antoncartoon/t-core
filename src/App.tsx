@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { WalletProvider } from "@/contexts/WalletContext";
 import { RedeemProvider } from "@/contexts/RedeemContext";
 import { DistributionProvider } from "@/contexts/DistributionContext";
+import PWAInstallPrompt from "@/components/PWAInstallPrompt";
+import OfflineIndicator from "@/components/OfflineIndicator";
 import Landing from "./pages/Landing";
 import App from "./pages/App";
 import Portfolio from "./pages/Portfolio";
@@ -27,6 +29,8 @@ const AppRouter = () => (
             <RiskRangeProvider>
           <Toaster />
           <Sonner />
+          <PWAInstallPrompt />
+          <OfflineIndicator />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Landing />} />
