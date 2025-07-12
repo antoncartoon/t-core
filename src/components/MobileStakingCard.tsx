@@ -315,7 +315,7 @@ const MobileStakingCard = () => {
                         {preset.range[0]}-{preset.range[1]}
                       </div>
                       <div className="text-xs font-medium mt-1">
-                        {analysis ? `${(analysis.estimatedAPR * 100).toFixed(1)}%` : '~12%'}
+                        {preset.name === 'Safe' ? '5.0%' : analysis ? `${(analysis.estimatedAPR * 100).toFixed(1)}%` : '~12%'}
                       </div>
                     </div>
                   </Button>

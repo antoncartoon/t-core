@@ -340,7 +340,7 @@ const StakingCard = () => {
                       </div>
                       <div className="text-right">
                         <div className="text-sm font-medium">
-                          {analysis ? `${(analysis.estimatedAPR * 100).toFixed(1)}%` : '~12%'}
+                          {preset.name === 'Safe' ? '5.0%' : analysis ? `${(analysis.estimatedAPR * 100).toFixed(1)}%` : '~12%'}
                         </div>
                         <div className="text-xs opacity-75">Est. APY</div>
                       </div>
