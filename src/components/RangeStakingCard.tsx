@@ -27,7 +27,7 @@ const RangeStakingCard = () => {
     protocolState.riskTicks
   ) : null;
 
-  // Convert liquidity data for visualization
+  // Convert liquidity data for visualization using real protocol data
   const liquidityData = protocolState.riskTicks.map(tick => ({
     risk: tick.riskLevel,
     liquidity: tick.totalLiquidity
@@ -221,6 +221,7 @@ const RangeStakingCard = () => {
         value={riskRange}
         onChange={setRiskRange}
         liquidityData={liquidityData}
+        amount={stakeAmount}
       />
     </div>
   );

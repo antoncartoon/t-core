@@ -2,12 +2,15 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { LiquidityPosition, ProtocolState, RiskTick } from '@/types/riskRange';
 import { 
-  generateInitialRiskTicks, 
+  generateRealProtocolRiskTicks, 
   distributeYieldBottomUp,
   calculateHistoricalAPY,
+  calculateProtocolYield28Days,
   MIN_GUARANTEED_APY,
   RISK_SCALE_MIN,
-  RISK_SCALE_MAX
+  RISK_SCALE_MAX,
+  PROTOCOL_TVL,
+  PROTOCOL_APY_28_DAYS
 } from '@/utils/riskRangeCalculations';
 
 interface Asset {
@@ -34,20 +37,22 @@ const RiskRangeContext = createContext<RiskRangeContextType | undefined>(undefin
 
 export const RiskRangeProvider = ({ children }: { children: ReactNode }) => {
   const [balances, setBalances] = useState<Asset[]>([
-    { symbol: 'USDC', balance: 0, usdValue: 0, change: '+0.00%' },
-    { symbol: 'TDD', balance: 0, usdValue: 0, change: '+0.00%' },
+    { symbol: 'USDC', balance: 50000, usdValue: 50000, change: '+0.00%' },
+    { symbol: 'TDD', balance: 100000, usdValue: 100000, change: '+0.00%' }, // Sample for testing
   ]);
 
   const [liquidityPositions, setLiquidityPositions] = useState<LiquidityPosition[]>([]);
   
-  // Generate mock 28-day historical yields (8-12% range)
-  const mockHistoricalYields = Array.from({ length: 28 }, () => 0.08 + Math.random() * 0.04);
+  // Generate realistic 28-day historical yields around 10.5%
+  const mockHistoricalYields = Array.from({ length: 28 }, () => 
+    PROTOCOL_APY_28_DAYS + (Math.random() - 0.5) * 0.02
+  );
   
   const [protocolState, setProtocolState] = useState<ProtocolState>({
-    totalTVL: 0,
-    totalYieldGenerated: 50000, // $50k yield in last 28 days (example)
+    totalTVL: PROTOCOL_TVL,
+    totalYieldGenerated: calculateProtocolYield28Days(), // Real protocol yield for 28 days
     guaranteedAPY: MIN_GUARANTEED_APY, // T-Bills + 20%
-    riskTicks: generateInitialRiskTicks(),
+    riskTicks: generateRealProtocolRiskTicks(), // Real distribution
     lastUpdateTimestamp: new Date(),
     historicalYields: mockHistoricalYields,
     estimatedAPY: calculateHistoricalAPY(mockHistoricalYields)

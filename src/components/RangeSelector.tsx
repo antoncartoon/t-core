@@ -4,16 +4,17 @@ import { Slider } from '@/components/ui/slider';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, Shield, AlertTriangle, BarChart3, Info } from 'lucide-react';
-import { calculateRiskLevelAPR, MIN_GUARANTEED_APY, MAX_APY, RISK_SCALE_MIN, RISK_SCALE_MAX } from '@/utils/riskRangeCalculations';
+import { calculateRiskLevelAPR, calculateRealisticRangeAPY, MIN_GUARANTEED_APY, MAX_APY, RISK_SCALE_MIN, RISK_SCALE_MAX } from '@/utils/riskRangeCalculations';
 
 interface RangeSelectorProps {
   value: [number, number];
   onChange: (range: [number, number]) => void;
   liquidityData?: Array<{ risk: number; liquidity: number }>;
+  amount?: number; // Amount for realistic APY calculation
   className?: string;
 }
 
-const RangeSelector = ({ value, onChange, liquidityData = [], className = "" }: RangeSelectorProps) => {
+const RangeSelector = ({ value, onChange, liquidityData = [], amount = 0, className = "" }: RangeSelectorProps) => {
   const [localValue, setLocalValue] = useState(value);
 
   useEffect(() => {
@@ -38,9 +39,15 @@ const RangeSelector = ({ value, onChange, liquidityData = [], className = "" }: 
   const rangeSize = localValue[1] - localValue[0];
   const efficiency = Math.round(100 / Math.max(1, rangeSize / 10)); // Capital efficiency score
 
-  // Calculate expected APR range using the exact formula
-  const minAPR = calculateRiskLevelAPR(localValue[0]);
-  const maxAPR = calculateRiskLevelAPR(localValue[1]);
+  // Calculate expected APR using realistic calculation with amount
+  const realisticAPY = amount > 0 ? calculateRealisticRangeAPY(amount, {
+    min: localValue[0],
+    max: localValue[1]
+  }) : 0;
+  
+  // Also show theoretical range
+  const minTheoreticalAPR = calculateRiskLevelAPR(localValue[0]);
+  const maxTheoreticalAPR = calculateRiskLevelAPR(localValue[1]);
 
   return (
     <Card className={className}>
@@ -87,18 +94,34 @@ const RangeSelector = ({ value, onChange, liquidityData = [], className = "" }: 
             </div>
           </div>
 
-          {/* Expected APR Range Display */}
+          {/* Expected APR Display */}
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 p-4 rounded-lg">
             <div className="flex items-center space-x-2 mb-2">
               <Info className="w-4 h-4 text-blue-600" />
-              <span className="text-sm font-medium">Expected APR Range</span>
+              <span className="text-sm font-medium">Expected APY</span>
             </div>
-            <div className="text-lg font-bold text-blue-600">
-              {(minAPR * 100).toFixed(1)}% - {(maxAPR * 100).toFixed(1)}%
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Based on formula: r_i = {(MIN_GUARANTEED_APY * 100).toFixed(0)}% + {((MAX_APY - MIN_GUARANTEED_APY) * 100).toFixed(0)}% × (i-1)/99
-            </p>
+            {amount > 0 && realisticAPY > 0 ? (
+              <div>
+                <div className="text-lg font-bold text-blue-600">
+                  {(realisticAPY * 100).toFixed(1)}%
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Realistic estimate for {amount.toLocaleString()} TDD
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Theoretical range: {(minTheoreticalAPR * 100).toFixed(1)}% - {(maxTheoreticalAPR * 100).toFixed(1)}%
+                </p>
+              </div>
+            ) : (
+              <div>
+                <div className="text-lg font-bold text-blue-600">
+                  {(minTheoreticalAPR * 100).toFixed(1)}% - {(maxTheoreticalAPR * 100).toFixed(1)}%
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Non-linear curve: r_i = {(MIN_GUARANTEED_APY * 100).toFixed(1)}% + {((MAX_APY - MIN_GUARANTEED_APY) * 100).toFixed(0)}% × ((i-1)/99)²
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Liquidity Density Visualization */}

@@ -1,23 +1,92 @@
 
 import { RiskRange, RiskTick, LiquidityPosition, RangeCalculationResult } from '@/types/riskRange';
 
+// Protocol constants (updated with real data)
 export const RISK_SCALE_MIN = 1;
 export const RISK_SCALE_MAX = 100;
-export const T_BILL_RATE = 0.05; // 5% T-Bills (example)
-export const PREMIUM_RATE = 0.20; // +20% premium  
-export const MIN_GUARANTEED_APY = T_BILL_RATE + PREMIUM_RATE; // T-Bill + 20% = 25% for Safe tier
-export const MAX_APY = 0.35; // 35% maximum for T-Core HERO tier
+export const T_BILL_RATE = 0.0418; // 4.18%
+export const PREMIUM_RATE = 0.20; // 20% premium
+export const MIN_GUARANTEED_APY = T_BILL_RATE * (1 + PREMIUM_RATE); // 5.016%
+export const MAX_APY = 0.80; // 80% max theoretical APY
+
+// Real protocol data
+export const PROTOCOL_TVL = 12_500_000; // USD
+export const TOTAL_TDD_ISSUED = 12_500_000;
+export const TDD_IN_STAKING = 8_750_000; // 70%
+export const PROTOCOL_APY_28_DAYS = 0.105; // 10.5%
+export const YIELD_CURVE_K = 2; // Non-linear curve steepness
+
+// TDD distribution by risk categories
+export const CATEGORY_DISTRIBUTION = {
+  SAFE: { range: [1, 3], totalTDD: 4_750_000 }, // Safe (1-3)
+  CONSERVATIVE: { range: [4, 24], totalTDD: 1_000_000 }, // Conservative (4-24) 
+  BALANCED: { range: [25, 80], totalTDD: 2_500_000 }, // Balanced (25-80)
+  INSURANCE: { range: [81, 100], totalTDD: 500_000 } // Insurance (81-100)
+};
 
 /**
- * Calculate risk level APR using the exact formula from the document:
- * r_i = r_min + (r_max - r_min) * (i - 1) / 99
+ * Calculate risk level APR using non-linear yield curve (k=2):
+ * r_i = r_min + (r_max - r_min) * ((i - 1) / 99)^k
+ * For Safe ticks (1-3): guaranteed 5.016% APY
  */
 export const calculateRiskLevelAPR = (riskLevel: number): number => {
   if (riskLevel < RISK_SCALE_MIN || riskLevel > RISK_SCALE_MAX) {
     return MIN_GUARANTEED_APY;
   }
   
-  return MIN_GUARANTEED_APY + (MAX_APY - MIN_GUARANTEED_APY) * (riskLevel - 1) / 99;
+  // Safe ticks (1-3) get guaranteed APY
+  if (riskLevel <= 3) {
+    return MIN_GUARANTEED_APY;
+  }
+  
+  // Non-linear curve for ticks 4-100
+  const normalizedPosition = (riskLevel - 1) / 99;
+  const curveValue = Math.pow(normalizedPosition, YIELD_CURVE_K);
+  return MIN_GUARANTEED_APY + (MAX_APY - MIN_GUARANTEED_APY) * curveValue;
+};
+
+/**
+ * Generate initial risk ticks with real protocol liquidity distribution
+ */
+export const generateRealProtocolRiskTicks = (): RiskTick[] => {
+  const ticks: RiskTick[] = [];
+  
+  // Calculate TDD per tick for each category
+  const safeTDDPerTick = CATEGORY_DISTRIBUTION.SAFE.totalTDD / 3; // 3 ticks (1-3)
+  const conservativeTDDPerTick = CATEGORY_DISTRIBUTION.CONSERVATIVE.totalTDD / 21; // 21 ticks (4-24)
+  const balancedTDDPerTick = CATEGORY_DISTRIBUTION.BALANCED.totalTDD / 56; // 56 ticks (25-80)
+  const insuranceTDDPerTick = CATEGORY_DISTRIBUTION.INSURANCE.totalTDD / 20; // 20 ticks (81-100)
+  
+  for (let i = RISK_SCALE_MIN; i <= RISK_SCALE_MAX; i++) {
+    let totalLiquidity = 0;
+    
+    // Determine which category this tick belongs to
+    if (i >= 1 && i <= 3) {
+      totalLiquidity = safeTDDPerTick;
+    } else if (i >= 4 && i <= 24) {
+      totalLiquidity = conservativeTDDPerTick;
+    } else if (i >= 25 && i <= 80) {
+      totalLiquidity = balancedTDDPerTick;
+    } else if (i >= 81 && i <= 100) {
+      totalLiquidity = insuranceTDDPerTick;
+    }
+    
+    ticks.push({
+      riskLevel: i,
+      totalLiquidity,
+      availableYield: 0,
+      apr: calculateRiskLevelAPR(i)
+    });
+  }
+  
+  return ticks;
+};
+
+/**
+ * Calculate total protocol yield for 28 days based on real data
+ */
+export const calculateProtocolYield28Days = (): number => {
+  return (PROTOCOL_TVL * PROTOCOL_APY_28_DAYS / 365) * 28;
 };
 
 /**
@@ -122,32 +191,81 @@ export const calculateNormalizedRisk = (riskRange: RiskRange): number => {
 };
 
 /**
- * Calculate user's position APR in a risk range
+ * Calculate realistic APY for new user with real protocol data
+ * Implements the exact example calculation from the user's breakdown
+ */
+export const calculateRealisticRangeAPY = (
+  userAmount: number,
+  riskRange: RiskRange
+): number => {
+  // Total protocol yield for 28 days
+  const totalYield28Days = calculateProtocolYield28Days(); // ~100,685 USD
+  
+  // Guaranteed yield for Safe category (ticks 1-3)  
+  const safeGuarantee = (CATEGORY_DISTRIBUTION.SAFE.totalTDD * MIN_GUARANTEED_APY / 365) * 28;
+  
+  // Remaining yield for distribution to ticks 4-100
+  const remainingYield = totalYield28Days - safeGuarantee;
+  
+  // Calculate user's share in each tick within their range
+  const rangeSize = riskRange.max - riskRange.min + 1;
+  const userTDDPerTick = userAmount / rangeSize;
+  
+  let userTotalYield28Days = 0;
+  
+  for (let tick = riskRange.min; tick <= riskRange.max; tick++) {
+    let currentLiquidityInTick = 0;
+    
+    // Determine base liquidity for this tick
+    if (tick >= 1 && tick <= 3) {
+      currentLiquidityInTick = CATEGORY_DISTRIBUTION.SAFE.totalTDD / 3;
+      // Safe ticks get guaranteed yield
+      const tickYieldPerTDD = MIN_GUARANTEED_APY / 365 * 28;
+      userTotalYield28Days += userTDDPerTick * tickYieldPerTDD;
+    } else if (tick >= 4 && tick <= 24) {
+      currentLiquidityInTick = CATEGORY_DISTRIBUTION.CONSERVATIVE.totalTDD / 21;
+    } else if (tick >= 25 && tick <= 80) {
+      currentLiquidityInTick = CATEGORY_DISTRIBUTION.BALANCED.totalTDD / 56;
+    } else if (tick >= 81 && tick <= 100) {
+      currentLiquidityInTick = CATEGORY_DISTRIBUTION.INSURANCE.totalTDD / 20;
+    }
+    
+    // For non-safe ticks, distribute from remaining yield pool
+    if (tick > 3) {
+      // Add user's contribution to the tick
+      const newTotalLiquidityInTick = currentLiquidityInTick + userTDDPerTick;
+      const userShareInTick = userTDDPerTick / newTotalLiquidityInTick;
+      
+      // Calculate theoretical APR for this tick using non-linear curve
+      const tickTheoreticalAPR = calculateRiskLevelAPR(tick);
+      
+      // Estimate tick's share of remaining yield (simplified)
+      // In reality this would use the waterfall model, but for estimation:
+      const totalStakingTDDNonSafe = TDD_IN_STAKING - CATEGORY_DISTRIBUTION.SAFE.totalTDD;
+      const tickYieldEstimate = (currentLiquidityInTick / totalStakingTDDNonSafe) * remainingYield;
+      
+      // User gets their share of this tick's yield
+      userTotalYield28Days += tickYieldEstimate * userShareInTick;
+    }
+  }
+  
+  // Convert 28-day yield to annual APY
+  const user28DayAPY = userTotalYield28Days / userAmount;
+  const annualAPY = (user28DayAPY / 28) * 365;
+  
+  return annualAPY;
+};
+
+/**
+ * Calculate user's position APR in a risk range (legacy function, kept for compatibility)
  */
 export const calculateRangeAPR = (
   userAmount: number,
   riskRange: RiskRange,
   riskTicks: RiskTick[]
 ): number => {
-  const relevantTicks = riskTicks.filter(
-    tick => tick.riskLevel >= riskRange.min && tick.riskLevel <= riskRange.max
-  );
-  
-  if (relevantTicks.length === 0) return 0;
-  
-  const rangeSize = riskRange.max - riskRange.min + 1;
-  const amountPerLevel = userAmount / rangeSize;
-  
-  let totalYield = 0;
-  
-  for (const tick of relevantTicks) {
-    if (tick.totalLiquidity > 0) {
-      const userShareInTick = amountPerLevel / (tick.totalLiquidity + amountPerLevel);
-      totalYield += tick.availableYield * userShareInTick;
-    }
-  }
-  
-  return userAmount > 0 ? (totalYield / userAmount) : 0;
+  // Use the new realistic calculation
+  return calculateRealisticRangeAPY(userAmount, riskRange);
 };
 
 /**
