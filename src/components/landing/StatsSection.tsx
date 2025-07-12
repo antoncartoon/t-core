@@ -21,7 +21,7 @@ const StatsSection = () => {
     },
     {
       icon: TrendingUp,
-      label: "Average APY",
+      label: "Average 28D APY",
       value: "10.5%",
       change: "+2.1%",
       period: "vs last quarter"
