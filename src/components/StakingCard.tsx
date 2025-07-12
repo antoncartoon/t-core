@@ -7,13 +7,12 @@ import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { useToast } from '@/hooks/use-toast';
-import { useWallet } from '@/contexts/WalletContext';
+import { useRiskRange } from '@/contexts/RiskRangeContext';
 import { 
-  calculateRangeAPR, 
+  calculateRealisticRangeAPY,
   calculateCapitalEfficiency, 
   calculatePotentialLoss, 
   calculateNormalizedRisk,
-  generateInitialRiskTicks,
   analyzeRiskRange
 } from '@/utils/riskRangeCalculations';
 import YieldCurveChart from './YieldCurveChart';
@@ -72,7 +71,7 @@ const StakingCard = () => {
   const [isQuickMode, setIsQuickMode] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { getAvailableBalance, createStakingPosition, poolSettings } = useWallet();
+  const { getAvailableBalance, createLiquidityPosition, protocolState } = useRiskRange();
 
   const availableBalance = getAvailableBalance('TDD');
   const stakeAmount = parseFloat(amount) || 0;
@@ -88,12 +87,12 @@ const StakingCard = () => {
   const selectedRange = calculateRange(centerPoint, rangeWidth);
   const riskRange = { min: selectedRange[0], max: selectedRange[1] };
   
-  // Generate risk ticks and analyze the range
-  const riskTicks = generateInitialRiskTicks();
+  // Use real protocol data for calculations
+  const riskTicks = protocolState.riskTicks;
   const analysis = stakeAmount > 0 ? analyzeRiskRange(stakeAmount, riskRange, riskTicks) : null;
   
-  // Mock historical APY data (28-day average)
-  const historicalAPY = 0.12; // 12% historical average
+  // Calculate realistic APY for current range
+  const realisticAPY = stakeAmount > 0 ? calculateRealisticRangeAPY(stakeAmount, riskRange) : 0;
 
   // Risk presets - 4 levels with enhanced marketing
   const presets = [
@@ -191,9 +190,9 @@ const StakingCard = () => {
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Create position with range-based APY
-      const estimatedAPY = analysis?.estimatedAPR || 0.10;
-      const positionId = createStakingPosition(stakeAmount, estimatedAPY);
+      // Create position with realistic APY
+      const estimatedAPY = realisticAPY || 0.10;
+      const positionId = createLiquidityPosition(stakeAmount, selectedRange[0], selectedRange[1]);
       
       toast({
         title: "NFT Liquidity Position Created!",
@@ -341,7 +340,12 @@ const StakingCard = () => {
                       </div>
                       <div className="text-right flex-shrink-0 min-w-[60px] max-w-[80px] overflow-hidden">
                         <div className="text-sm font-medium truncate">
-                          {preset.name === 'Safe' ? '5.0%' : analysis ? `${(analysis.estimatedAPR * 100).toFixed(1)}%` : '~12%'}
+                          {(() => {
+                            if (preset.name === 'Safe') return '5.0%';
+                            const presetRange = { min: preset.range[0], max: preset.range[1] };
+                            const presetAPY = calculateRealisticRangeAPY(stakeAmount || 100000, presetRange);
+                            return `${(presetAPY * 100).toFixed(1)}%`;
+                          })()}
                         </div>
                         <div className="text-xs opacity-75 truncate">Est. APY</div>
                       </div>
@@ -398,7 +402,7 @@ const StakingCard = () => {
                 <div className="flex justify-between">
                   <span className="text-sm">Estimated APY</span>
                   <span className="font-bold text-primary">
-                    {(analysis.estimatedAPR * 100).toFixed(1)}%
+                    {(realisticAPY * 100).toFixed(1)}%
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -410,7 +414,7 @@ const StakingCard = () => {
                 <div className="flex justify-between">
                   <span className="text-sm">Annual Return</span>
                   <span className="font-medium text-green-600">
-                    ${(stakeAmount * analysis.estimatedAPR).toFixed(2)}
+                    ${(stakeAmount * realisticAPY).toFixed(2)}
                   </span>
                 </div>
               </div>
