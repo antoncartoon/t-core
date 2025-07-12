@@ -39,7 +39,72 @@ export const WalletProvider = ({ children }: { children: ReactNode }) => {
     { symbol: 'TDD', balance: 0, usdValue: 0, change: '+0.00%' },
   ]);
 
-  const [stakingPositions, setStakingPositions] = useState<StakingPosition[]>([]);
+  // Initialize with demo positions
+  const [stakingPositions, setStakingPositions] = useState<StakingPosition[]>([
+    {
+      id: 'pos_demo_conservative_001',
+      amount: 1000,
+      originalTokenAmount: 1000,
+      currentValue: 1045.50,
+      earnedAmount: 45.50,
+      desiredAPY: 0.12,
+      riskScore: 2500,
+      payoutPriority: 7500,
+      baseAPY: 0.05,
+      maxAPY: 0.25,
+      apy: 12,
+      riskLevel: 25,
+      riskCategory: 'Conservative',
+      createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000), // 15 days ago
+      nextPayoutDate: new Date(Date.now() + 33 * 60 * 60 * 1000), // 33 hours from now
+      payoutFrequency: 7,
+      status: 'active',
+      missedPayouts: 0,
+      actualAPY: 0.125
+    },
+    {
+      id: 'pos_demo_moderate_002',
+      amount: 2500,
+      originalTokenAmount: 2500,
+      currentValue: 2687.25,
+      earnedAmount: 187.25,
+      desiredAPY: 0.18,
+      riskScore: 6000,
+      payoutPriority: 4000,
+      baseAPY: 0.05,
+      maxAPY: 0.25,
+      apy: 18,
+      riskLevel: 60,
+      riskCategory: 'Moderate',
+      createdAt: new Date(Date.now() - 28 * 24 * 60 * 60 * 1000), // 28 days ago
+      nextPayoutDate: new Date(Date.now() + 20 * 60 * 60 * 1000), // 20 hours from now
+      payoutFrequency: 7,
+      status: 'active',
+      missedPayouts: 12.5,
+      actualAPY: 0.16
+    },
+    {
+      id: 'pos_demo_aggressive_003',
+      amount: 500,
+      originalTokenAmount: 500,
+      currentValue: 478.50,
+      earnedAmount: -21.50,
+      desiredAPY: 0.25,
+      riskScore: 9200,
+      payoutPriority: 800,
+      baseAPY: 0.05,
+      maxAPY: 0.25,
+      apy: 25,
+      riskLevel: 92,
+      riskCategory: 'Aggressive',
+      createdAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // 7 days ago
+      nextPayoutDate: new Date(Date.now() + 45 * 60 * 60 * 1000), // 45 hours from now
+      payoutFrequency: 7,
+      status: 'active',
+      missedPayouts: 47.80,
+      actualAPY: 0.08
+    }
+  ]);
   const [poolSettings, setPoolSettings] = useState<PoolSettings>(DEFAULT_POOL_SETTINGS);
 
   const addBalance = (symbol: string, amount: number) => {

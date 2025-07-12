@@ -17,6 +17,7 @@ import {
   analyzeRiskRange
 } from '@/utils/riskRangeCalculations';
 import YieldCurveChart from './YieldCurveChart';
+import ActivePositions from './ActivePositions';
 
 // Risk range visualization component (similar to Uniswap V3)
 const RiskRangeVisualization = ({ selectedRange, centerPoint }) => {
@@ -174,8 +175,12 @@ const StakingCard = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Main Staking Interface */}
+    <div className="space-y-6">
+      {/* Active Positions Section */}
+      <ActivePositions />
+      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Main Staking Interface */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
@@ -445,6 +450,7 @@ const StakingCard = () => {
           )}
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };

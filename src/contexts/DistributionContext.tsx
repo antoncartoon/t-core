@@ -31,7 +31,29 @@ export const DistributionProvider = ({ children }: { children: ReactNode }) => {
     distributionHistory: []
   });
 
-  const [unclaimedYields, setUnclaimedYields] = useState<UnclaimedYield[]>([]);
+  const [unclaimedYields, setUnclaimedYields] = useState<UnclaimedYield[]>([
+    { 
+      positionId: 'pos_demo_conservative_001', 
+      amount: 0.0125, 
+      lastAccrualDate: new Date(), 
+      nextDistributionDate: new Date(Date.now() + 48 * 60 * 60 * 1000),
+      dailyAccrual: 0.0041
+    },
+    { 
+      positionId: 'pos_demo_moderate_002', 
+      amount: 0.0340, 
+      lastAccrualDate: new Date(), 
+      nextDistributionDate: new Date(Date.now() + 48 * 60 * 60 * 1000),
+      dailyAccrual: 0.0113
+    },
+    { 
+      positionId: 'pos_demo_aggressive_003', 
+      amount: 0.0089, 
+      lastAccrualDate: new Date(), 
+      nextDistributionDate: new Date(Date.now() + 48 * 60 * 60 * 1000),
+      dailyAccrual: 0.0029
+    }
+  ]);
 
   // Update distribution timer every second
   useEffect(() => {
