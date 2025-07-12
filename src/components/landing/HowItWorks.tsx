@@ -18,9 +18,9 @@ const HowItWorks = () => {
     },
     {
       icon: Target,
-      title: "Choose Risk",
-      description: "Conservative / Balanced / Aggressive",
-      detail: "Control your risk/return ratio yourself"
+      title: "Choose Tier",
+      description: "Safe / Conservative / Balanced / T-Core HERO",
+      detail: "4 risk tiers - from guaranteed safe to heroic yields"
     },
     {
       icon: TrendingUp,

@@ -1,83 +1,89 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Slider } from '@/components/ui/slider';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { TrendingUp, Target, DollarSign, Eye, ArrowDown, ArrowUp, Shield, Zap, Settings } from 'lucide-react';
+import { Eye, ArrowDown, ArrowUp, Shield, Crown, Zap, Star } from 'lucide-react';
 
-// Uniswap V3-style risk band visualization with center point
-const RiskBandVisualization = ({ selectedRange, centerPoint }) => {
+// T-Core risk band visualization with 4 categories and animation
+const RiskBandVisualization = ({ activeCategory, isAnimating }) => {
+  const categories = [
+    { name: 'Safe', range: [1, 3], color: 'bg-green-500/30', width: '3%' },
+    { name: 'Conservative', range: [4, 24], color: 'bg-blue-500/30', width: '21%' },
+    { name: 'Balanced', range: [25, 80], color: 'bg-yellow-500/30', width: '56%' },
+    { name: 'T-Core HERO', range: [81, 100], color: 'bg-gradient-to-r from-purple-500/30 to-yellow-500/30', width: '20%' }
+  ];
+
   return (
     <div className="space-y-6">
       {/* Risk Band */}
-      <div className="relative h-16 bg-muted/30 rounded-lg overflow-hidden">
+      <div className="relative h-20 bg-muted/30 rounded-lg overflow-hidden">
         {/* Color zones */}
         <div className="absolute inset-0 flex">
-          <div className="w-[15%] bg-green-500/20" />
-          <div className="w-[55%] bg-yellow-500/20" />
-          <div className="w-[30%] bg-orange-500/20" />
+          <div className="w-[3%] bg-green-500/20" />
+          <div className="w-[21%] bg-blue-500/20" />
+          <div className="w-[56%] bg-yellow-500/20" />
+          <div className="w-[20%] bg-gradient-to-r from-purple-500/20 to-yellow-500/20" />
         </div>
         
-        {/* Selected range highlight */}
-        <div 
-          className="absolute top-0 h-full bg-primary/30 border-2 border-primary transition-all duration-300"
-          style={{
-            left: `${selectedRange[0]}%`,
-            width: `${selectedRange[1] - selectedRange[0]}%`
-          }}
-        />
+        {/* Active category highlight */}
+        {activeCategory && (
+          <div 
+            className={`absolute top-0 h-full border-2 border-primary transition-all duration-1000 ${
+              activeCategory.name === 'T-Core HERO' 
+                ? 'bg-gradient-to-r from-purple-500/40 to-yellow-500/40 shadow-lg shadow-yellow-500/20' 
+                : 'bg-primary/30'
+            } ${isAnimating ? 'animate-pulse' : ''}`}
+            style={{
+              left: `${(activeCategory.range[0] - 1)}%`,
+              width: `${activeCategory.range[1] - activeCategory.range[0] + 1}%`
+            }}
+          />
+        )}
         
-        {/* Center point marker (prominent) */}
-        <div 
-          className="absolute top-0 w-1 h-full bg-primary-foreground shadow-lg z-10 transition-all duration-300"
-          style={{ left: `${centerPoint}%` }}
-        />
-        <div 
-          className="absolute top-1/2 w-3 h-3 bg-primary-foreground rounded-full border-2 border-background shadow-lg transform -translate-x-1/2 -translate-y-1/2 z-20 transition-all duration-300"
-          style={{ left: `${centerPoint}%` }}
-        />
-        
-        {/* Range boundaries */}
-        <div 
-          className="absolute top-0 w-0.5 h-full bg-primary/60 transition-all duration-300"
-          style={{ left: `${selectedRange[0]}%` }}
-        />
-        <div 
-          className="absolute top-0 w-0.5 h-full bg-primary/60 transition-all duration-300"
-          style={{ left: `${selectedRange[1]}%` }}
-        />
+        {/* T-Core HERO crown icon */}
+        {activeCategory?.name === 'T-Core HERO' && (
+          <div className="absolute top-2 right-4 animate-bounce">
+            <Crown className="w-6 h-6 text-yellow-500" />
+          </div>
+        )}
       </div>
       
       {/* Labels */}
-      <div className="flex justify-between text-xs text-muted-foreground">
-        <span className="text-green-600 font-medium">Conservative (1-15)</span>
-        <span className="text-yellow-600 font-medium">Balanced (15-70)</span>
-        <span className="text-orange-600 font-medium">Aggressive (70-100)</span>
+      <div className="grid grid-cols-4 gap-2 text-xs text-muted-foreground">
+        <span className="text-green-600 font-medium text-center">Safe (1-3)</span>
+        <span className="text-blue-600 font-medium text-center">Conservative (4-24)</span>
+        <span className="text-yellow-600 font-medium text-center">Balanced (25-80)</span>
+        <span className="text-purple-600 font-medium text-center">T-Core HERO (81-100)</span>
       </div>
     </div>
   );
 };
 
-// Enhanced APY Calculator with concentration bonus
-const calculateAPY = (riskLevel, rangeWidth = 20) => {
-  const baseAPY = 5; // T-Bills rate
-  const maxAPY = 25;
-  const normalizedRisk = riskLevel / 100;
+// T-Core APY calculation with new categories
+const calculateCategoryAPY = (categoryName) => {
+  const categoryAPYs = {
+    'Safe': { min: 5.2, max: 5.8 },
+    'Conservative': { min: 6.5, max: 9.2 },
+    'Balanced': { min: 8.5, max: 16.8 },
+    'T-Core HERO': { min: 15.0, max: 35.0 }
+  };
   
-  // Concentration bonus: inversely proportional to range width
-  // Narrower ranges get higher APY due to concentrated liquidity
-  const concentrationBonus = Math.max(1, (40 - rangeWidth) / 40 * 0.5 + 1);
+  const apy = categoryAPYs[categoryName];
+  if (!apy) return 8.0;
   
-  const riskMultiplier = normalizedRisk * ((maxAPY - baseAPY) / baseAPY);
-  return baseAPY * (1 + riskMultiplier) * concentrationBonus;
+  return {
+    estimated: (apy.min + apy.max) / 2,
+    range: `${apy.min}% - ${apy.max}%`
+  };
 };
 
-// Waterfall Distribution Component
-const WaterfallDistribution = () => {
+// T-Core Waterfall Distribution Component
+const TCoreWaterfallDistribution = () => {
   const waterfallFlow = [
-    { level: "Conservative", color: "green", allocation: "60%", yield: "Base APY" },
-    { level: "Balanced", color: "yellow", allocation: "30%", yield: "Enhanced APY" },
-    { level: "Aggressive", color: "orange", allocation: "10%", yield: "Maximum APY" }
+    { level: "Safe", color: "green", allocation: "25%", yield: "T-Bill + 20% guaranteed" },
+    { level: "Conservative", color: "blue", allocation: "40%", yield: "Stable yield" },
+    { level: "Balanced", color: "yellow", allocation: "30%", yield: "Enhanced yield" },
+    { level: "T-Core HERO", color: "purple", allocation: "5%", yield: "Maximum yield + pool insurance" }
   ];
 
   return (
@@ -86,15 +92,15 @@ const WaterfallDistribution = () => {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <Eye className="w-5 h-5 text-primary" />
-            <h3 className="text-xl font-medium">Waterfall Risk/Reward Distribution</h3>
+            <h3 className="text-xl font-medium">T-Core Waterfall Distribution</h3>
           </div>
           <p className="text-muted-foreground mb-4">
-            Protocol yields distributed bottom-up, losses absorbed top-down.<br/>
-            <span className="text-sm font-medium text-amber-600">APY varies with protocol performance</span>
+            T-Core HERO tier protects lower tiers, earns maximum yield.<br/>
+            <span className="text-sm font-medium text-purple-600">Be the pool's hero - earn the most, protect others</span>
           </p>
-          <div className="flex items-center justify-center space-x-2 text-sm text-emerald-600 mb-4 p-2 bg-emerald-50 dark:bg-emerald-950/20 rounded-lg">
-            <Shield className="w-4 h-4" />
-            <span className="font-medium">Self-insurance pool. You are protected by yield generated.</span>
+          <div className="flex items-center justify-center space-x-2 text-sm text-purple-600 mb-4 p-3 bg-gradient-to-r from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20 rounded-lg border border-purple-200 dark:border-purple-800">
+            <Crown className="w-4 h-4" />
+            <span className="font-medium">T-Core HERO: Maximum yield for heroes who protect the entire pool</span>
           </div>
         </div>
 
@@ -109,14 +115,18 @@ const WaterfallDistribution = () => {
               {waterfallFlow.map((level, index) => {
                 const colors = {
                   green: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-950/20 dark:text-green-200 dark:border-green-800',
-                  yellow: 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-950/20 dark:text-yellow-200 dark:border-yellow-800', 
-                  orange: 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-950/20 dark:text-orange-200 dark:border-orange-800'
+                  blue: 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-950/20 dark:text-blue-200 dark:border-blue-800',
+                  yellow: 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-950/20 dark:text-yellow-200 dark:border-yellow-800',
+                  purple: 'bg-gradient-to-r from-purple-100 to-yellow-100 text-purple-800 border-purple-200 dark:from-purple-950/20 dark:to-yellow-950/20 dark:text-purple-200 dark:border-purple-800'
                 };
                 
                 return (
-                  <div key={index} className={`p-3 rounded-lg border ${colors[level.color as keyof typeof colors]}`}>
+                  <div key={index} className={`p-3 rounded-lg border ${colors[level.color as keyof typeof colors]} ${level.level === 'T-Core HERO' ? 'shadow-lg' : ''}`}>
                     <div className="flex justify-between items-center">
-                      <span className="font-medium">{level.level}</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="font-medium">{level.level}</span>
+                        {level.level === 'T-Core HERO' && <Crown className="w-4 h-4 text-yellow-600" />}
+                      </div>
                       <div className="text-right">
                         <div className="text-sm font-medium">{level.yield}</div>
                         <div className="text-xs opacity-75">{level.allocation} participants</div>
@@ -137,21 +147,25 @@ const WaterfallDistribution = () => {
             <div className="space-y-3">
               {[...waterfallFlow].reverse().map((level, index) => {
                 const colors = {
-                  orange: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-950/20 dark:text-red-200 dark:border-red-800',
+                  purple: 'bg-red-100 text-red-800 border-red-200 dark:bg-red-950/20 dark:text-red-200 dark:border-red-800',
                   yellow: 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-950/20 dark:text-orange-200 dark:border-orange-800',
-                  green: 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-950/20 dark:text-yellow-200 dark:border-yellow-800'
+                  blue: 'bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-950/20 dark:text-yellow-200 dark:border-yellow-800',
+                  green: 'bg-green-100 text-green-800 border-green-200 dark:bg-green-950/20 dark:text-green-200 dark:border-green-800'
                 };
                 
                 return (
                   <div key={index} className={`p-3 rounded-lg border ${colors[level.color as keyof typeof colors]}`}>
                     <div className="flex justify-between items-center">
-                      <span className="font-medium">{level.level}</span>
+                      <div className="flex items-center space-x-2">
+                        <span className="font-medium">{level.level}</span>
+                        {level.level === 'T-Core HERO' && <Crown className="w-4 h-4 text-yellow-600" />}
+                      </div>
                       <div className="text-right">
                         <div className="text-sm font-medium">
-                          {index === 0 ? 'First' : index === 1 ? 'Second' : 'Protected'}
+                          {index === 0 ? 'First' : index === 1 ? 'Second' : index === 2 ? 'Third' : 'Protected'}
                         </div>
                         <div className="text-xs opacity-75">
-                          {index === 0 ? 'absorb' : index === 1 ? 'absorb' : 'from losses'}
+                          {index <= 2 ? 'absorb losses' : 'from losses'}
                         </div>
                       </div>
                     </div>
@@ -174,337 +188,351 @@ const WaterfallDistribution = () => {
 };
 
 const RiskSelection = () => {
-  // Center + Width approach instead of dual range
-  const [centerPoint, setCenterPoint] = useState(8);
-  const [rangeWidth, setRangeWidth] = useState(14);
-  const [isLiteMode, setIsLiteMode] = useState(true);
-
-  // Calculate selected range from center and width
-  const calculateRange = (center, width) => {
-    const halfWidth = width / 2;
-    const start = Math.max(1, Math.min(center - halfWidth, 100 - width));
-    const end = Math.min(100, start + width);
-    return [Math.round(start), Math.round(end)];
-  };
-
-  const selectedRange = calculateRange(centerPoint, rangeWidth);
+  const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(true);
   
-  // Calculate metrics for selected range
-  const avgRisk = (selectedRange[0] + selectedRange[1]) / 2;
-  const estimatedAPY = calculateAPY(avgRisk, rangeWidth);
-  
-  // Preset configurations
-  const presets = [
-    { name: 'Conservative', center: 8, width: 14, color: 'green', range: [1, 15] },
-    { name: 'Balanced', center: 42.5, width: 55, color: 'yellow', range: [15, 70] },
-    { name: 'Aggressive', center: 85, width: 30, color: 'orange', range: [70, 100] }
+  // T-Core risk categories
+  const categories = [
+    { 
+      name: 'Safe', 
+      range: [1, 3], 
+      color: 'green',
+      description: 'T-Bill +20% guaranteed, zero loss risk',
+      apyRange: '5.2% - 5.8%',
+      participants: '25%',
+      icon: Shield
+    },
+    { 
+      name: 'Conservative', 
+      range: [4, 24], 
+      color: 'blue',
+      description: 'Stable yield, minimal drawdown risk',
+      apyRange: '6.5% - 9.2%',
+      participants: '40%',
+      icon: Shield
+    },
+    { 
+      name: 'Balanced', 
+      range: [25, 80], 
+      color: 'yellow',
+      description: 'Optimal risk/reward, diversified exposure',
+      apyRange: '8.5% - 16.8%',
+      participants: '30%',
+      icon: Star
+    },
+    { 
+      name: 'T-Core HERO', 
+      range: [81, 100], 
+      color: 'purple',
+      description: 'Be the pool\'s insurance - max yield for heroes!',
+      apyRange: '15.0% - 35.0%',
+      participants: '5%',
+      icon: Crown,
+      isHero: true
+    }
   ];
 
-  const handlePresetClick = (preset) => {
-    setCenterPoint(preset.center);
-    setRangeWidth(preset.width);
-  };
-  
-  const getRiskLabel = (risk) => {
-    if (risk < 15) return 'Conservative';
-    if (risk < 70) return 'Balanced';
-    return 'Aggressive';
-  };
+  // Auto-cycle through categories every 4 seconds
+  useEffect(() => {
+    if (!isAnimating) return;
+    
+    const interval = setInterval(() => {
+      setCurrentCategoryIndex((prev) => (prev + 1) % categories.length);
+    }, 4000);
 
-  const getRiskColorClass = (risk) => {
-    if (risk < 15) return 'text-green-600';
-    if (risk < 70) return 'text-yellow-600';
-    return 'text-orange-600';
-  };
+    return () => clearInterval(interval);
+  }, [isAnimating, categories.length]);
+
+  const currentCategory = categories[currentCategoryIndex];
 
   return (
     <section className="py-16 sm:py-24 bg-muted/20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12 sm:mb-16">
           <h2 className="text-2xl sm:text-4xl font-light text-foreground mb-4 sm:mb-6">
-            Choose Your Risk Position
+            Choose Your T-Core Position
           </h2>
           <p className="text-lg text-muted-foreground max-w-4xl mx-auto">
-            Select your position on the risk spectrum. Each level offers different rewards and responsibilities 
-            in our waterfall distribution model.
+            Four risk tiers designed for different investor profiles. From guaranteed safe yields to heroic maximum returns.
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 mb-12">
-          {/* Left: Simple Visualization */}
+          {/* Left: Animated Risk Visualization */}
           <Card className="border-border bg-card/50">
             <CardContent className="p-6">
-              <div className="flex items-center justify-center mb-6">
-                {/* Mode Toggle Tabs */}
-                <div className="flex bg-muted rounded-lg p-1 gap-1">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant={isLiteMode ? "default" : "ghost"}
-                          size="sm"
-                          onClick={() => setIsLiteMode(true)}
-                          className="flex items-center gap-2 transition-all duration-200"
-                        >
-                          <Zap className="w-4 h-4" />
-                          Quick Select
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Choose from preset strategies</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                  
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant={!isLiteMode ? "default" : "ghost"}
-                          size="sm"
-                          onClick={() => setIsLiteMode(false)}
-                          className="flex items-center gap-2 transition-all duration-200"
-                        >
-                          <Settings className="w-4 h-4" />
-                          Advanced
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Precise control with sliders</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-medium">Live Demo</h3>
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant={isAnimating ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setIsAnimating(!isAnimating)}
+                    className="flex items-center gap-2"
+                  >
+                    {isAnimating ? 'Pause' : 'Play'}
+                  </Button>
                 </div>
               </div>
               
               <RiskBandVisualization
-                selectedRange={selectedRange}
-                centerPoint={centerPoint}
+                activeCategory={currentCategory}
+                isAnimating={isAnimating}
               />
               
-              {/* Lite Mode - Quick Presets */}
-              {isLiteMode && (
-                <div className="mt-8 space-y-6">
+              {/* Current Category Display */}
+              <div className="mt-8">
+                <Card className={`p-6 transition-all duration-1000 ${
+                  currentCategory.isHero 
+                    ? 'bg-gradient-to-r from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20 border-purple-200 dark:border-purple-800 shadow-lg' 
+                    : 'bg-muted/30'
+                }`}>
+                  <div className="flex items-start space-x-4">
+                    <div className="flex-shrink-0">
+                      <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                        currentCategory.isHero 
+                          ? 'bg-gradient-to-r from-purple-500 to-yellow-500' 
+                          : 'bg-primary/10'
+                      }`}>
+                        <currentCategory.icon className={`w-6 h-6 ${
+                          currentCategory.isHero ? 'text-white' : 'text-primary'
+                        }`} />
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className={`text-xl font-bold mb-2 ${
+                        currentCategory.isHero ? 'text-purple-700 dark:text-purple-300' : 'text-foreground'
+                      }`}>
+                        {currentCategory.name}
+                        {currentCategory.isHero && <span className="ml-2 text-yellow-500">⭐</span>}
+                      </h4>
+                      <p className="text-muted-foreground mb-4">
+                        {currentCategory.description}
+                      </p>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <div className="text-sm text-muted-foreground">Expected APY</div>
+                          <div className={`text-lg font-bold ${
+                            currentCategory.isHero ? 'text-purple-600' : 'text-primary'
+                          }`}>
+                            {currentCategory.apyRange}
+                          </div>
+                        </div>
+                        <div>
+                          <div className="text-sm text-muted-foreground">Risk Range</div>
+                          <div className="text-lg font-medium">
+                            {currentCategory.range[0]} - {currentCategory.range[1]}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </div>
+
+              {/* Manual Category Selection */}
+              <div className="mt-6 grid grid-cols-2 gap-2">
+                {categories.map((category, index) => {
+                  const Icon = category.icon;
+                  const isActive = index === currentCategoryIndex;
                   
-                  <div className="grid grid-cols-1 gap-3">
-                    {presets.map((preset) => {
-                      const isActive = Math.abs(centerPoint - preset.center) < 5 && Math.abs(rangeWidth - preset.width) < 5;
-                      const colorClasses = {
-                        green: 'border-green-500 bg-green-50 text-green-700 hover:bg-green-100 dark:bg-green-950/20 dark:text-green-200 dark:hover:bg-green-950/40',
-                        yellow: 'border-yellow-500 bg-yellow-50 text-yellow-700 hover:bg-yellow-100 dark:bg-yellow-950/20 dark:text-yellow-200 dark:hover:bg-yellow-950/40',
-                        orange: 'border-orange-500 bg-orange-50 text-orange-700 hover:bg-orange-100 dark:bg-orange-950/20 dark:text-orange-200 dark:hover:bg-orange-950/40'
-                      };
-                      
-                      return (
-                        <Button
-                          key={preset.name}
-                          variant={isActive ? "default" : "outline"}
-                          size="lg"
-                          onClick={() => handlePresetClick(preset)}
-                          className={`p-4 h-auto justify-between transition-all duration-200 ${
-                            !isActive ? colorClasses[preset.color as keyof typeof colorClasses] : ''
-                          }`}
-                        >
-                          <div className="text-left">
-                            <div className="font-medium">{preset.name}</div>
-                            <div className="text-xs opacity-75">
-                              Range {preset.range[0]}-{preset.range[1]}
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-sm font-medium">
-                              ~{calculateAPY(preset.center, preset.width).toFixed(1)}%
-                            </div>
-                            <div className="text-xs opacity-75">Est. APY</div>
-                          </div>
-                        </Button>
-                      );
-                    })}
-                  </div>
-
-                </div>
-              )}
-
-              {/* Advanced Mode - Center + Width Controls */}
-              {!isLiteMode && (
-                <div className="mt-8 space-y-6">
-
-                  {/* Center Point Slider */}
-                  <div className="space-y-2">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <label className="text-sm font-medium cursor-help">Center Position</label>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Your position's center point on the risk spectrum</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <Slider
-                      value={[centerPoint]}
-                      onValueChange={(value) => setCenterPoint(value[0])}
-                      max={100}
-                      min={1}
-                      step={1}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>Conservative</span>
-                      <span className="font-medium">{centerPoint}</span>
-                      <span>Aggressive</span>
-                    </div>
-                  </div>
-
-                  {/* Range Width Slider */}
-                  <div className="space-y-2">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <label className="text-sm font-medium cursor-help">Range Width</label>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Narrower ranges get higher APY from concentration bonus</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    <Slider
-                      value={[rangeWidth]}
-                      onValueChange={(value) => setRangeWidth(value[0])}
-                      max={50}
-                      min={5}
-                      step={1}
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-xs text-muted-foreground">
-                      <span>Focused (+Bonus)</span>
-                      <span className="font-medium">{rangeWidth} levels</span>
-                      <span>Broad</span>
-                    </div>
-                  </div>
-
-                  {/* Live APY Preview */}
-                  <div className="p-4 bg-gradient-to-r from-primary/5 to-primary/10 rounded-lg border border-primary/20">
-                    <div className="text-center space-y-2">
-                      <div className="text-sm font-medium">Live Preview</div>
-                      <div className="text-lg font-bold text-primary">
-                        ~{estimatedAPY.toFixed(1)}% APY
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        Range: {selectedRange[0]} - {selectedRange[1]} 
-                        {rangeWidth < 20 && <span className="text-green-600 ml-2">+Concentration Bonus</span>}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
+                  return (
+                    <Button
+                      key={category.name}
+                      variant={isActive ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => {
+                        setCurrentCategoryIndex(index);
+                        setIsAnimating(false);
+                      }}
+                      className={`flex items-center gap-2 transition-all duration-200 ${
+                        category.isHero && isActive 
+                          ? 'bg-gradient-to-r from-purple-500 to-yellow-500 text-white' 
+                          : ''
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span className="text-xs">{category.name}</span>
+                    </Button>
+                  );
+                })}
+              </div>
             </CardContent>
           </Card>
 
-          {/* Right: Position Info */}
+          {/* Right: Category Benefits */}
           <Card className="border-border bg-card/50">
             <CardContent className="p-6">
               <div className="space-y-6">
-                {/* Current Selection */}
-                <div className="text-center">
-                  <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-muted/50 font-medium ${getRiskColorClass(avgRisk)}`}>
-                    <Target className="w-4 h-4" />
-                    {getRiskLabel(avgRisk)} Position
-                  </div>
-                  <div className="mt-4 space-y-2">
-                    <div className={`text-3xl font-bold ${getRiskColorClass(avgRisk)}`}>
-                      ~{estimatedAPY.toFixed(1)}% APY
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Range: {selectedRange[0]}-{selectedRange[1]} 
-                      <span className="mx-2">•</span>
-                      Width: {rangeWidth} levels
-                    </div>
-                  </div>
+                <div className="flex items-center space-x-2 mb-4">
+                  <Star className="w-5 h-5 text-primary" />
+                  <h3 className="text-lg font-medium">T-Core Benefits</h3>
                 </div>
 
-                {/* Metrics */}
-                <div className="space-y-4 pt-4 border-t border-border">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Base Rate (T-Bills)</span>
-                    <span className="font-medium">5.0%</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Risk Premium</span>
-                    <span className="font-medium">
-                      +{(estimatedAPY - 5).toFixed(1)}%
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Concentration Bonus</span>
-                    <span className="font-medium">
-                      {rangeWidth < 20 ? '+High' : rangeWidth < 35 ? '+Medium' : 'None'}
-                    </span>
-                  </div>
+                {/* All Categories Overview */}
+                <div className="space-y-3">
+                  {categories.map((category, index) => {
+                    const Icon = category.icon;
+                    const isActive = index === currentCategoryIndex;
+                    
+                    return (
+                      <div
+                        key={category.name}
+                        className={`p-4 rounded-lg border transition-all duration-300 ${
+                          isActive 
+                            ? category.isHero 
+                              ? 'border-purple-300 bg-gradient-to-r from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20' 
+                              : 'border-primary bg-primary/5'
+                            : 'border-border bg-muted/30'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <Icon className={`w-5 h-5 ${
+                              isActive 
+                                ? category.isHero ? 'text-purple-600' : 'text-primary'
+                                : 'text-muted-foreground'
+                            }`} />
+                            <div>
+                              <div className={`font-medium ${
+                                isActive 
+                                  ? category.isHero ? 'text-purple-700 dark:text-purple-300' : 'text-primary'
+                                  : 'text-foreground'
+                              }`}>
+                                {category.name}
+                                {category.isHero && ' ⭐'}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                Risk {category.range[0]}-{category.range[1]}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className={`text-sm font-medium ${
+                              isActive 
+                                ? category.isHero ? 'text-purple-600' : 'text-primary'
+                                : 'text-muted-foreground'
+                            }`}>
+                              {category.apyRange}
+                            </div>
+                            <div className="text-xs text-muted-foreground">
+                              {category.participants} users
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
 
-                {/* Position Description */}
-                 <div className="p-4 bg-muted/50 rounded-lg">
-                  <h4 className="font-medium mb-2">{getRiskLabel(avgRisk)} Strategy</h4>
-                  <p className="text-sm text-muted-foreground">
-                    {avgRisk < 15 
-                      ? 'Lower volatility, steady returns, protected from most losses'
-                      : avgRisk < 70 
-                      ? 'Balanced risk-reward, moderate volatility, shared loss protection'
-                      : 'Higher returns potential, absorbs losses first, maximum risk exposure'
-                    }
-                  </p>
+                {/* T-Core HERO Special Benefits */}
+                <Card className="bg-gradient-to-r from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20 border-purple-200 dark:border-purple-800">
+                  <CardContent className="p-4">
+                    <div className="flex items-center space-x-2 mb-3">
+                      <Crown className="w-5 h-5 text-purple-600" />
+                      <h4 className="font-bold text-purple-700 dark:text-purple-300">T-Core HERO Benefits</h4>
+                    </div>
+                    <div className="space-y-2 text-sm">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                        <span>Maximum yield potential (up to 35%)</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                        <span>Pool insurance role - protect others</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                        <span>First to earn from protocol success</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full"></div>
+                        <span>Hero status in community</span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Key Benefits */}
+                <div className="space-y-3">
+                  <div className="text-sm font-medium">Universal Benefits</div>
+                  <div className="space-y-2 text-xs">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                      <span>Transparent on-chain mechanics</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                      <span>No lock-up periods</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                      <span>NFT positions for DeFi use</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                      <span>Self-insurance protection</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Waterfall Distribution */}
-        <WaterfallDistribution />
+        {/* T-Core Waterfall Distribution */}
+        <TCoreWaterfallDistribution />
 
-        {/* Features Grid */}
-        <Card className="border-border bg-card/50 mb-8">
-          <CardContent className="p-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="text-center space-y-3">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-                  <DollarSign className="w-6 h-6 text-primary" />
-                </div>
-                <h4 className="font-medium">Single Pool</h4>
-                <p className="text-sm text-muted-foreground">
-                  All funds go into one optimized investment strategy with T-Bills as the base layer
-                </p>
-              </div>
-              <div className="text-center space-y-3">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-                  <TrendingUp className="w-6 h-6 text-primary" />
-                </div>
-                <h4 className="font-medium">Risk Distribution</h4>
-                <p className="text-sm text-muted-foreground">
-                  Waterfall model with priority-based payouts - higher risk positions absorb losses first
-                </p>
-              </div>
-              <div className="text-center space-y-3">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-                  <Target className="w-6 h-6 text-primary" />
-                </div>
-                <h4 className="font-medium">Flexible Positioning</h4>
-                <p className="text-sm text-muted-foreground">
-                  Choose ranges instead of single points - concentrate or diversify across 100 levels
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
+        {/* Start Position CTA */}
         <div className="text-center">
-          <Button size="lg" className="px-8">
-            Start with {getRiskLabel(avgRisk).toLowerCase()} position
-          </Button>
-          <p className="text-sm text-muted-foreground mt-4">
-            Join the unified pool and navigate your optimal risk-return position
-          </p>
+          <Card className={`inline-block border-border p-8 ${
+            currentCategory.isHero 
+              ? 'bg-gradient-to-r from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20 border-purple-200 dark:border-purple-800' 
+              : 'bg-card/50'
+          }`}>
+            <CardContent className="p-0">
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-xl font-medium mb-2">Ready to Become a T-Core {currentCategory.isHero ? 'HERO' : 'User'}?</h3>
+                  <p className="text-muted-foreground">
+                    {currentCategory.isHero 
+                      ? 'Join the heroes who protect the pool and earn maximum yields.'
+                      : 'Start earning with your selected risk category immediately.'
+                    }
+                  </p>
+                </div>
+                
+                <div className={`p-4 rounded-lg border ${
+                  currentCategory.isHero
+                    ? 'bg-gradient-to-r from-purple-100 to-yellow-100 dark:from-purple-950/30 dark:to-yellow-950/30 border-purple-300 dark:border-purple-700'
+                    : 'bg-gradient-to-r from-primary/5 to-primary/10 border-primary/20'
+                }`}>
+                  <div className="text-center space-y-2">
+                    <div className="text-sm text-muted-foreground">Your Position</div>
+                    <div className={`text-lg font-bold ${
+                      currentCategory.isHero ? 'text-purple-600' : 'text-primary'
+                    }`}>
+                      {currentCategory.name} • {currentCategory.range[0]}-{currentCategory.range[1]} • {currentCategory.apyRange}
+                      {currentCategory.isHero && ' ⭐'}
+                    </div>
+                  </div>
+                </div>
+                
+                <Button 
+                  size="lg" 
+                  className={`w-full sm:w-auto ${
+                    currentCategory.isHero 
+                      ? 'bg-gradient-to-r from-purple-500 to-yellow-500 hover:from-purple-600 hover:to-yellow-600 text-white'
+                      : ''
+                  }`}
+                >
+                  {currentCategory.isHero && <Crown className="w-4 h-4 mr-2" />}
+                  Start as {currentCategory.name}
+                  {currentCategory.isHero && ' HERO'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </section>

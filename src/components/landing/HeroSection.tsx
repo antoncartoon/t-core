@@ -22,8 +22,8 @@ const HeroSection = () => {
           </h1>
           
           <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8 sm:mb-12">
-            Best crypto yields with optimized risks. 
-            Deposit stables, get TDD, choose your risk level and earn.
+            Best crypto yields with 4 risk tiers. From safe guaranteed returns to heroic maximum yields.
+            Choose your position and start earning.
           </p>
         </div>
 
@@ -59,8 +59,8 @@ const HeroSection = () => {
           
           <div className="flex flex-col items-center text-center p-4 sm:p-6 rounded-lg border border-border bg-card/50">
             <Lock className="w-8 h-8 text-purple-600 mb-3" />
-            <h3 className="font-medium mb-2">Your Risk - Your Yield</h3>
-            <p className="text-sm text-muted-foreground">Choose risk level and earn from your position.</p>
+            <h3 className="font-medium mb-2">4 Risk Tiers</h3>
+            <p className="text-sm text-muted-foreground">From Safe to T-Core HERO - choose your path.</p>
           </div>
         </div>
       </div>
