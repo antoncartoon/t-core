@@ -315,30 +315,31 @@ const StakingCard = () => {
                       variant={isActive ? "default" : "outline"}
                       size="lg"
                       onClick={() => handlePresetClick(preset)}
-                      className={`p-4 h-auto flex items-center justify-between transition-all duration-300 hover:shadow-md ${
+                      className={`p-4 h-auto flex items-center justify-between transition-all duration-300 hover:shadow-md overflow-hidden ${
                         !isActive ? colorClasses[preset.color as keyof typeof colorClasses] : ''
                       }`}
                     >
-                      <div className="flex items-center space-x-3 flex-1 min-w-0">
+                      <div className="flex items-center space-x-3 flex-1 min-w-0 overflow-hidden">
                         <IconComponent className="w-5 h-5 flex-shrink-0" />
-                        <div className="text-left flex-1 min-w-0">
-                          <div className="font-medium flex items-center space-x-2">
-                            <span className="truncate">{preset.name}</span>
+                        <div className="text-left flex-1 min-w-0 overflow-hidden">
+                          <div className="font-medium flex items-center space-x-2 overflow-hidden">
+                            <span className="truncate flex-1">{preset.name}</span>
                             {preset.name === 'T-Core HERO' && (
-                              <span className="text-xs bg-gradient-to-r from-purple-600 to-gold-600 bg-clip-text text-transparent font-bold">
-                                🦸
-                              </span>
+                              <span className="text-xs flex-shrink-0">🦸</span>
                             )}
                           </div>
-                          <div className="text-xs opacity-75 font-medium truncate">
+                          <div className="text-xs opacity-75 font-medium truncate overflow-hidden">
                             {preset.tagline}
                           </div>
-                          <div className="text-xs opacity-60 truncate">
-                            Range {preset.range[0]}-{preset.range[1]} • {preset.description}
+                          <div className="text-xs opacity-60 truncate overflow-hidden">
+                            Range {preset.range[0]}-{preset.range[1]}
+                          </div>
+                          <div className="text-xs opacity-50 truncate overflow-hidden">
+                            {preset.description}
                           </div>
                         </div>
                       </div>
-                      <div className="text-right flex-shrink-0 min-w-0">
+                      <div className="text-right flex-shrink-0 min-w-[60px] max-w-[80px] overflow-hidden">
                         <div className="text-sm font-medium truncate">
                           {preset.name === 'Safe' ? '5.0%' : analysis ? `${(analysis.estimatedAPR * 100).toFixed(1)}%` : '~12%'}
                         </div>
