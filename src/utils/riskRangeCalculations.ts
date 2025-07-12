@@ -191,69 +191,56 @@ export const calculateNormalizedRisk = (riskRange: RiskRange): number => {
 };
 
 /**
- * Calculate realistic APY for new user with real protocol data
- * Implements the exact example calculation from the user's breakdown
+ * Calculate realistic APY for new user with proper weighted average
+ * Uses theoretical APR for each tick and calculates weighted average
  */
 export const calculateRealisticRangeAPY = (
   userAmount: number,
   riskRange: RiskRange
 ): number => {
-  // Total protocol yield for 28 days
-  const totalYield28Days = calculateProtocolYield28Days(); // ~100,685 USD
+  // Handle safe ticks separately (guaranteed APY)
+  if (riskRange.max <= 3) {
+    return MIN_GUARANTEED_APY; // 5.016% for safe ticks
+  }
   
-  // Guaranteed yield for Safe category (ticks 1-3)  
-  const safeGuarantee = (CATEGORY_DISTRIBUTION.SAFE.totalTDD * MIN_GUARANTEED_APY / 365) * 28;
-  
-  // Remaining yield for distribution to ticks 4-100
-  const remainingYield = totalYield28Days - safeGuarantee;
-  
-  // Calculate user's share in each tick within their range
+  // Calculate range size
   const rangeSize = riskRange.max - riskRange.min + 1;
   const userTDDPerTick = userAmount / rangeSize;
   
-  let userTotalYield28Days = 0;
+  let weightedAPR = 0;
+  let totalWeight = 0;
   
+  // Calculate weighted average APR across the range
   for (let tick = riskRange.min; tick <= riskRange.max; tick++) {
-    let currentLiquidityInTick = 0;
+    let tickAPR: number;
+    let weight = userTDDPerTick;
     
-    // Determine base liquidity for this tick
     if (tick >= 1 && tick <= 3) {
-      currentLiquidityInTick = CATEGORY_DISTRIBUTION.SAFE.totalTDD / 3;
-      // Safe ticks get guaranteed yield
-      const tickYieldPerTDD = MIN_GUARANTEED_APY / 365 * 28;
-      userTotalYield28Days += userTDDPerTick * tickYieldPerTDD;
-    } else if (tick >= 4 && tick <= 24) {
-      currentLiquidityInTick = CATEGORY_DISTRIBUTION.CONSERVATIVE.totalTDD / 21;
-    } else if (tick >= 25 && tick <= 80) {
-      currentLiquidityInTick = CATEGORY_DISTRIBUTION.BALANCED.totalTDD / 56;
-    } else if (tick >= 81 && tick <= 100) {
-      currentLiquidityInTick = CATEGORY_DISTRIBUTION.INSURANCE.totalTDD / 20;
+      // Safe ticks: guaranteed APY
+      tickAPR = MIN_GUARANTEED_APY;
+    } else {
+      // Risk ticks: use theoretical APR curve
+      tickAPR = calculateRiskLevelAPR(tick);
+      
+      // Apply slight dilution effect for large positions
+      // Larger positions have slightly lower effective APR due to increased supply
+      const baseLiquidity = (() => {
+        if (tick >= 4 && tick <= 24) return CATEGORY_DISTRIBUTION.CONSERVATIVE.totalTDD / 21;
+        if (tick >= 25 && tick <= 80) return CATEGORY_DISTRIBUTION.BALANCED.totalTDD / 56;
+        if (tick >= 81 && tick <= 100) return CATEGORY_DISTRIBUTION.INSURANCE.totalTDD / 20;
+        return 1000000; // fallback
+      })();
+      
+      // Small dilution factor based on user contribution to tick
+      const dilutionFactor = 1 - (userTDDPerTick / (baseLiquidity + userTDDPerTick)) * 0.05;
+      tickAPR *= Math.max(0.95, dilutionFactor); // Max 5% dilution
     }
     
-    // For non-safe ticks, distribute from remaining yield pool
-    if (tick > 3) {
-      // Add user's contribution to the tick
-      const newTotalLiquidityInTick = currentLiquidityInTick + userTDDPerTick;
-      const userShareInTick = userTDDPerTick / newTotalLiquidityInTick;
-      
-      // Calculate theoretical APR for this tick using non-linear curve
-      const tickTheoreticalAPR = calculateRiskLevelAPR(tick);
-      
-      // Estimate tick's share of remaining yield (simplified)
-      // In reality this would use the waterfall model, but for estimation:
-      const totalStakingTDDNonSafe = TDD_IN_STAKING - CATEGORY_DISTRIBUTION.SAFE.totalTDD;
-      const tickYieldEstimate = (currentLiquidityInTick / totalStakingTDDNonSafe) * remainingYield;
-      
-      // User gets their share of this tick's yield
-      userTotalYield28Days += tickYieldEstimate * userShareInTick;
-    }
+    weightedAPR += tickAPR * weight;
+    totalWeight += weight;
   }
   
-  // Convert 28-day yield to annual APY
-  const user28DayAPY = userTotalYield28Days / userAmount;
-  const annualAPY = (user28DayAPY / 28) * 365;
-  
-  return annualAPY;
+  return totalWeight > 0 ? weightedAPR / totalWeight : 0;
 };
 
 /**
