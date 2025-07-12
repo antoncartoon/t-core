@@ -7,7 +7,7 @@ import { Shield } from 'lucide-react';
 const StatsOverview = () => {
   const stats = [
     { label: 'Total Value Locked', value: '$12.5M', change: '+15.2%' },
-    { label: 'Average APY', value: '8.4%', change: '+0.3%' },
+    { label: 'Average APY', value: '10.5% APY', change: '+0.3%' },
     { label: 'Active Stakers', value: '2,847', change: '+12.1%' },
     { label: 'Self-Insurance Pool', value: '$1.2M', change: '+5.3%', tooltip: 'Self-insurance pool. You are protected by yield generated.' }
   ];
