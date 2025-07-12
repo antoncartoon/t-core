@@ -1,11 +1,13 @@
 import React from 'react';
-import { Trophy, Calendar, TrendingUp, Lock, Unlock, AlertTriangle, Users } from 'lucide-react';
+import { Trophy, Calendar, TrendingUp, Lock, Unlock, AlertTriangle, Users, Zap, Gift, Clock } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useWallet } from '@/contexts/WalletContext';
 import { StakingPosition } from '@/types/staking';
+import { UnclaimedYieldDisplay } from './UnclaimedYieldDisplay';
+import { useDistribution } from '@/contexts/DistributionContext';
 
 interface NFTPositionCardProps {
   position: StakingPosition;
@@ -13,7 +15,8 @@ interface NFTPositionCardProps {
 
 const NFTPositionCard = ({ position }: NFTPositionCardProps) => {
   const { toast } = useToast();
-  const { withdrawPosition } = useWallet();
+  const { withdrawPosition, addBalance } = useWallet();
+  const { getFormattedTimeToNext, unclaimedYields } = useDistribution();
 
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString('en-US', { 
@@ -46,21 +49,32 @@ const NFTPositionCard = ({ position }: NFTPositionCardProps) => {
     return `Every ${days} days`;
   };
 
-  const handleWithdraw = () => {
+  // Instant unstake - no lock period
+  const handleInstantUnstake = () => {
     const success = withdrawPosition(position.id);
     if (success) {
+      // Add TDD back to balance (including any accumulated yield)
+      addBalance('TDD', position.currentValue);
+      
       toast({
-        title: "Position Withdrawn",
-        description: `Successfully withdrew ${position.currentValue.toFixed(2)} tkchUSD from position #${position.id.slice(-6)}`,
+        title: "Position Unstaked Instantly",
+        description: `Received ${position.currentValue.toFixed(2)} TDD. Unclaimed yield remains in protocol pool.`,
       });
     } else {
       toast({
-        title: "Withdrawal Failed",
-        description: "Unable to withdraw from this position.",
+        title: "Unstake failed",
+        description: "Unable to unstake position. Please try again.",
         variant: "destructive",
       });
     }
   };
+
+  // Get unclaimed yield for this position
+  const unclaimedYield = unclaimedYields.find(y => y.positionId === position.id);
+  const timeToNext = getFormattedTimeToNext();
+  
+  // Calculate "if unstake now" preview
+  const unstakeNowAmount = position.currentValue;
 
   const getRiskBadgeClass = () => {
     switch (position.riskCategory) {
@@ -136,7 +150,40 @@ const NFTPositionCard = ({ position }: NFTPositionCardProps) => {
           </div>
         </div>
 
-        {/* New Priority and Risk Info */}
+        {/* Unclaimed Yield Display */}
+        {unclaimedYield && (
+          <div className="mb-4">
+            <UnclaimedYieldDisplay positionId={position.id} />
+          </div>
+        )}
+
+        {/* Instant Unstake Preview */}
+        <div className="bg-blue-50 dark:bg-blue-950/20 p-3 rounded-lg mb-4">
+          <div className="flex items-center space-x-2 mb-2">
+            <Zap className="w-4 h-4 text-blue-600" />
+            <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+              If you unstake now
+            </span>
+          </div>
+          <div className="space-y-1 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">You'll receive:</span>
+              <span className="font-bold text-blue-600">{unstakeNowAmount.toFixed(2)} TDD</span>
+            </div>
+            {unclaimedYield && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Unclaimed yield forfeited:</span>
+                <span className="font-medium text-red-600">{unclaimedYield.amount.toFixed(4)} TDD</span>
+              </div>
+            )}
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>Next distribution in:</span>
+              <span className="font-medium">{timeToNext}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Priority and Risk Info */}
         <div className="bg-muted/30 p-3 rounded-lg mb-4">
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="flex justify-between">
@@ -202,21 +249,26 @@ const NFTPositionCard = ({ position }: NFTPositionCardProps) => {
           </div>
         </div>
 
-        <div className="flex space-x-2">
+        <div className="grid grid-cols-2 gap-3">
+          {unclaimedYield && (
+            <Button 
+              variant="outline"
+              size="sm"
+              className="border-green-600 text-green-600 hover:bg-green-50"
+              disabled
+            >
+              <Gift className="w-4 h-4 mr-1" />
+              <span className="text-xs">Claim ({timeToNext})</span>
+            </Button>
+          )}
           <Button 
-            variant="outline" 
-            size="sm" 
-            className="flex-1"
-          >
-            Use in DeFi
-          </Button>
-          <Button 
-            size="sm" 
-            className="flex-1"
-            onClick={handleWithdraw}
+            onClick={handleInstantUnstake}
+            size="sm"
+            className={`${unclaimedYield ? '' : 'col-span-2'} bg-blue-600 hover:bg-blue-700`}
             disabled={position.status !== 'active'}
           >
-            Withdraw
+            <Zap className="w-4 h-4 mr-2" />
+            Instant Unstake
           </Button>
         </div>
       </CardContent>
