@@ -51,7 +51,7 @@ export const RiskRangeProvider = ({ children }: { children: ReactNode }) => {
   const [protocolState, setProtocolState] = useState<ProtocolState>({
     totalTVL: PROTOCOL_TVL,
     totalYieldGenerated: calculateProtocolYield28Days(), // Real protocol yield for 28 days
-    guaranteedAPY: MIN_GUARANTEED_APY, // T-Bills + 20%
+    guaranteedAPY: FIXED_BASE_APY, // T-Bills * 1.2 = 6%
     riskTicks: generateRealProtocolRiskTicks(), // Real distribution
     lastUpdateTimestamp: new Date(),
     historicalYields: mockHistoricalYields,

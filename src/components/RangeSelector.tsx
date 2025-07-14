@@ -4,7 +4,7 @@ import { Slider } from '@/components/ui/slider';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, Shield, AlertTriangle, BarChart3, Info } from 'lucide-react';
-import { calculateRiskLevelAPR, calculateRealisticRangeAPY, MIN_GUARANTEED_APY, MAX_APY, RISK_SCALE_MIN, RISK_SCALE_MAX } from '@/utils/riskRangeCalculations';
+import { calculateRiskLevelAPR, calculateRealisticRangeAPY, FIXED_BASE_APY, calculateTCoreAPY, RISK_SCALE_MIN, RISK_SCALE_MAX } from '@/utils/riskRangeCalculations';
 
 interface RangeSelectorProps {
   value: [number, number];
@@ -118,7 +118,7 @@ const RangeSelector = ({ value, onChange, liquidityData = [], amount = 0, classN
                   {(minTheoreticalAPR * 100).toFixed(1)}% - {(maxTheoreticalAPR * 100).toFixed(1)}%
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Non-linear curve: r_i = {(MIN_GUARANTEED_APY * 100).toFixed(1)}% + {((MAX_APY - MIN_GUARANTEED_APY) * 100).toFixed(0)}% × ((i-1)/99)²
+                  T-Core formula: tier1 = {(FIXED_BASE_APY * 100).toFixed(1)}% (fixed), higher = fixed + bonus × k^(i-25), k=1.03
                 </p>
               </div>
             )}
