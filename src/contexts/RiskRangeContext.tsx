@@ -6,7 +6,7 @@ import {
   distributeYieldBottomUp,
   calculateHistoricalAPY,
   calculateProtocolYield28Days,
-  MIN_GUARANTEED_APY,
+  FIXED_BASE_APY,
   RISK_SCALE_MIN,
   RISK_SCALE_MAX,
   PROTOCOL_TVL,

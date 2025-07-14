@@ -1,85 +1,115 @@
 
 import { RiskRange, RiskTick, LiquidityPosition, RangeCalculationResult } from '@/types/riskRange';
 
-// Protocol constants (updated with real data)
+// T-Core Protocol constants with new T-Core formulas
 export const RISK_SCALE_MIN = 1;
 export const RISK_SCALE_MAX = 100;
-export const T_BILL_RATE = 0.0418; // 4.18%
-export const PREMIUM_RATE = 0.20; // 20% premium
-export const MIN_GUARANTEED_APY = T_BILL_RATE * (1 + PREMIUM_RATE); // 5.016%
-export const MAX_APY = 0.80; // 80% max theoretical APY
+export const T_BILL_RATE = 0.05; // 5% T-Bills rate
+export const FIXED_BASE_MULTIPLIER = 1.2; // T-Bills * 1.2 for tier1 guarantee
+export const FIXED_BASE_APY = T_BILL_RATE * FIXED_BASE_MULTIPLIER; // 6% guaranteed for tier1
+export const OPTIMAL_K = 1.03; // Optimal k value for gradual bonus growth
+export const VARIANCE_TARGET = 2.9e-7; // Target variance for liquidity uniformity
+export const TIER1_WIDTH = 25; // Width of tier1 (levels 1-25)
 
-// Real protocol data
+// T-Core 4-tier preset structure
+export const TIER_PRESETS = {
+  TIER1: { range: [1, 25], name: 'Fixed Safe', fixedAPY: FIXED_BASE_APY },
+  TIER2: { range: [26, 50], name: 'Low Bonus', fixedAPY: FIXED_BASE_APY },
+  TIER3: { range: [51, 75], name: 'Medium Bonus', fixedAPY: FIXED_BASE_APY },
+  TIER4: { range: [76, 100], name: 'High Bonus', fixedAPY: FIXED_BASE_APY }
+};
+
+// Protocol data with T-Core structure
 export const PROTOCOL_TVL = 12_500_000; // USD
 export const TOTAL_TDD_ISSUED = 12_500_000;
 export const TDD_IN_STAKING = 8_750_000; // 70%
 export const PROTOCOL_APY_28_DAYS = 0.105; // 10.5%
-export const YIELD_CURVE_K = 2; // Non-linear curve steepness
+export const AVERAGE_APY_TARGET = 0.0873; // 8.73% from simulation
+export const BONUS_SPREAD = 0.0891; // 8.91% spread from simulation
 
-// TDD distribution by risk categories
+// Updated distribution matching T-Core tiers
 export const CATEGORY_DISTRIBUTION = {
-  SAFE: { range: [1, 3], totalTDD: 4_750_000 }, // Safe (1-3)
-  CONSERVATIVE: { range: [4, 24], totalTDD: 1_000_000 }, // Conservative (4-24) 
-  BALANCED: { range: [25, 80], totalTDD: 2_500_000 }, // Balanced (25-80)
-  INSURANCE: { range: [81, 100], totalTDD: 500_000 } // Insurance (81-100)
+  TIER1: { range: [1, 25], totalTDD: 4_750_000, isFixed: true },
+  TIER2: { range: [26, 50], totalTDD: 2_500_000, isFixed: false },
+  TIER3: { range: [51, 75], totalTDD: 3_250_000, isFixed: false },
+  TIER4: { range: [76, 100], totalTDD: 2_000_000, isFixed: false }
 };
 
 /**
- * Calculate risk level APR using non-linear yield curve (k=2):
- * r_i = r_min + (r_max - r_min) * ((i - 1) / 99)^k
- * For Safe ticks (1-3): guaranteed 5.016% APY
+ * Calculate T-Core APY using tier1 fixed + bonus formula:
+ * tier1 APY = fixed_base = T-Bills_rate * 1.2 (6% guaranteed)
+ * higher tiers APY = fixed_base + bonus * f(i), where f(i) = p * k^(i - tier1_width)
+ */
+export const calculateTCoreAPY = (riskLevel: number): number => {
+  if (riskLevel < RISK_SCALE_MIN || riskLevel > RISK_SCALE_MAX) {
+    return FIXED_BASE_APY;
+  }
+  
+  // Tier1 (1-25): guaranteed fixed APY, no bonus
+  if (riskLevel <= TIER1_WIDTH) {
+    return FIXED_BASE_APY; // 6% guaranteed
+  }
+  
+  // Higher tiers (26-100): fixed_base + bonus
+  const p = 1; // Scale factor
+  const bonusExponent = riskLevel - TIER1_WIDTH; // Distance from tier1
+  const bonusMultiplier = p * Math.pow(OPTIMAL_K, bonusExponent);
+  
+  // Bonus calculation (gradual growth with k=1.03)
+  const bonus = (bonusMultiplier - 1) * FIXED_BASE_APY; // Bonus relative to fixed_base
+  
+  return FIXED_BASE_APY + bonus;
+};
+
+/**
+ * Legacy function for backward compatibility
  */
 export const calculateRiskLevelAPR = (riskLevel: number): number => {
-  if (riskLevel < RISK_SCALE_MIN || riskLevel > RISK_SCALE_MAX) {
-    return MIN_GUARANTEED_APY;
-  }
-  
-  // Safe ticks (1-3) get guaranteed APY
-  if (riskLevel <= 3) {
-    return MIN_GUARANTEED_APY;
-  }
-  
-  // Non-linear curve for ticks 4-100
-  const normalizedPosition = (riskLevel - 1) / 99;
-  const curveValue = Math.pow(normalizedPosition, YIELD_CURVE_K);
-  return MIN_GUARANTEED_APY + (MAX_APY - MIN_GUARANTEED_APY) * curveValue;
+  return calculateTCoreAPY(riskLevel);
 };
 
 /**
- * Generate initial risk ticks with real protocol liquidity distribution
+ * Generate T-Core risk ticks with 4-tier structure
  */
-export const generateRealProtocolRiskTicks = (): RiskTick[] => {
+export const generateTCoreRiskTicks = (): RiskTick[] => {
   const ticks: RiskTick[] = [];
   
-  // Calculate TDD per tick for each category
-  const safeTDDPerTick = CATEGORY_DISTRIBUTION.SAFE.totalTDD / 3; // 3 ticks (1-3)
-  const conservativeTDDPerTick = CATEGORY_DISTRIBUTION.CONSERVATIVE.totalTDD / 21; // 21 ticks (4-24)
-  const balancedTDDPerTick = CATEGORY_DISTRIBUTION.BALANCED.totalTDD / 56; // 56 ticks (25-80)
-  const insuranceTDDPerTick = CATEGORY_DISTRIBUTION.INSURANCE.totalTDD / 20; // 20 ticks (81-100)
+  // Calculate TDD per tick for each T-Core tier
+  const tier1TDDPerTick = CATEGORY_DISTRIBUTION.TIER1.totalTDD / 25; // 25 ticks (1-25)
+  const tier2TDDPerTick = CATEGORY_DISTRIBUTION.TIER2.totalTDD / 25; // 25 ticks (26-50)
+  const tier3TDDPerTick = CATEGORY_DISTRIBUTION.TIER3.totalTDD / 25; // 25 ticks (51-75)
+  const tier4TDDPerTick = CATEGORY_DISTRIBUTION.TIER4.totalTDD / 25; // 25 ticks (76-100)
   
   for (let i = RISK_SCALE_MIN; i <= RISK_SCALE_MAX; i++) {
     let totalLiquidity = 0;
     
-    // Determine which category this tick belongs to
-    if (i >= 1 && i <= 3) {
-      totalLiquidity = safeTDDPerTick;
-    } else if (i >= 4 && i <= 24) {
-      totalLiquidity = conservativeTDDPerTick;
-    } else if (i >= 25 && i <= 80) {
-      totalLiquidity = balancedTDDPerTick;
-    } else if (i >= 81 && i <= 100) {
-      totalLiquidity = insuranceTDDPerTick;
+    // Determine which T-Core tier this tick belongs to
+    if (i >= 1 && i <= 25) {
+      totalLiquidity = tier1TDDPerTick;
+    } else if (i >= 26 && i <= 50) {
+      totalLiquidity = tier2TDDPerTick;
+    } else if (i >= 51 && i <= 75) {
+      totalLiquidity = tier3TDDPerTick;
+    } else if (i >= 76 && i <= 100) {
+      totalLiquidity = tier4TDDPerTick;
     }
     
     ticks.push({
       riskLevel: i,
       totalLiquidity,
       availableYield: 0,
-      apr: calculateRiskLevelAPR(i)
+      apr: calculateTCoreAPY(i)
     });
   }
   
   return ticks;
+};
+
+/**
+ * Legacy function for backward compatibility
+ */
+export const generateRealProtocolRiskTicks = (): RiskTick[] => {
+  return generateTCoreRiskTicks();
 };
 
 /**
@@ -158,28 +188,53 @@ export const distributeYieldBottomUp = (
 };
 
 /**
- * Calculate losses top-down distribution (high risk levels absorb losses first)
+ * Calculate T-Core subordination losses (high absorbs losses first via Loss_i formula)
+ * Loss_i = L_total * (f(i)/∑f(j>1)), where f(i) = p * k^(i - tier1_width)
+ */
+export const calculateTCoreSubordinationLoss = (
+  totalLoss: number,
+  riskTicks: RiskTick[]
+): { [riskLevel: number]: number } => {
+  const lossPerTick: { [riskLevel: number]: number } = {};
+  
+  // Tier1 (1-25) has 0 loss (guaranteed)
+  for (let i = 1; i <= TIER1_WIDTH; i++) {
+    lossPerTick[i] = 0;
+  }
+  
+  // Calculate f(i) for higher tiers (26-100)
+  const higherTierFactors: { [riskLevel: number]: number } = {};
+  let totalFactor = 0;
+  
+  for (let i = TIER1_WIDTH + 1; i <= RISK_SCALE_MAX; i++) {
+    const p = 1; // Scale factor
+    const bonusExponent = i - TIER1_WIDTH;
+    const factor = p * Math.pow(OPTIMAL_K, bonusExponent);
+    higherTierFactors[i] = factor;
+    totalFactor += factor;
+  }
+  
+  // Distribute losses based on subordination formula
+  for (let i = TIER1_WIDTH + 1; i <= RISK_SCALE_MAX; i++) {
+    if (totalFactor > 0) {
+      const lossRatio = higherTierFactors[i] / totalFactor;
+      lossPerTick[i] = totalLoss * lossRatio;
+    } else {
+      lossPerTick[i] = 0;
+    }
+  }
+  
+  return lossPerTick;
+};
+
+/**
+ * Legacy function for backward compatibility
  */
 export const calculateLossDistribution = (
   totalLoss: number,
   riskTicks: RiskTick[]
 ): { [riskLevel: number]: number } => {
-  const sortedTicks = [...riskTicks].sort((a, b) => b.riskLevel - a.riskLevel);
-  let remainingLoss = totalLoss;
-  const lossPerTick: { [riskLevel: number]: number } = {};
-  
-  for (const tick of sortedTicks) {
-    if (remainingLoss <= 0) {
-      lossPerTick[tick.riskLevel] = 0;
-      continue;
-    }
-    
-    const tickLoss = Math.min(remainingLoss, tick.totalLiquidity);
-    lossPerTick[tick.riskLevel] = tick.totalLiquidity > 0 ? tickLoss / tick.totalLiquidity : 0;
-    remainingLoss -= tickLoss;
-  }
-  
-  return lossPerTick;
+  return calculateTCoreSubordinationLoss(totalLoss, riskTicks);
 };
 
 /**
@@ -191,56 +246,66 @@ export const calculateNormalizedRisk = (riskRange: RiskRange): number => {
 };
 
 /**
- * Calculate realistic APY for new user with proper weighted average
- * Uses theoretical APR for each tick and calculates weighted average
+ * Calculate T-Core personal APY using formula:
+ * Личный APY = ∑ [fixed_base if j in tier1 else fixed_base + bonus] * (S_user_j / S_j)
  */
-export const calculateRealisticRangeAPY = (
+export const calculateTCorePersonalAPY = (
   userAmount: number,
   riskRange: RiskRange
 ): number => {
-  // Handle safe ticks separately (guaranteed APY)
-  if (riskRange.max <= 3) {
-    return MIN_GUARANTEED_APY; // 5.016% for safe ticks
+  // Handle tier1 ranges (guaranteed fixed APY)
+  if (riskRange.max <= TIER1_WIDTH) {
+    return FIXED_BASE_APY; // 6% guaranteed for tier1
   }
   
-  // Calculate range size
+  // Calculate range size and user allocation per tick
   const rangeSize = riskRange.max - riskRange.min + 1;
   const userTDDPerTick = userAmount / rangeSize;
   
   let weightedAPR = 0;
   let totalWeight = 0;
   
-  // Calculate weighted average APR across the range
+  // Calculate weighted average APR across the range using T-Core formula
   for (let tick = riskRange.min; tick <= riskRange.max; tick++) {
     let tickAPR: number;
     let weight = userTDDPerTick;
     
-    if (tick >= 1 && tick <= 3) {
-      // Safe ticks: guaranteed APY
-      tickAPR = MIN_GUARANTEED_APY;
+    if (tick <= TIER1_WIDTH) {
+      // Tier1: guaranteed fixed APY
+      tickAPR = FIXED_BASE_APY;
     } else {
-      // Risk ticks: use theoretical APR curve
-      tickAPR = calculateRiskLevelAPR(tick);
+      // Higher tiers: fixed_base + bonus
+      tickAPR = calculateTCoreAPY(tick);
       
-      // Apply slight dilution effect for large positions
-      // Larger positions have slightly lower effective APR due to increased supply
+      // Apply dilution effect based on T-Core tier structure
       const baseLiquidity = (() => {
-        if (tick >= 4 && tick <= 24) return CATEGORY_DISTRIBUTION.CONSERVATIVE.totalTDD / 21;
-        if (tick >= 25 && tick <= 80) return CATEGORY_DISTRIBUTION.BALANCED.totalTDD / 56;
-        if (tick >= 81 && tick <= 100) return CATEGORY_DISTRIBUTION.INSURANCE.totalTDD / 20;
+        if (tick >= 1 && tick <= 25) return CATEGORY_DISTRIBUTION.TIER1.totalTDD / 25;
+        if (tick >= 26 && tick <= 50) return CATEGORY_DISTRIBUTION.TIER2.totalTDD / 25;
+        if (tick >= 51 && tick <= 75) return CATEGORY_DISTRIBUTION.TIER3.totalTDD / 25;
+        if (tick >= 76 && tick <= 100) return CATEGORY_DISTRIBUTION.TIER4.totalTDD / 25;
         return 1000000; // fallback
       })();
       
-      // Small dilution factor based on user contribution to tick
-      const dilutionFactor = 1 - (userTDDPerTick / (baseLiquidity + userTDDPerTick)) * 0.05;
-      tickAPR *= Math.max(0.95, dilutionFactor); // Max 5% dilution
+      // Dilution factor for large positions (S_user_j / S_j effect)
+      const dilutionFactor = 1 - (userTDDPerTick / (baseLiquidity + userTDDPerTick)) * 0.03;
+      tickAPR *= Math.max(0.97, dilutionFactor); // Max 3% dilution
     }
     
     weightedAPR += tickAPR * weight;
     totalWeight += weight;
   }
   
-  return totalWeight > 0 ? weightedAPR / totalWeight : 0;
+  return totalWeight > 0 ? weightedAPR / totalWeight : FIXED_BASE_APY;
+};
+
+/**
+ * Legacy function for backward compatibility
+ */
+export const calculateRealisticRangeAPY = (
+  userAmount: number,
+  riskRange: RiskRange
+): number => {
+  return calculateTCorePersonalAPY(userAmount, riskRange);
 };
 
 /**
