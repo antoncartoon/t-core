@@ -41,7 +41,7 @@ const Index = () => {
             T-Core Finance
           </h1>
           <p className="text-sm sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed px-2 sm:px-4">
-            Stake your stablecoins, mint tkchUSD, and earn yield through optimized DeFi strategies
+            Mathematical precision meets DeFi innovation. Choose your T-Core tier and earn sustainable yields.
           </p>
         </div>
 
@@ -148,34 +148,44 @@ const Index = () => {
                   <div className="space-y-3">
                     {[
                       {
-                        name: "Conservative",
-                        description: "Low risk, stable returns through blue-chip DeFi protocols",
-                        risk: "0-33%",
-                        apy: "2-6%",
+                        name: "Safe",
+                        description: "T-Bill +20% guaranteed, zero loss risk",
+                        risk: "1-3",
+                        apy: "6.0%",
                         color: "text-green-600"
                       },
                       {
-                        name: "Moderate",
-                        description: "Balanced approach with diversified yield farming",
-                        risk: "34-66%",
-                        apy: "6-15%",
+                        name: "Conservative",
+                        description: "Stable yield, minimal drawdown risk",
+                        risk: "4-24",
+                        apy: "9.0%",
+                        color: "text-blue-600"
+                      },
+                      {
+                        name: "Balanced",
+                        description: "Optimal risk/reward, diversified exposure",
+                        risk: "25-80",
+                        apy: "16.0%",
                         color: "text-yellow-600"
                       },
                       {
-                        name: "Aggressive",
-                        description: "High-yield strategies with elevated risk exposure",
-                        risk: "67-100%",
-                        apy: "15-25%",
-                        color: "text-red-600"
+                        name: "T-Core HERO",
+                        description: "Pool insurance provider - maximum yield for heroes",
+                        risk: "81-100",
+                        apy: "35.0%",
+                        color: "text-purple-600"
                       }
                     ].map((strategy) => (
                       <div key={strategy.name} className="p-4 border border-border rounded-lg">
-                        <h4 className={`font-medium ${strategy.color} mb-2`}>{strategy.name}</h4>
+                        <h4 className={`font-medium ${strategy.color} mb-2`}>
+                          {strategy.name}
+                          {strategy.name === 'T-Core HERO' && <span className="ml-2 text-yellow-500">⭐</span>}
+                        </h4>
                         <p className="text-xs text-muted-foreground mb-2 leading-relaxed">
                           {strategy.description}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          Risk: {strategy.risk} | APY: {strategy.apy}
+                          Tier: {strategy.risk} | APY: {strategy.apy}
                         </p>
                       </div>
                     ))}
@@ -190,27 +200,34 @@ const Index = () => {
                 
                 <div className="space-y-6 sm:space-y-8">
                   <h3 className="text-xl font-medium text-center sm:text-left">Staking Strategies</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                     <div className="p-4 sm:p-6 border border-border rounded-lg">
-                      <h4 className="font-medium text-green-600 mb-2">Conservative</h4>
+                      <h4 className="font-medium text-green-600 mb-2">Safe</h4>
                       <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
-                        Low risk, stable returns through blue-chip DeFi protocols
+                        T-Bill +20% guaranteed, zero loss risk
                       </p>
-                      <p className="text-xs text-muted-foreground">Risk: 0-33% | APY: 2-6%</p>
+                      <p className="text-xs text-muted-foreground">Tier: 1-3 | APY: 6.0%</p>
                     </div>
                     <div className="p-4 sm:p-6 border border-border rounded-lg">
-                      <h4 className="font-medium text-yellow-600 mb-2">Moderate</h4>
+                      <h4 className="font-medium text-blue-600 mb-2">Conservative</h4>
                       <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
-                        Balanced approach with diversified yield farming
+                        Stable yield, minimal drawdown risk
                       </p>
-                      <p className="text-xs text-muted-foreground">Risk: 34-66% | APY: 6-15%</p>
+                      <p className="text-xs text-muted-foreground">Tier: 4-24 | APY: 9.0%</p>
                     </div>
-                    <div className="p-4 sm:p-6 border border-border rounded-lg sm:col-span-2 lg:col-span-1">
-                      <h4 className="font-medium text-red-600 mb-2">Aggressive</h4>
+                    <div className="p-4 sm:p-6 border border-border rounded-lg">
+                      <h4 className="font-medium text-yellow-600 mb-2">Balanced</h4>
                       <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
-                        High-yield strategies with elevated risk exposure
+                        Optimal risk/reward, diversified exposure
                       </p>
-                      <p className="text-xs text-muted-foreground">Risk: 67-100% | APY: 15-25%</p>
+                      <p className="text-xs text-muted-foreground">Tier: 25-80 | APY: 16.0%</p>
+                    </div>
+                    <div className="p-4 sm:p-6 border border-border rounded-lg">
+                      <h4 className="font-medium text-purple-600 mb-2">T-Core HERO ⭐</h4>
+                      <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
+                        Pool insurance provider - maximum yield for heroes
+                      </p>
+                      <p className="text-xs text-muted-foreground">Tier: 81-100 | APY: 35.0%</p>
                     </div>
                   </div>
                 </div>

@@ -3,13 +3,31 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Shield } from 'lucide-react';
+import { TCORE_STATS, formatCurrency, formatPercentage, formatGrowth } from '@/data/tcoreData';
 
 const StatsOverview = () => {
   const stats = [
-    { label: 'Total Value Locked', value: '$12.5M', change: '+15.2%' },
-    { label: 'T-CORE APY 28 Days', value: '10.5% APY', change: '+0.3%' },
-    { label: 'Active Stakers', value: '2,847', change: '+12.1%' },
-    { label: 'Self-Insurance Pool', value: '$1.2M', change: '+5.3%', tooltip: 'Self-insurance pool. You are protected by yield generated.' }
+    { 
+      label: 'Total Value Locked', 
+      value: formatCurrency(TCORE_STATS.totalValueLocked), 
+      change: formatGrowth(TCORE_STATS.growthMetrics.tvlGrowth) 
+    },
+    { 
+      label: 'T-Core APY 28 Days', 
+      value: `${formatPercentage(TCORE_STATS.protocolAPY28Days)} APY`, 
+      change: formatGrowth(TCORE_STATS.growthMetrics.apyChange) 
+    },
+    { 
+      label: 'Active Stakers', 
+      value: TCORE_STATS.activeStakers.toLocaleString(), 
+      change: formatGrowth(TCORE_STATS.growthMetrics.stakersGrowth) 
+    },
+    { 
+      label: 'Self-Insurance Pool', 
+      value: formatCurrency(TCORE_STATS.selfInsurancePool), 
+      change: formatGrowth(TCORE_STATS.growthMetrics.insuranceGrowth), 
+      tooltip: 'T-Core HERO tier protects lower tiers. You are protected by yield generated.' 
+    }
   ];
 
   return (

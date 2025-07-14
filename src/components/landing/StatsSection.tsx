@@ -2,46 +2,47 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { TrendingUp, Users, DollarSign, Shield } from 'lucide-react';
+import { TCORE_STATS, formatCurrency, formatPercentage, formatGrowth } from '@/data/tcoreData';
 
 const StatsSection = () => {
+  // Performance stats using unified T-Core data
   const stats = [
     {
       icon: DollarSign,
-      label: "Total Value Locked",
-      value: "$2.4M",
-      change: "+18.2%",
-      period: "this month"
-    },
-    {
-      icon: Users,
-      label: "Active Positions",
-      value: "1,247",
-      change: "+156",
-      period: "this week"
+      label: 'Total Value Locked',
+      value: formatCurrency(TCORE_STATS.totalValueLocked),
+      change: formatGrowth(TCORE_STATS.growthMetrics.tvlGrowth),
+      period: 'Last 30 days'
     },
     {
       icon: TrendingUp,
-      label: "Average 28D APY",
-      value: "10.5%",
-      change: "+2.1%",
-      period: "vs last quarter"
+      label: 'T-Core APY',
+      value: formatPercentage(TCORE_STATS.protocolAPY28Days),
+      change: formatGrowth(TCORE_STATS.growthMetrics.apyChange),
+      period: 'Last 28 days'
+    },
+    {
+      icon: Users,
+      label: 'Active Stakers',
+      value: TCORE_STATS.activeStakers.toLocaleString(),
+      change: formatGrowth(TCORE_STATS.growthMetrics.stakersGrowth),
+      period: 'This month'
     },
     {
       icon: Shield,
-      label: "Security Score",
-      value: "AA+",
-      change: "Excellent",
-      period: "rating"
+      label: 'Self-Insurance Pool',
+      value: formatCurrency(TCORE_STATS.selfInsurancePool),
+      change: formatGrowth(TCORE_STATS.growthMetrics.insuranceGrowth),
+      period: 'T-Core HERO protection'
     }
   ];
 
-  const protocols = [
-    { name: "AAVE", allocation: "35%", apy: "4.2%" },
-    { name: "Compound", allocation: "25%", apy: "3.8%" },
-    { name: "Pendle", allocation: "20%", apy: "12.5%" },
-    { name: "CEX Strategies", allocation: "15%", apy: "8.9%" },
-    { name: "Treasury", allocation: "5%", apy: "5.1%" }
-  ];
+  // T-Core yield sources (anti-ponzi breakdown)
+  const yieldSources = TCORE_STATS.yieldSources.sources.map(source => ({
+    name: source.name,
+    allocation: Math.round(source.allocation * 100),
+    apy: source.apy * 100
+  }));
 
   return (
     <section className="py-16 sm:py-24 bg-muted/20">
@@ -79,6 +80,37 @@ const StatsSection = () => {
             );
           })}
         </div>
+
+        {/* T-Core Yield Sources */}
+        <Card className="border-border bg-card/50">
+          <CardContent className="p-6">
+            <h3 className="text-lg font-medium mb-4 text-center">Anti-Ponzi Yield Sources</h3>
+            <div className="mb-4 p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
+              <div className="text-sm font-medium text-green-700 dark:text-green-300 text-center">
+                60% Fixed Yield + 40% Protocol Revenue
+              </div>
+              <div className="text-xs text-green-600 dark:text-green-400 mt-1 text-center">
+                Sustainable, non-ponzi yield structure
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+              {yieldSources.map((source, index) => (
+                <div key={index} className="flex flex-col items-center text-center p-3 bg-muted/30 rounded-lg">
+                  <div className={`w-3 h-3 rounded-full mb-2 ${
+                    source.name === 'T-Bills' ? 'bg-green-500' :
+                    source.name === 'AAVE' ? 'bg-blue-500' :
+                    source.name === 'JLP' ? 'bg-yellow-500' :
+                    source.name === 'LP Farming' ? 'bg-purple-500' :
+                    'bg-orange-500'
+                  }`} />
+                  <span className="text-sm font-medium">{source.name}</span>
+                  <div className="text-xs font-medium text-primary mt-1">{source.allocation}%</div>
+                  <div className="text-xs text-muted-foreground">{source.apy.toFixed(1)}% APY</div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
       </div>
     </section>

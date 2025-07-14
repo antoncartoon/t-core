@@ -3,6 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Eye, ArrowDown, ArrowUp, Shield, Crown, Zap, Star } from 'lucide-react';
+import RiskSimulator from '@/components/RiskSimulator';
 
 // T-Core risk band visualization with 4 categories and animation
 const RiskBandVisualization = ({ activeCategory, isAnimating }) => {

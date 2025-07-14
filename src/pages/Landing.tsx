@@ -6,6 +6,7 @@ import WhyTCore from '@/components/landing/WhyTCore';
 import RiskSelection from '@/components/landing/RiskSelection';
 import HowItWorks from '@/components/landing/HowItWorks';
 import StatsSection from '@/components/landing/StatsSection';
+import ArchitectureDashboard from '@/components/ArchitectureDashboard';
 import CTASection from '@/components/landing/CTASection';
 import LandingFooter from '@/components/landing/LandingFooter';
 
@@ -21,6 +22,7 @@ const Landing = () => {
         <HowItWorks />
         <RiskSelection />
         <StatsSection />
+        <ArchitectureDashboard />
         <CTASection />
       </main>
       <LandingFooter />
