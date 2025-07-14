@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
 import { Wallet, Smartphone, Globe, ArrowRight, Zap, Info, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -63,9 +64,9 @@ const WalletConnect = ({
       <div className="w-full max-w-4xl">
         <div className="text-center mb-12">
           <div className="flex items-center justify-center mb-6">
-            <div className="w-12 h-12 bg-foreground rounded-lg flex items-center justify-center">
+            <NavLink to="/" className="w-12 h-12 bg-foreground rounded-lg flex items-center justify-center hover:opacity-80 transition-opacity cursor-pointer">
               <span className="text-background font-bold text-xl">T</span>
-            </div>
+            </NavLink>
           </div>
           <h1 className="text-4xl font-light mb-4">Welcome to T-CORE</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
