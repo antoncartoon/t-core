@@ -11,14 +11,14 @@ const LandingHeader = () => {
   return (
     <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-        <div className="flex items-center space-x-2 sm:space-x-3">
+        <NavLink to="/" className="flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity cursor-pointer">
           <div className="w-5 h-5 sm:w-6 sm:h-6 bg-foreground rounded flex items-center justify-center">
             <span className="text-background font-bold text-xs sm:text-sm">T</span>
           </div>
-          <div className="text-base sm:text-lg font-medium">
+          <span className="text-base sm:text-lg font-medium">
             T-Core
-          </div>
-        </div>
+          </span>
+        </NavLink>
         
         <nav className="hidden md:flex items-center space-x-8">
           <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
