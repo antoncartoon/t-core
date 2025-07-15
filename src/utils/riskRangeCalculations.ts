@@ -395,6 +395,132 @@ export const calculateHistoricalAPY = (historicalYields: number[]): number => {
 /**
  * Calculate comprehensive range analysis using exact formulas from document
  */
+// ============= BUYBACK & BURN CALCULATIONS =============
+
+/**
+ * Calculate buyback amount for TDD based on post-distribution yields/fees
+ * Formula: Burn_amount = fraction * (fees or yields_post_min)
+ */
+export const calculateBuybackAmount = (
+  postDistributionYields: number,
+  burnFraction: number = 0.15 // 15% default burn rate
+): number => {
+  return postDistributionYields * burnFraction;
+};
+
+/**
+ * Calculate value increase from supply reduction
+ * Formula: Value_increase = (1 - initial_supply / new_supply) * 100
+ */
+export const calculateValueIncrease = (
+  initialSupply: number,
+  burnedAmount: number,
+  currentPrice: number
+): number => {
+  const burnedTokens = burnedAmount / currentPrice;
+  const newSupply = initialSupply - burnedTokens;
+  return ((1 - initialSupply / newSupply) * 100);
+};
+
+/**
+ * Simulate annual value increase from burns
+ * Based on simulation: ~0.5-5% annually depending on burn rate
+ */
+export const simulateAnnualValueIncrease = (
+  totalFees: number,
+  burnRate: number,
+  currentPrice: number = 1.0
+): number => {
+  const annualBurnAmount = totalFees * burnRate;
+  const baseIncrease = 0.005; // 0.5% base
+  const scalingFactor = burnRate * 10; // Higher burn rate = more value increase
+  
+  return Math.min(baseIncrease + (scalingFactor * 0.001), 0.05); // Cap at 5%
+};
+
+// ============= SURPLUS POOL CALCULATIONS =============
+
+/**
+ * Calculate surplus pool after minimum yields distributed
+ * Formula: Surplus = Y_total - (fixed_base * S_tier1)
+ */
+export const calculateSurplusPool = (
+  totalYield: number,
+  tier1Stake: number = CATEGORY_DISTRIBUTION.TIER1.totalTDD
+): number => {
+  const minYieldsRequired = tier1Stake * FIXED_BASE_APY;
+  return Math.max(0, totalYield - minYieldsRequired);
+};
+
+/**
+ * Calculate surplus distribution to higher tiers
+ * Formula: Dist_i = surplus * (f(i)/∑f(j>1)) * (S_i / ∑S_higher)
+ * where f(i) = 1 * 1.03^(i - 25) for i > 25
+ */
+export const calculateSurplusDistribution = (
+  surplus: number,
+  riskTicks: RiskTick[]
+): { [riskLevel: number]: number } => {
+  const distribution: { [riskLevel: number]: number } = {};
+  
+  // Tier1 gets 0 surplus (already has fixed minimum)
+  for (let i = 1; i <= TIER1_WIDTH; i++) {
+    distribution[i] = 0;
+  }
+  
+  // Calculate factors for higher tiers (26-100)
+  const higherTierFactors: { [riskLevel: number]: number } = {};
+  let totalFactor = 0;
+  let totalHigherStake = 0;
+  
+  for (let i = TIER1_WIDTH + 1; i <= RISK_SCALE_MAX; i++) {
+    const factor = Math.pow(OPTIMAL_K, i - TIER1_WIDTH);
+    higherTierFactors[i] = factor;
+    totalFactor += factor;
+    
+    // Get stake for this tier
+    const tick = riskTicks.find(t => t.riskLevel === i);
+    totalHigherStake += tick?.totalLiquidity || 0;
+  }
+  
+  // Distribute surplus proportionally
+  for (let i = TIER1_WIDTH + 1; i <= RISK_SCALE_MAX; i++) {
+    if (totalFactor > 0 && totalHigherStake > 0) {
+      const tick = riskTicks.find(t => t.riskLevel === i);
+      const stake = tick?.totalLiquidity || 0;
+      
+      const proportionalWeight = (higherTierFactors[i] / totalFactor) * (stake / totalHigherStake);
+      distribution[i] = surplus * proportionalWeight;
+    } else {
+      distribution[i] = 0;
+    }
+  }
+  
+  return distribution;
+};
+
+/**
+ * Simulate surplus distribution for UI display
+ * Returns example distribution for 1M TVL scenario
+ */
+export const simulateSurplusDistribution = (): {
+  tier1: number;
+  tier2: number; 
+  tier3: number;
+  tier4: number;
+} => {
+  const totalYield = 1_000_000 * 0.105; // 10.5% on 1M TVL
+  const surplus = calculateSurplusPool(totalYield);
+  
+  // Simulated distribution based on T-Core weights
+  return {
+    tier1: 0, // No surplus for tier1 (already has fixed)
+    tier2: surplus * 0.08, // ~8% of surplus (~5.8k)
+    tier3: surplus * 0.17, // ~17% of surplus (~12.5k)
+    tier4: surplus * 0.75  // ~75% of surplus (~54k)
+  };
+};
+
 export const analyzeRiskRange = (
   amount: number,
   riskRange: RiskRange,

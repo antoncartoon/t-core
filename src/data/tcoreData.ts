@@ -16,6 +16,18 @@ export const TCORE_STATS = {
   // Self-Insurance Pool
   selfInsurancePool: 1200000, // $1.2M
   
+  // Buyback & Burn Statistics
+  burnRate: 0.15, // 15% of post-distribution yields
+  totalBurned: 187500, // Total TDD burned to date
+  supplyReduction: 0.015, // 1.5% supply reduction
+  valueIncrease: 0.0125, // 1.25% value increase from burns
+  lastBurnAmount: 12500, // Last burn amount in USD
+  
+  // Surplus Pool Statistics
+  currentSurplus: 890000, // Current surplus available
+  surplusUtilization: 0.73, // 73% of surplus distributed
+  averageSurplusAPY: 0.182, // 18.2% average surplus APY
+  
   // Yield Sources (Anti-Ponzi Breakdown)
   yieldSources: {
     fixed: 0.6, // 60% fixed yield
