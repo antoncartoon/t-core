@@ -24,10 +24,10 @@ const BuybackBurnDashboard = () => {
       <div className="text-center space-y-2">
         <h2 className="text-2xl font-semibold flex items-center justify-center gap-2">
           <Flame className="w-6 h-6 text-orange-500" />
-          Buyback & Burn Mechanism
+          TDD Deflationary Engine
         </h2>
         <p className="text-muted-foreground">
-          Deflationary mechanics for T-Core value capture
+          Automated token buyback and burn mechanism for value capture
         </p>
       </div>
 
