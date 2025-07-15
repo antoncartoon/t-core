@@ -9,9 +9,13 @@ import StatsSection from '@/components/landing/StatsSection';
 import ArchitectureDashboard from '@/components/ArchitectureDashboard';
 import CTASection from '@/components/landing/CTASection';
 import LandingFooter from '@/components/landing/LandingFooter';
+import InteractiveTutorial from '@/components/InteractiveTutorial';
+import PWAInstallPrompt from '@/components/PWAInstallPrompt';
+import { useTutorial } from '@/hooks/useTutorial';
 
 const Landing = () => {
   const isMobile = useIsMobile();
+  const { isVisible, startTutorial, completeTutorial, skipTutorial } = useTutorial();
 
   return (
     <div className="min-h-screen bg-background">
@@ -26,6 +30,14 @@ const Landing = () => {
         <CTASection />
       </main>
       <LandingFooter />
+      
+      {/* Enhanced UX Elements */}
+      <InteractiveTutorial 
+        isVisible={isVisible}
+        onComplete={completeTutorial}
+        onSkip={skipTutorial}
+      />
+      <PWAInstallPrompt />
     </div>
   );
 };
