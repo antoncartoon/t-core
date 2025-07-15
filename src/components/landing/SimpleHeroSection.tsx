@@ -1,0 +1,83 @@
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { NavLink } from 'react-router-dom';
+import { ArrowRight, Play, Shield, TrendingUp, Lock } from 'lucide-react';
+import { useIsMobile } from '@/hooks/use-mobile';
+
+interface SimpleHeroSectionProps {
+  onStartTutorial?: () => void;
+}
+
+const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
+  const isMobile = useIsMobile();
+  
+  return (
+    <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20 py-16 sm:py-24">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-light text-foreground mb-6 sm:mb-8">
+            From <span className="text-green-600 font-medium">6% Safe</span> to{' '}
+            <span className="text-purple-600 font-medium">35% Heroic</span>{' '}
+            <span className="text-primary">Yields</span>
+          </h1>
+          
+          <p className="text-lg sm:text-xl text-muted-foreground mb-8 sm:mb-12 max-w-2xl mx-auto">
+            Choose your risk tier and earn transparent, sustainable yields backed by real assets.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 sm:mb-16">
+            <NavLink to="/app">
+              <Button 
+                size={isMobile ? "default" : "lg"} 
+                className="w-full sm:w-auto text-base font-medium px-8 py-6 h-auto"
+              >
+                Start Earning Now
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </NavLink>
+            
+            {onStartTutorial && (
+              <Button 
+                variant="outline" 
+                size={isMobile ? "default" : "lg"} 
+                className="w-full sm:w-auto text-base px-8 py-6 h-auto"
+                onClick={onStartTutorial}
+              >
+                <Play className="w-4 h-4 mr-2" />
+                Take Tutorial
+              </Button>
+            )}
+            
+            <a href="#how-it-works">
+              <Button 
+                variant="ghost" 
+                size={isMobile ? "default" : "lg"} 
+                className="w-full sm:w-auto text-base px-8 py-6 h-auto"
+              >
+                Learn More
+              </Button>
+            </a>
+          </div>
+          
+          {/* Key Features */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+            <div className="flex items-center justify-center gap-3 p-4 bg-muted/30 rounded-lg">
+              <Shield className="w-6 h-6 text-green-600" />
+              <span className="text-sm font-medium">Guaranteed Safe Tier</span>
+            </div>
+            <div className="flex items-center justify-center gap-3 p-4 bg-muted/30 rounded-lg">
+              <TrendingUp className="w-6 h-6 text-primary" />
+              <span className="text-sm font-medium">Scalable Returns</span>
+            </div>
+            <div className="flex items-center justify-center gap-3 p-4 bg-muted/30 rounded-lg">
+              <Lock className="w-6 h-6 text-purple-600" />
+              <span className="text-sm font-medium">Transparent & Secure</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default SimpleHeroSection;

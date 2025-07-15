@@ -1,12 +1,11 @@
 import React from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import LandingHeader from '@/components/landing/LandingHeader';
-import HeroSection from '@/components/landing/HeroSection';
-import WhyTCore from '@/components/landing/WhyTCore';
-import RiskSelection from '@/components/landing/RiskSelection';
-import HowItWorks from '@/components/landing/HowItWorks';
-import StatsSection from '@/components/landing/StatsSection';
-import ArchitectureDashboard from '@/components/ArchitectureDashboard';
+import SimpleHeroSection from '@/components/landing/SimpleHeroSection';
+import SimpleWhyTCore from '@/components/landing/SimpleWhyTCore';
+import SimpleRiskTiers from '@/components/landing/SimpleRiskTiers';
+import SimpleHowItWorks from '@/components/landing/SimpleHowItWorks';
+import KeyStats from '@/components/landing/KeyStats';
 import CTASection from '@/components/landing/CTASection';
 import LandingFooter from '@/components/landing/LandingFooter';
 import InteractiveTutorial from '@/components/InteractiveTutorial';
@@ -21,12 +20,11 @@ const Landing = () => {
     <div className="min-h-screen bg-background">
       <LandingHeader onStartTutorial={startTutorial} />
       <main>
-        <HeroSection onStartTutorial={startTutorial} />
-        <WhyTCore />
-        <HowItWorks />
-        <RiskSelection />
-        <StatsSection />
-        <ArchitectureDashboard />
+        <SimpleHeroSection onStartTutorial={startTutorial} />
+        <SimpleWhyTCore />
+        <SimpleHowItWorks />
+        <SimpleRiskTiers />
+        <KeyStats />
         <CTASection />
       </main>
       <LandingFooter />
