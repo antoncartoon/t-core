@@ -18,6 +18,7 @@ import {
   AVERAGE_APY_TARGET,
   BONUS_SPREAD
 } from '@/utils/riskRangeCalculations';
+import SkeletonAPYCalculator from '@/components/SkeletonAPYCalculator';
 
 interface APYCalculatorProps {
   className?: string;
@@ -27,10 +28,20 @@ const APYCalculator: React.FC<APYCalculatorProps> = ({ className }) => {
   const [amount, setAmount] = useState(10000);
   const [selectedRange, setSelectedRange] = useState({ min: 1, max: 25 });
   const [isAdvancedMode, setIsAdvancedMode] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [multiSplitAllocations, setMultiSplitAllocations] = useState([
     { tier: 'TIER1', fraction: 0.5, range: [1, 25] },
     { tier: 'TIER4', fraction: 0.5, range: [76, 100] }
   ]);
+
+  useEffect(() => {
+    // Simulate loading time
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Calculate APY data for chart
   const generateAPYCurve = () => {
@@ -93,6 +104,14 @@ const APYCalculator: React.FC<APYCalculatorProps> = ({ className }) => {
       max: TIER_PRESETS[preset].range[1] 
     });
   };
+
+  if (isLoading) {
+    return (
+      <div className={className}>
+        <SkeletonAPYCalculator />
+      </div>
+    );
+  }
 
   return (
     <div className={className}>

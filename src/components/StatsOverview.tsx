@@ -1,11 +1,27 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Shield } from 'lucide-react';
 import { TCORE_STATS, formatCurrency, formatPercentage, formatGrowth } from '@/data/tcoreData';
+import SkeletonStatsOverview from '@/components/SkeletonStatsOverview';
 
 const StatsOverview = () => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate loading time
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (isLoading) {
+    return <SkeletonStatsOverview />;
+  }
+
   const stats = [
     { 
       label: 'Total Value Locked', 

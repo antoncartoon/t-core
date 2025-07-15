@@ -4,6 +4,7 @@ import { NavLink } from 'react-router-dom';
 import { ArrowRight, Shield, TrendingUp, Lock } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import APYCalculator from '@/components/APYCalculator';
+import InteractiveRiskCalculator from '@/components/InteractiveRiskCalculator';
 const HeroSection = () => {
   const isMobile = useIsMobile();
   return <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20 py-12 sm:py-24">
@@ -42,9 +43,9 @@ const HeroSection = () => {
           </a>
         </div>
 
-        {/* APY Calculator Integration */}
+        {/* Interactive Risk Calculator */}
         <div className="max-w-4xl mx-auto mb-12 sm:mb-16">
-          <APYCalculator className="bg-card/50 border border-border" />
+          <InteractiveRiskCalculator className="bg-card/50 border border-border" />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-4xl mx-auto">
