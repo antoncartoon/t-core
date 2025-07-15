@@ -14,8 +14,9 @@ import {
   Shield,
   TrendingUp,
   Brain,
-  Users,
-  Search
+  Layers,
+  Eye,
+  BarChart3
 } from 'lucide-react';
 
 interface TutorialStep {
@@ -32,7 +33,7 @@ const TUTORIAL_STEPS: TutorialStep[] = [
   {
     id: 'welcome',
     title: 'Welcome to T-Core',
-    description: 'Learn how to maximize your DeFi yields with T-Core\'s risk-optimized strategies.',
+    description: 'Learn how to maximize your DeFi yields with T-Core\'s risk-optimized strategies backed by T-Bills.',
     target: 'hero',
     icon: Play,
     highlight: true
@@ -40,7 +41,7 @@ const TUTORIAL_STEPS: TutorialStep[] = [
   {
     id: 'risk-selection',
     title: 'Choose Your Risk Level',
-    description: 'Select from 4 risk tiers based on your comfort level and return expectations.',
+    description: 'Select from 4 risk tiers: Conservative, Balanced, Aggressive, and T-Core HERO based on your comfort level.',
     target: 'risk-calculator',
     icon: Target,
     action: 'Try adjusting the risk slider'
@@ -48,18 +49,18 @@ const TUTORIAL_STEPS: TutorialStep[] = [
   {
     id: 'portfolio-setup',
     title: 'Build Your Portfolio',
-    description: 'Deposit funds and create diversified positions across multiple risk tiers.',
+    description: 'Deposit TDD tokens and create diversified positions across multiple risk tiers.',
     target: 'deposit-card',
     icon: DollarSign,
     action: 'Connect your wallet to start'
   },
   {
-    id: 'nft-staking',
-    title: 'NFT Staking Positions',
-    description: 'Create yield-generating NFT positions that can be traded or held to maturity.',
+    id: 'liquidity-positions',
+    title: 'Liquidity Positions',
+    description: 'Create liquidity positions that represent your stake in specific risk ranges with instant unstaking capability.',
     target: 'staking-card',
-    icon: Shield,
-    action: 'Explore staking options'
+    icon: Layers,
+    action: 'Explore liquidity options'
   },
   {
     id: 'track-performance',
@@ -78,28 +79,28 @@ const TUTORIAL_STEPS: TutorialStep[] = [
     action: 'Try the AI optimizer'
   },
   {
-    id: 'social-trading',
-    title: 'Copy Trading',
-    description: 'Follow successful traders and automatically copy their strategies to your portfolio.',
+    id: 'risk-diversification',
+    title: 'Risk Diversification',
+    description: 'Learn how to diversify across Conservative, Balanced, and T-Core HERO risk ranges for optimal yield.',
     target: 'copy-trading',
-    icon: Users,
-    action: 'Explore top traders'
+    icon: BarChart3,
+    action: 'Explore risk distribution'
   },
   {
-    id: 'security-dashboard',
-    title: 'Advanced Security',
-    description: 'Monitor your portfolio security with real-time threat detection and smart contract auditing.',
+    id: 'protocol-transparency',
+    title: 'Protocol Transparency',
+    description: 'Monitor all protocol operations, collateral backing, and governance decisions in real-time on-chain.',
     target: 'security-dashboard',
-    icon: Shield,
-    action: 'Check security status'
+    icon: Eye,
+    action: 'Check transparency dashboard'
   },
   {
-    id: 'global-search',
-    title: 'Global Search',
-    description: 'Quickly find any feature, position, or information across the entire platform.',
+    id: 'portfolio-management',
+    title: 'Portfolio Management',
+    description: 'Track and manage all your liquidity positions across different risk tiers from one unified view.',
     target: 'global-search',
-    icon: Search,
-    action: 'Try searching for anything'
+    icon: Shield,
+    action: 'Manage your positions'
   }
 ];
 
