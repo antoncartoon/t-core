@@ -3,11 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Flame, TrendingUp, Target, Clock, HelpCircle, DollarSign, Shield } from 'lucide-react';
+import { Flame, TrendingUp, Target, Clock, HelpCircle, DollarSign, Shield, ExternalLink } from 'lucide-react';
 import { TCORE_STATS, formatCurrency, formatPercentage } from '@/data/tcoreData';
 import SupplyChart from './SupplyChart';
 import BurnTracker from './BurnTracker';
-import StressTestCalculator from './StressTestCalculator';
+
 
 const BuybackBurnDashboard = () => {
   const [simulationTVL, setSimulationTVL] = useState([1000000]);
@@ -211,8 +211,29 @@ const BuybackBurnDashboard = () => {
         </CardContent>
       </Card>
 
-      {/* Stress Test Calculator */}
-      <StressTestCalculator />
+      {/* Advanced Analytics Link */}
+      <Card className="border-primary/20 bg-primary/5">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="w-5 h-5" />
+            Advanced Risk Analysis
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground mb-4">
+            Access stress testing, Monte Carlo simulations, and detailed risk metrics for TDD deflationary scenarios
+          </p>
+          <Button 
+            variant="outline" 
+            className="flex items-center gap-2"
+            onClick={() => window.open('/transparency?tab=risk-tools', '_blank')}
+          >
+            <Shield className="w-4 h-4" />
+            Risk Tools Dashboard
+            <ExternalLink className="w-4 h-4" />
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* High-Tier Equity Benefits */}
       <Card>

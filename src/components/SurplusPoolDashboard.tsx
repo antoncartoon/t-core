@@ -4,11 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Slider } from '@/components/ui/slider';
-import { Droplets, TrendingUp, Target, Users, Layers, Calculator, AlertTriangle } from 'lucide-react';
+import { Droplets, TrendingUp, Target, Users, Layers, Calculator, AlertTriangle, ExternalLink } from 'lucide-react';
 import { TCORE_STATS, formatCurrency, formatPercentage } from '@/data/tcoreData';
-import SurplusSimulator from './SurplusSimulator';
-import WaterfallChart from './WaterfallChart';
-import MonteCarloSimulator from './MonteCarloSimulator';
 
 const SurplusPoolDashboard = () => {
   const [totalYield, setTotalYield] = useState([87300]);
@@ -210,107 +207,89 @@ const SurplusPoolDashboard = () => {
         </Card>
       </div>
 
-      {/* Interactive Components */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5" />
-              Surplus Distribution
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <WaterfallChart />
-          </CardContent>
-        </Card>
+      {/* Advanced Analytics Link */}
+      <Card className="border-primary/20 bg-primary/5">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calculator className="w-5 h-5" />
+            Advanced Analytics & Simulators
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground mb-4">
+            Access detailed surplus distribution charts, cash flow simulators, and Monte Carlo analysis
+          </p>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-2"
+              onClick={() => window.open('/transparency?tab=analytics', '_blank')}
+            >
+              <Target className="w-4 h-4" />
+              Surplus Analytics
+              <ExternalLink className="w-4 h-4" />
+            </Button>
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-2"
+              onClick={() => window.open('/transparency?tab=risk-tools', '_blank')}
+            >
+              <TrendingUp className="w-4 h-4" />
+              Risk Simulators
+              <ExternalLink className="w-4 h-4" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="w-5 h-5" />
-              Cash Flow Simulator
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <SurplusSimulator />
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Live Surplus Calculator */}
+      {/* Simplified Distribution Overview */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calculator className="w-5 h-5" />
-            Live Surplus Distribution Calculator
+            Surplus Distribution Overview
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-6">
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium">Total Protocol Yield: {formatCurrency(totalYield[0])}</label>
-                <Slider
-                  value={totalYield}
-                  onValueChange={setTotalYield}
-                  max={150000}
-                  min={60000}
-                  step={1000}
-                  className="mt-2"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium">Tier 1 Stake: {tier1Stake[0]}%</label>
-                <Slider
-                  value={tier1Stake}
-                  onValueChange={setTier1Stake}
-                  max={50}
-                  min={15}
-                  step={1}
-                  className="mt-2"
-                />
-              </div>
-            </div>
-            
+          <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="p-3 bg-muted/50 rounded-lg">
-                <div className="text-sm text-muted-foreground">Minimum Yield</div>
-                <div className="text-lg font-semibold">{formatCurrency(minYield)}</div>
+                <div className="text-sm text-muted-foreground">Current Surplus</div>
+                <div className="text-lg font-semibold">{formatCurrency(TCORE_STATS.currentSurplus)}</div>
               </div>
               <div className="p-3 bg-muted/50 rounded-lg">
-                <div className="text-sm text-muted-foreground">Available Surplus</div>
-                <div className="text-lg font-semibold text-blue-600">{formatCurrency(surplus)}</div>
+                <div className="text-sm text-muted-foreground">Tier 1 Share</div>
+                <div className="text-lg font-semibold text-muted-foreground">0%</div>
+              </div>
+              <div className="p-3 bg-muted/50 rounded-lg">
+                <div className="text-sm text-muted-foreground">Tier 2-3 Share</div>
+                <div className="text-lg font-semibold text-blue-600">26%</div>
               </div>
               <div className="p-3 bg-muted/50 rounded-lg">
                 <div className="text-sm text-muted-foreground">Tier 4 Share</div>
-                <div className="text-lg font-semibold text-purple-600">{formatCurrency(tier4SurplusShare)}</div>
-              </div>
-              <div className="p-3 bg-muted/50 rounded-lg">
-                <div className="text-sm text-muted-foreground">Tier 4 Total APY</div>
-                <div className="text-lg font-semibold text-green-600">{tier4TotalAPY.toFixed(1)}%</div>
+                <div className="text-lg font-semibold text-purple-600">74%</div>
               </div>
             </div>
             
             <div className="p-4 bg-muted/50 rounded-lg">
-              <h4 className="font-medium mb-2 text-sm">Surplus Distribution Breakdown</h4>
-              <div className="space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-sm">Tier 1 (Fixed):</span>
-                  <span className="font-medium">$0 (0%)</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Tier 2 (8% share):</span>
-                  <span className="font-medium">{formatCurrency(surplus * 0.08)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Tier 3 (18% share):</span>
-                  <span className="font-medium">{formatCurrency(surplus * 0.18)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Tier 4 (74% share):</span>
-                  <span className="font-medium text-primary">{formatCurrency(tier4SurplusShare)}</span>
-                </div>
+              <h4 className="font-medium mb-2 text-sm">Distribution Logic</h4>
+              <div className="space-y-2 text-sm text-muted-foreground">
+                <p>• Tier 1: Fixed 6% APY from guaranteed yield</p>
+                <p>• Tier 2-4: Base curve + proportional surplus share</p>
+                <p>• Higher tiers earn more surplus as compensation for risk</p>
               </div>
+            </div>
+            
+            <div className="flex justify-center pt-2">
+              <Button 
+                variant="outline" 
+                className="flex items-center gap-2"
+                onClick={() => window.open('/transparency?tab=analytics', '_blank')}
+              >
+                <Calculator className="w-4 h-4" />
+                Advanced Calculator
+                <ExternalLink className="w-4 h-4" />
+              </Button>
             </div>
           </div>
         </CardContent>
@@ -432,8 +411,6 @@ const SurplusPoolDashboard = () => {
         </CardContent>
       </Card>
 
-      {/* Monte Carlo Simulator */}
-      <MonteCarloSimulator />
     </div>
   );
 };
