@@ -19,9 +19,9 @@ const Landing = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <LandingHeader />
+      <LandingHeader onStartTutorial={startTutorial} />
       <main>
-        <HeroSection />
+        <HeroSection onStartTutorial={startTutorial} />
         <WhyTCore />
         <HowItWorks />
         <RiskSelection />

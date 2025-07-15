@@ -1,11 +1,16 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { NavLink } from 'react-router-dom';
-import { ArrowRight, Shield, TrendingUp, Lock } from 'lucide-react';
+import { ArrowRight, Shield, TrendingUp, Lock, Play } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import APYCalculator from '@/components/APYCalculator';
 import InteractiveRiskCalculator from '@/components/InteractiveRiskCalculator';
-const HeroSection = () => {
+
+interface HeroSectionProps {
+  onStartTutorial?: () => void;
+}
+
+const HeroSection = ({ onStartTutorial }: HeroSectionProps) => {
   const isMobile = useIsMobile();
   return <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20 py-12 sm:py-24">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
@@ -35,6 +40,18 @@ const HeroSection = () => {
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </NavLink>
+          
+          {onStartTutorial && (
+            <Button 
+              variant="outline" 
+              size={isMobile ? "default" : "lg"} 
+              className="w-full sm:w-auto"
+              onClick={onStartTutorial}
+            >
+              <Play className="w-4 h-4 mr-2" />
+              Take Tutorial
+            </Button>
+          )}
           
           <a href="#how-it-works">
             <Button variant="outline" size={isMobile ? "default" : "lg"} className="w-full sm:w-auto">

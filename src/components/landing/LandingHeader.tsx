@@ -2,10 +2,14 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Play } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
-const LandingHeader = () => {
+interface LandingHeaderProps {
+  onStartTutorial?: () => void;
+}
+
+const LandingHeader = ({ onStartTutorial }: LandingHeaderProps) => {
   const isMobile = useIsMobile();
 
   return (
@@ -39,14 +43,37 @@ const LandingHeader = () => {
           >
             FAQ
           </NavLink>
+          {onStartTutorial && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={onStartTutorial}
+              className="text-sm"
+            >
+              <Play className="w-4 h-4 mr-2" />
+              Tutorial
+            </Button>
+          )}
         </nav>
 
-        <NavLink to="/app">
-          <Button size={isMobile ? "sm" : "default"} className="text-xs sm:text-sm">
-            Launch App
-            <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2" />
-          </Button>
-        </NavLink>
+        <div className="flex items-center gap-2">
+          {onStartTutorial && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={onStartTutorial}
+              className="md:hidden"
+            >
+              <Play className="w-4 h-4" />
+            </Button>
+          )}
+          <NavLink to="/app">
+            <Button size={isMobile ? "sm" : "default"} className="text-xs sm:text-sm">
+              Launch App
+              <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2" />
+            </Button>
+          </NavLink>
+        </div>
       </div>
     </header>
   );
