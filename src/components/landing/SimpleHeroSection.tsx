@@ -16,13 +16,12 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-light text-foreground mb-6 sm:mb-8">
-            From <span className="text-green-600 font-medium">6% Safe</span> to{' '}
-            <span className="text-purple-600 font-medium">35% Heroic</span>{' '}
-            <span className="text-primary">Yields</span>
+            <span className="text-green-600 font-medium">Guaranteed 6% Safe</span> +{' '}
+            <span className="text-primary font-medium">Unlimited Upside Potential</span>
           </h1>
           
           <p className="text-lg sm:text-xl text-muted-foreground mb-8 sm:mb-12 max-w-2xl mx-auto">
-            Choose your risk tier and earn transparent, sustainable yields backed by real assets.
+            Scale Your Yields Based on Your Risk Appetite
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 sm:mb-16">
@@ -31,7 +30,7 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
                 size={isMobile ? "default" : "lg"} 
                 className="w-full sm:w-auto text-base font-medium px-8 py-6 h-auto"
               >
-                Start Earning Now
+                Start Staking TDD
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </NavLink>

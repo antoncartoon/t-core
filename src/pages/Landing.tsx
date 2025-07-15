@@ -2,6 +2,7 @@ import React from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import LandingHeader from '@/components/landing/LandingHeader';
 import SimpleHeroSection from '@/components/landing/SimpleHeroSection';
+import TDDExplainer from '@/components/landing/TDDExplainer';
 import SimpleWhyTCore from '@/components/landing/SimpleWhyTCore';
 import SimpleRiskTiers from '@/components/landing/SimpleRiskTiers';
 import SimpleHowItWorks from '@/components/landing/SimpleHowItWorks';
@@ -21,9 +22,10 @@ const Landing = () => {
       <LandingHeader onStartTutorial={startTutorial} />
       <main>
         <SimpleHeroSection onStartTutorial={startTutorial} />
+        <TDDExplainer />
         <SimpleWhyTCore />
-        <SimpleHowItWorks />
         <SimpleRiskTiers />
+        <SimpleHowItWorks />
         <KeyStats />
         <CTASection />
       </main>
