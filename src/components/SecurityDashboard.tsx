@@ -18,6 +18,7 @@ import {
   Bell,
   Settings
 } from 'lucide-react';
+import SkeletonSecurityDashboard from './SkeletonSecurityDashboard';
 
 interface SecurityAlert {
   id: string;
@@ -53,6 +54,7 @@ const SecurityDashboard: React.FC = () => {
   const [isMonitoring, setIsMonitoring] = useState(true);
   const [alerts, setAlerts] = useState<SecurityAlert[]>([]);
   const [lastUpdate, setLastUpdate] = useState(new Date());
+  const [isLoading, setIsLoading] = useState(true);
 
   const securityMetrics: SecurityMetric[] = [
     {
@@ -152,11 +154,20 @@ const SecurityDashboard: React.FC = () => {
   ];
 
   useEffect(() => {
+    // Simulate initial loading
+    const loadingTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
     setAlerts(mockAlerts);
     const interval = setInterval(() => {
       setLastUpdate(new Date());
     }, 30000);
-    return () => clearInterval(interval);
+    
+    return () => {
+      clearTimeout(loadingTimer);
+      clearInterval(interval);
+    };
   }, []);
 
   const getAlertColor = (type: string) => {
@@ -202,6 +213,10 @@ const SecurityDashboard: React.FC = () => {
       default: return <div className="h-4 w-4" />;
     }
   };
+
+  if (isLoading) {
+    return <SkeletonSecurityDashboard />;
+  }
 
   return (
     <div className="space-y-6">

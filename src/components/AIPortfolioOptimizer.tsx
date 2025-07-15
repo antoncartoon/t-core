@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Brain, TrendingUp, Target, Zap, AlertTriangle, CheckCircle } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import SkeletonAIOptimizer from './SkeletonAIOptimizer';
 
 interface OptimizationSuggestion {
   id: string;
@@ -33,6 +34,7 @@ const AIPortfolioOptimizer: React.FC = () => {
   const [analysis, setAnalysis] = useState<AIAnalysis | null>(null);
   const [suggestions, setSuggestions] = useState<OptimizationSuggestion[]>([]);
   const [selectedSuggestion, setSelectedSuggestion] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Mock AI analysis data
   const mockAnalysis: AIAnalysis = {

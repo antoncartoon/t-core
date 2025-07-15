@@ -18,12 +18,20 @@ import ModeSelector from '@/components/ModeSelector';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RedeemProvider } from '@/contexts/RedeemContext';
 import { DistributionProvider } from '@/contexts/DistributionContext';
+import AIPortfolioOptimizer from '@/components/AIPortfolioOptimizer';
+import CopyTradingPlatform from '@/components/CopyTradingPlatform';
+import SecurityDashboard from '@/components/SecurityDashboard';
+import MobileGestureHandler from '@/components/MobileGestureHandler';
+import InteractiveTutorial from '@/components/InteractiveTutorial';
+import { useTutorial } from '@/hooks/useTutorial';
 
 const App = () => {
   const [isConnected, setIsConnected] = useState(false);
   const [walletAddress, setWalletAddress] = useState('');
   const [isProMode, setIsProMode] = useState(false);
+  const [activeTab, setActiveTab] = useState("earn");
   const isMobile = useIsMobile();
+  const { isVisible, completeTutorial, skipTutorial } = useTutorial();
 
   const handleConnect = (provider?: string) => {
     // Simulate wallet connection
@@ -37,10 +45,30 @@ const App = () => {
     return <WalletConnect onConnect={handleConnect} />;
   }
 
+  const handleSwipeLeft = () => {
+    const tabs = ["earn", "trade", "portfolio", "ai", "social", "security"];
+    const currentIndex = tabs.indexOf(activeTab);
+    if (currentIndex < tabs.length - 1) {
+      setActiveTab(tabs[currentIndex + 1]);
+    }
+  };
+
+  const handleSwipeRight = () => {
+    const tabs = ["earn", "trade", "portfolio", "ai", "social", "security"];
+    const currentIndex = tabs.indexOf(activeTab);
+    if (currentIndex > 0) {
+      setActiveTab(tabs[currentIndex - 1]);
+    }
+  };
+
   return (
     <RedeemProvider>
       <DistributionProvider>
-        <div className="min-h-screen bg-background">
+        <MobileGestureHandler 
+          onSwipeLeft={handleSwipeLeft}
+          onSwipeRight={handleSwipeRight}
+          className="min-h-screen bg-background"
+        >
           <Header 
             isConnected={isConnected} 
             onConnect={handleConnect}
@@ -67,11 +95,14 @@ const App = () => {
         {/* Mode Selector */}
         <ModeSelector isProMode={isProMode} onModeChange={setIsProMode} />
 
-        <Tabs defaultValue="earn" className="space-y-6 sm:space-y-12">
-          <TabsList className="grid w-full grid-cols-3 max-w-lg mx-auto bg-muted/50 h-10 sm:h-auto">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6 sm:space-y-12">
+          <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 max-w-4xl mx-auto bg-muted/50 h-10 sm:h-auto">
             <TabsTrigger value="earn" className="text-xs sm:text-sm h-8 sm:h-auto">Earn</TabsTrigger>
             <TabsTrigger value="trade" className="text-xs sm:text-sm h-8 sm:h-auto">Trade</TabsTrigger>
             <TabsTrigger value="portfolio" className="text-xs sm:text-sm h-8 sm:h-auto">Portfolio</TabsTrigger>
+            <TabsTrigger value="ai" className="text-xs sm:text-sm h-8 sm:h-auto">AI</TabsTrigger>
+            <TabsTrigger value="social" className="text-xs sm:text-sm h-8 sm:h-auto">Social</TabsTrigger>
+            <TabsTrigger value="security" className="text-xs sm:text-sm h-8 sm:h-auto">Security</TabsTrigger>
           </TabsList>
           
           {/* Earn Tab - Deposit & Stake */}
@@ -328,9 +359,58 @@ const App = () => {
               )}
             </div>
           </TabsContent>
+          
+          {/* AI Tab - Portfolio Optimization */}
+          <TabsContent value="ai" className="space-y-6 sm:space-y-12">
+            <div className="space-y-8">
+              <div className="text-center">
+                <h2 className="text-2xl font-light mb-2">AI Portfolio Optimization</h2>
+                <p className="text-muted-foreground">
+                  Leverage machine learning to optimize your DeFi portfolio
+                </p>
+              </div>
+              
+              <AIPortfolioOptimizer />
+            </div>
+          </TabsContent>
+          
+          {/* Social Tab - Copy Trading */}
+          <TabsContent value="social" className="space-y-6 sm:space-y-12">
+            <div className="space-y-8">
+              <div className="text-center">
+                <h2 className="text-2xl font-light mb-2">Social Trading</h2>
+                <p className="text-muted-foreground">
+                  Follow top traders and copy their strategies
+                </p>
+              </div>
+              
+              <CopyTradingPlatform />
+            </div>
+          </TabsContent>
+          
+          {/* Security Tab - Advanced Security */}
+          <TabsContent value="security" className="space-y-6 sm:space-y-12">
+            <div className="space-y-8">
+              <div className="text-center">
+                <h2 className="text-2xl font-light mb-2">Security Dashboard</h2>
+                <p className="text-muted-foreground">
+                  Monitor and manage your protocol security
+                </p>
+              </div>
+              
+              <SecurityDashboard />
+            </div>
+          </TabsContent>
         </Tabs>
           </main>
-        </div>
+          
+          {/* Interactive Tutorial */}
+          <InteractiveTutorial
+            isVisible={isVisible}
+            onComplete={completeTutorial}
+            onSkip={skipTutorial}
+          />
+        </MobileGestureHandler>
       </DistributionProvider>
     </RedeemProvider>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Copy, TrendingUp, Users, Star, Shield, Filter, Search } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
+import SkeletonCopyTrading from './SkeletonCopyTrading';
 
 interface Trader {
   id: string;
@@ -41,6 +42,7 @@ const CopyTradingPlatform: React.FC = () => {
   const [riskFilter, setRiskFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('return');
   const [copiedTraders, setCopiedTraders] = useState<CopyPosition[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const topTraders: Trader[] = [
     {
@@ -183,6 +185,13 @@ const CopyTradingPlatform: React.FC = () => {
     return matchesSearch && matchesRisk;
   });
 
+  useEffect(() => {
+    const loadingTimer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1200);
+    return () => clearTimeout(loadingTimer);
+  }, []);
+
   const sortedTraders = [...filteredTraders].sort((a, b) => {
     switch (sortBy) {
       case 'return': return b.totalReturn - a.totalReturn;
@@ -192,6 +201,10 @@ const CopyTradingPlatform: React.FC = () => {
       default: return 0;
     }
   });
+
+  if (isLoading) {
+    return <SkeletonCopyTrading />;
+  }
 
   return (
     <div className="space-y-6">

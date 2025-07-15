@@ -1,11 +1,12 @@
 
 import React, { useState } from 'react';
-import { Wallet, Menu } from 'lucide-react';
+import { Wallet, Menu, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NavLink } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
 import WalletDropdown from './WalletDropdown';
 import MobileMenu from './MobileMenu';
+import GlobalSearch from './GlobalSearch';
 
 interface HeaderProps {
   isConnected: boolean;
@@ -15,6 +16,7 @@ interface HeaderProps {
 
 const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const isMobile = useIsMobile();
 
   return (
@@ -97,6 +99,17 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
           </nav>
 
           <div className="flex items-center space-x-2">
+            {isConnected && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0"
+                onClick={() => setSearchOpen(true)}
+              >
+                <Search className="w-4 h-4" />
+              </Button>
+            )}
+            
             {isConnected && walletAddress ? (
               <WalletDropdown walletAddress={walletAddress} />
             ) : (
@@ -122,6 +135,11 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
         isOpen={mobileMenuOpen}
         onClose={() => setMobileMenuOpen(false)}
         isConnected={isConnected}
+      />
+      
+      <GlobalSearch
+        isOpen={searchOpen}
+        onOpenChange={setSearchOpen}
       />
     </>
   );

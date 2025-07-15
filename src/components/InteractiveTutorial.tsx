@@ -12,7 +12,10 @@ import {
   Target,
   DollarSign,
   Shield,
-  TrendingUp 
+  TrendingUp,
+  Brain,
+  Users,
+  Search
 } from 'lucide-react';
 
 interface TutorialStep {
@@ -65,6 +68,38 @@ const TUTORIAL_STEPS: TutorialStep[] = [
     target: 'portfolio-stats',
     icon: TrendingUp,
     action: 'View your dashboard'
+  },
+  {
+    id: 'ai-optimization',
+    title: 'AI Portfolio Optimization',
+    description: 'Use machine learning to automatically optimize your portfolio allocation and maximize returns.',
+    target: 'ai-optimizer',
+    icon: Brain,
+    action: 'Try the AI optimizer'
+  },
+  {
+    id: 'social-trading',
+    title: 'Copy Trading',
+    description: 'Follow successful traders and automatically copy their strategies to your portfolio.',
+    target: 'copy-trading',
+    icon: Users,
+    action: 'Explore top traders'
+  },
+  {
+    id: 'security-dashboard',
+    title: 'Advanced Security',
+    description: 'Monitor your portfolio security with real-time threat detection and smart contract auditing.',
+    target: 'security-dashboard',
+    icon: Shield,
+    action: 'Check security status'
+  },
+  {
+    id: 'global-search',
+    title: 'Global Search',
+    description: 'Quickly find any feature, position, or information across the entire platform.',
+    target: 'global-search',
+    icon: Search,
+    action: 'Try searching for anything'
   }
 ];
 
