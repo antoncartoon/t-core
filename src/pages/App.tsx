@@ -11,6 +11,8 @@ import MobileStakingCard from '@/components/MobileStakingCard';
 import WalletConnect from '@/components/WalletConnect';
 import { RedeemCard } from '@/components/RedeemCard';
 import { DistributionTimer } from '@/components/DistributionTimer';
+import BuybackBurnDashboard from '@/components/BuybackBurnDashboard';
+import SurplusPoolDashboard from '@/components/SurplusPoolDashboard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RedeemProvider } from '@/contexts/RedeemContext';
 import { DistributionProvider } from '@/contexts/DistributionContext';
@@ -60,9 +62,11 @@ const App = () => {
         </div>
 
         <Tabs defaultValue="deposit" className="space-y-6 sm:space-y-12">
-          <TabsList className="grid w-full grid-cols-2 max-w-xs sm:max-w-sm mx-auto bg-muted/50 h-10 sm:h-auto">
-            <TabsTrigger value="deposit" className="text-xs sm:text-sm h-8 sm:h-auto">Deposit & Redeem</TabsTrigger>
-            <TabsTrigger value="stake" className="text-xs sm:text-sm h-8 sm:h-auto">Stake & Yield</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-4 max-w-2xl mx-auto bg-muted/50 h-10 sm:h-auto">
+            <TabsTrigger value="deposit" className="text-xs sm:text-sm h-8 sm:h-auto">Deposit</TabsTrigger>
+            <TabsTrigger value="stake" className="text-xs sm:text-sm h-8 sm:h-auto">Stake</TabsTrigger>
+            <TabsTrigger value="buyback" className="text-xs sm:text-sm h-8 sm:h-auto">Buyback</TabsTrigger>
+            <TabsTrigger value="surplus" className="text-xs sm:text-sm h-8 sm:h-auto">Surplus</TabsTrigger>
           </TabsList>
           
           <TabsContent value="deposit" className="space-y-6 sm:space-y-12">
@@ -245,6 +249,14 @@ const App = () => {
                 </div>
               </>
             )}
+          </TabsContent>
+          
+          <TabsContent value="buyback" className="space-y-6 sm:space-y-12">
+            <BuybackBurnDashboard />
+          </TabsContent>
+          
+          <TabsContent value="surplus" className="space-y-6 sm:space-y-12">
+            <SurplusPoolDashboard />
           </TabsContent>
         </Tabs>
           </main>
