@@ -68,16 +68,16 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
                 >
                   DeFi
                 </NavLink>
-                <NavLink 
-                  to="/transparency" 
-                  className={({ isActive }) => 
-                    `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
-                  }
-                >
-                  Transparency
-                </NavLink>
               </>
             )}
+            <NavLink 
+              to="/transparency" 
+              className={({ isActive }) => 
+                `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
+              }
+            >
+              Transparency
+            </NavLink>
             <NavLink 
               to="/docs" 
               className={({ isActive }) => 

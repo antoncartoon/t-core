@@ -222,14 +222,36 @@ const StakingCard = () => {
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Target className="w-5 h-5 text-primary" />
-            <span>Create Liquidity Position</span>
+            <span>Create 
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="underline decoration-dotted cursor-help ml-1">Liquidity Position</span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs">A liquidity position allows you to provide funds to the protocol and earn yield based on your chosen risk level.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Step 1: Amount Input */}
           <div>
             <label className="text-sm font-medium mb-2 block">
-              Amount to Stake (TDD)
+              Amount to Stake (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="underline decoration-dotted cursor-help">TDD</span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs">TDD (T-Core Deposit Dollars) are the protocol's native staking tokens representing your deposited value.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              )
             </label>
             <Input
               type="number"
@@ -400,7 +422,19 @@ const StakingCard = () => {
             <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-4 rounded-lg border border-primary/20">
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-sm">Estimated APY</span>
+                  <span className="text-sm">
+                    Estimated 
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="underline decoration-dotted cursor-help ml-1">APY</span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="max-w-xs">Annual Percentage Yield - the total return on your staked tokens including compound interest over one year.</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </span>
                   <span className="font-bold text-primary">
                     {(realisticAPY * 100).toFixed(1)}%
                   </span>

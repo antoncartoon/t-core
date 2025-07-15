@@ -78,19 +78,19 @@ const MobileMenu = ({ isOpen, onClose, isConnected }: MobileMenuProps) => {
               >
                 DeFi
               </NavLink>
-              <NavLink 
-                to="/transparency" 
-                onClick={onClose}
-                className={({ isActive }) => 
-                  `block py-3 px-4 rounded-lg text-base transition-colors touch-manipulation ${
-                    isActive ? 'text-foreground font-medium bg-muted' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                  }`
-                }
-              >
-                Transparency
-              </NavLink>
             </>
           )}
+          <NavLink 
+            to="/transparency" 
+            onClick={onClose}
+            className={({ isActive }) => 
+              `block py-3 px-4 rounded-lg text-base transition-colors touch-manipulation ${
+                isActive ? 'text-foreground font-medium bg-muted' : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+              }`
+            }
+          >
+            Transparency
+          </NavLink>
           <NavLink 
             to="/docs" 
             onClick={onClose}
