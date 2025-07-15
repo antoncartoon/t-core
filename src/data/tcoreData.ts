@@ -16,17 +16,57 @@ export const TCORE_STATS = {
   // Self-Insurance Pool
   selfInsurancePool: 1200000, // $1.2M
   
-  // Buyback & Burn Statistics
+  // Buyback & Burn Statistics (Enhanced with simulation data)
   burnRate: 0.15, // 15% of post-distribution yields
   totalBurned: 187500, // Total TDD burned to date
   supplyReduction: 0.015, // 1.5% supply reduction
   valueIncrease: 0.0125, // 1.25% value increase from burns
   lastBurnAmount: 12500, // Last burn amount in USD
   
-  // Surplus Pool Statistics
+  // Simulation Results
+  simulationData: {
+    monthlyBurn: 4167, // Monthly burn at 1M TVL
+    annualBurn: 50000, // Annual burn at 1M TVL
+    pegStabilization: {
+      withoutBuyback: 0.98, // Peg slips in bear market
+      withBuyback: 1.01, // Stabilized with premium
+    },
+    tierBoosts: {
+      tier3: 1.5, // 1.5x deflation benefit
+      tier4: 2.0, // 2.0x deflation benefit
+    }
+  },
+  
+  // Surplus Pool Statistics (Enhanced with distribution data)
   currentSurplus: 890000, // Current surplus available
   surplusUtilization: 0.73, // 73% of surplus distributed
   averageSurplusAPY: 0.182, // 18.2% average surplus APY
+  
+  // Surplus Distribution Weights
+  surplusDistribution: {
+    tier1: 0.00, // 0% - No surplus for tier 1
+    tier2: 0.08, // 8% - Low surplus share
+    tier3: 0.18, // 18% - Medium surplus share
+    tier4: 0.74, // 74% - High surplus share (insurance compensation)
+  },
+  
+  // Base Curve vs Surplus Layer
+  baseAPYs: {
+    tier1: 6.0,  // Fixed T-Bills * 1.2
+    tier2: 9.2,  // Base + low bonus
+    tier3: 12.8, // Base + medium bonus
+    tier4: 14.9, // Base + high bonus
+  },
+  
+  // Stress Test Data
+  stressTestResults: {
+    marketDrop20: {
+      tier1Loss: 0.0,    // 0% loss (protected)
+      tier2Loss: 0.002,  // 0.2% loss
+      tier3Loss: 0.006,  // 0.6% loss
+      tier4Loss: 0.008,  // 0.8% loss (absorbs first)
+    }
+  },
   
   // Yield Sources (Anti-Ponzi Breakdown)
   yieldSources: {
