@@ -7,21 +7,16 @@ import { Flame, TrendingUp, Target, Clock, HelpCircle, DollarSign, Shield } from
 import { TCORE_STATS, formatCurrency, formatPercentage } from '@/data/tcoreData';
 import SupplyChart from './SupplyChart';
 import BurnTracker from './BurnTracker';
+import StressTestCalculator from './StressTestCalculator';
 
 const BuybackBurnDashboard = () => {
   const [simulationTVL, setSimulationTVL] = useState([1000000]);
-  const [stressScenario, setStressScenario] = useState([0.8]); // 20% market drop
   
   // Simulation calculations
   const monthlyBurn = (simulationTVL[0] * 0.01 * 0.5) / 12; // 0.5% of 1% fees monthly
   const annualBurn = monthlyBurn * 12;
   const supplyReduction = (annualBurn / simulationTVL[0]) * 100;
   const valueIncrease = (1 - simulationTVL[0] / (simulationTVL[0] - annualBurn)) * 100;
-  
-  // Stress test calculations
-  const marketDrop = (1 - stressScenario[0]) * 100;
-  const withoutBuyback = 1 - 0.02; // Peg slips to 0.98
-  const withBuyback = 1 + 0.01; // Stabilizes at 1.01
   
   return (
     <div className="space-y-6">
@@ -216,42 +211,8 @@ const BuybackBurnDashboard = () => {
         </CardContent>
       </Card>
 
-      {/* Stress Test */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="w-5 h-5" />
-            Stress Test: Market Crash Scenarios
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium">Market Drop: -{marketDrop.toFixed(0)}%</label>
-              <Slider
-                value={stressScenario}
-                onValueChange={setStressScenario}
-                max={1}
-                min={0.5}
-                step={0.05}
-                className="mt-2"
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                <h4 className="font-medium text-red-800 mb-2">Without Buyback</h4>
-                <div className="text-2xl font-bold text-red-600">${withoutBuyback.toFixed(3)}</div>
-                <p className="text-sm text-red-600 mt-1">Peg slips, mass redemptions</p>
-              </div>
-              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
-                <h4 className="font-medium text-green-800 mb-2">With Buyback</h4>
-                <div className="text-2xl font-bold text-green-600">${withBuyback.toFixed(3)}</div>
-                <p className="text-sm text-green-600 mt-1">Stabilized with premium</p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Stress Test Calculator */}
+      <StressTestCalculator />
 
       {/* High-Tier Equity Benefits */}
       <Card>

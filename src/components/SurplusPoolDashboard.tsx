@@ -8,6 +8,7 @@ import { Droplets, TrendingUp, Target, Users, Layers, Calculator, AlertTriangle 
 import { TCORE_STATS, formatCurrency, formatPercentage } from '@/data/tcoreData';
 import SurplusSimulator from './SurplusSimulator';
 import WaterfallChart from './WaterfallChart';
+import MonteCarloSimulator from './MonteCarloSimulator';
 
 const SurplusPoolDashboard = () => {
   const [totalYield, setTotalYield] = useState([87300]);
@@ -430,6 +431,9 @@ const SurplusPoolDashboard = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Monte Carlo Simulator */}
+      <MonteCarloSimulator />
     </div>
   );
 };
