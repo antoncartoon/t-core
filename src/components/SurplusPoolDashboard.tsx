@@ -419,7 +419,7 @@ const SurplusPoolDashboard = () => {
               f(i) = 1.03^(i - 25) for levels 26-100
             </code>
             <code className="text-xs text-muted-foreground block mb-2">
-              Surplus_i = surplus × (f(i)/∑f(j>1)) × (S_i / ∑S_higher)
+              Surplus_i = surplus × (f(i)/∑f(j&gt;1)) × (S_i / ∑S_higher)
             </code>
             <code className="text-xs text-muted-foreground block">
               Total_APY_i = Base_APY_i + Surplus_i / Stake_i

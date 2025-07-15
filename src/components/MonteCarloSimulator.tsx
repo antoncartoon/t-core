@@ -11,7 +11,7 @@ const MonteCarloSimulator = () => {
   const [simulations, setSimulations] = useState([1000]);
   const [timeHorizon, setTimeHorizon] = useState([12]); // months
   const [selectedTier, setSelectedTier] = useState(4);
-  const [results, setResults] = useState<any[]>([]);
+  const [results, setResults] = useState<any>(null);
   const [isRunning, setIsRunning] = useState(false);
   
   // Monte Carlo simulation function
@@ -174,7 +174,7 @@ const MonteCarloSimulator = () => {
           </div>
           
           {/* Results */}
-          {results.statistics && (
+          {results && results.statistics && (
             <>
               {/* Statistics */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
