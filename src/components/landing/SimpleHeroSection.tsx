@@ -22,25 +22,25 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
           </h1>
           
           <p className="text-sm text-muted-foreground mb-8 sm:mb-12">
-            Гарантированная доходность рассчитывается как текущая ставка T-Bills ({(T_BILL_RATE * 100).toFixed(0)}%) × {FIXED_BASE_MULTIPLIER} = {(FIXED_BASE_APY * 100).toFixed(0)}%
+            Guaranteed yield calculated as current T-Bills rate ({(T_BILL_RATE * 100).toFixed(0)}%) × {FIXED_BASE_MULTIPLIER} = {(FIXED_BASE_APY * 100).toFixed(0)}%
           </p>
           
           <p className="text-lg sm:text-xl text-muted-foreground mb-8 sm:mb-12 max-w-2xl mx-auto">
-            Профессионально управляемые стейблкоин стратегии с прозрачными комиссиями
+            Professionally managed stablecoin strategies with transparent fees
           </p>
           
           <div className="flex flex-wrap justify-center gap-4 mb-6 text-sm text-muted-foreground">
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              Safe: {(FIXED_BASE_APY * 100).toFixed(0)}% гарантированно (мин. 25% базовой доходности)
+              Safe: {(FIXED_BASE_APY * 100).toFixed(0)}% guaranteed (min. 25% base yield)
             </span>
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 bg-primary rounded-full"></span>
-              Бонус: f(i) = 1.03^(i-25) + инсентивы
+              Bonus: f(i) = 1.03^(i-25) + incentives
             </span>
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-              Hero: до 35%+ в зависимости от ликвидности
+              Hero: up to 35%+ depending on liquidity
             </span>
           </div>
           
@@ -50,7 +50,7 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
                 size={isMobile ? "default" : "lg"} 
                 className="w-full sm:w-auto text-base font-medium px-8 py-6 h-auto"
               >
-                Начать инвестировать
+                Start Investing
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </NavLink>
@@ -82,15 +82,15 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
             <div className="flex items-center justify-center gap-3 p-4 bg-muted/30 rounded-lg">
               <Shield className="w-6 h-6 text-green-600" />
-              <span className="text-sm font-medium">Фиксированный Safe Tier</span>
+              <span className="text-sm font-medium">Fixed Safe Tier</span>
             </div>
             <div className="flex items-center justify-center gap-3 p-4 bg-muted/30 rounded-lg">
               <TrendingUp className="w-6 h-6 text-primary" />
-              <span className="text-sm font-medium">Кастомизируемые тиры</span>
+              <span className="text-sm font-medium">Customizable Tiers</span>
             </div>
             <div className="flex items-center justify-center gap-3 p-4 bg-muted/30 rounded-lg">
               <Lock className="w-6 h-6 text-purple-600" />
-              <span className="text-sm font-medium">Прозрачно и безопасно</span>
+              <span className="text-sm font-medium">Transparent & Secure</span>
             </div>
           </div>
         </div>

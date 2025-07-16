@@ -6,20 +6,20 @@ const SimpleHowItWorks = () => {
   const steps = [
     {
       icon: Wallet,
-      title: 'Депонируйте стейблкоины',
-      description: 'Mint TDD 1:1 из USDC, USDT, DAI для начала инвестирования.',
+      title: 'Deposit Stablecoins',
+      description: 'Mint TDD 1:1 from USDC, USDT, DAI to start investing.',
       color: 'text-blue-600'
     },
     {
       icon: Target,
-      title: 'Выберите стратегию',
-      description: 'Предустановленные тиры или полностью кастомизированная позиция.',
+      title: 'Choose Strategy',
+      description: 'Preset tiers or fully customized position.',
       color: 'text-purple-600'
     },
     {
       icon: TrendingUp,
-      title: 'Получайте доходность',
-      description: 'Автоматическое начисление yield с прозрачным трекингом on-chain.',
+      title: 'Earn Yield',
+      description: 'Automatic yield accrual with transparent on-chain tracking.',
       color: 'text-green-600'
     }
   ];
@@ -29,10 +29,10 @@ const SimpleHowItWorks = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-light text-foreground mb-4">
-            Как это работает
+            How It Works
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Начните инвестировать в три простых шага. Никаких сложных стратегий, только прозрачная доходность.
+            Start investing in three simple steps. No complex strategies, just transparent yield.
           </p>
         </div>
         
@@ -67,10 +67,10 @@ const SimpleHowItWorks = () => {
         
         <div className="text-center mt-12">
           <p className="text-muted-foreground mb-6">
-            Готовы начать получать устойчивую доходность?
+            Ready to start earning stable yield?
           </p>
           <a href="/app" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium">
-            Запустить приложение
+            Launch App
             <ArrowRight className="w-4 h-4" />
           </a>
         </div>
