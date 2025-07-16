@@ -17,12 +17,27 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
         <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-light text-foreground mb-6 sm:mb-8">
             <span className="text-green-600 font-medium">Guaranteed 6% Safe</span> +{' '}
-            <span className="text-primary font-medium">Unlimited Upside Potential</span>
+            <span className="text-primary font-medium">8.73% Average Returns</span>
           </h1>
           
           <p className="text-lg sm:text-xl text-muted-foreground mb-8 sm:mb-12 max-w-2xl mx-auto">
-            Scale Your Yields Based on Your Risk Appetite
+            Risk-Tranched Yields with Transparent Performance Fee (20%)
           </p>
+          
+          <div className="flex flex-wrap justify-center gap-4 mb-6 text-sm text-muted-foreground">
+            <span className="flex items-center gap-1">
+              <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+              Tier 1: 6% Fixed (T-Bills*1.2)
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-2 h-2 bg-primary rounded-full"></span>
+              Avg: 8.73% with bonus yields
+            </span>
+            <span className="flex items-center gap-1">
+              <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+              Max: ~35% potential upside
+            </span>
+          </div>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 sm:mb-16">
             <NavLink to="/app">

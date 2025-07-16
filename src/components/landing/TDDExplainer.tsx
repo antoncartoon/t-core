@@ -10,8 +10,8 @@ const TDDExplainer = () => {
             What is <span className="text-primary font-medium">TDD</span>?
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            TDD (T-Core Distribution Dollar) is your gateway to decentralized yield farming. 
-            It's a simple, transparent way to earn returns on your USDC.
+            TDD (T-Core Distribution Dollar) is a risk-tranched stablecoin backed by T-Bills and DeFi strategies. 
+            Centralized management with multisig security, transitioning to full DAO governance in Q1 2026.
           </p>
         </div>
 
@@ -65,9 +65,9 @@ const TDDExplainer = () => {
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Shield className="w-6 h-6 text-green-600" />
             </div>
-            <h4 className="font-medium text-foreground mb-2">Guaranteed Safe Tier</h4>
+            <h4 className="font-medium text-foreground mb-2">Fixed Guarantee (Tier 1)</h4>
             <p className="text-sm text-muted-foreground">
-              6% APY guaranteed with full capital protection
+              6% APY = T-Bills*1.2 with zero loss protection
             </p>
           </div>
 
@@ -75,9 +75,9 @@ const TDDExplainer = () => {
             <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Coins className="w-6 h-6 text-blue-600" />
             </div>
-            <h4 className="font-medium text-foreground mb-2">1:1 USDC Backing</h4>
+            <h4 className="font-medium text-foreground mb-2">Overcollateralized &gt;105%</h4>
             <p className="text-sm text-muted-foreground">
-              Every TDD token is backed by real USDC reserves
+              Real yield sources: AAVE, JLP, LP farming (60% fixed, 40% bonus)
             </p>
           </div>
 
@@ -85,9 +85,9 @@ const TDDExplainer = () => {
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <TrendingUp className="w-6 h-6 text-primary" />
             </div>
-            <h4 className="font-medium text-foreground mb-2">Scalable Returns</h4>
+            <h4 className="font-medium text-foreground mb-2">Performance Fee 20%</h4>
             <p className="text-sm text-muted-foreground">
-              Higher risk tiers offer unlimited upside potential
+              25% bonus, 25% buyback, 25% protocol, 25% insurance buffer
             </p>
           </div>
         </div>

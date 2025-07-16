@@ -5,45 +5,49 @@ import { Shield, Star, Crown, TrendingUp } from 'lucide-react';
 const SimpleRiskTiers = () => {
   const tiers = [
     {
-      name: 'Safe',
+      name: 'Safe (1-25)',
       apy: '6%',
       risk: 'Zero Loss',
-      description: 'T-Bills backed guarantee',
+      description: 'T-Bills*1.2 fixed guarantee',
       icon: Shield,
       color: 'text-green-600',
       bgColor: 'bg-green-50 dark:bg-green-950/20',
-      borderColor: 'border-green-200 dark:border-green-800'
+      borderColor: 'border-green-200 dark:border-green-800',
+      formula: 'Fixed: T-Bills * 1.2'
     },
     {
-      name: 'Conservative',
-      apy: '8%',
+      name: 'Conservative (26-50)',
+      apy: '~9%',
       risk: 'Low Risk',
-      description: 'Stable DeFi protocols',
+      description: 'Fixed + small bonus f(i)',
       icon: Shield,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50 dark:bg-blue-950/20',
-      borderColor: 'border-blue-200 dark:border-blue-800'
+      borderColor: 'border-blue-200 dark:border-blue-800',
+      formula: 'f(i) = 1.03^(i-25), small bonus'
     },
     {
-      name: 'Balanced',
-      apy: '15%',
+      name: 'Balanced (51-75)',
+      apy: '~13%',
       risk: 'Medium Risk',
-      description: 'Diversified exposure',
+      description: 'Moderate bonus + surplus ~18%',
       icon: Star,
       color: 'text-yellow-600',
       bgColor: 'bg-yellow-50 dark:bg-yellow-950/20',
-      borderColor: 'border-yellow-200 dark:border-yellow-800'
+      borderColor: 'border-yellow-200 dark:border-yellow-800',
+      formula: 'Medium f(i) + surplus pool'
     },
     {
-      name: 'Hero',
-      apy: '35%',
+      name: 'Hero (76-100)',
+      apy: 'Up to 35%',
       risk: 'High Risk',
-      description: 'Protect others, earn most',
+      description: 'Max bonus + surplus ~74%',
       icon: Crown,
       color: 'text-purple-600',
       bgColor: 'bg-gradient-to-br from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20',
       borderColor: 'border-purple-200 dark:border-purple-800',
-      isHero: true
+      isHero: true,
+      formula: 'High f(i) + 74% surplus share'
     }
   ];
 
@@ -88,8 +92,11 @@ const SimpleRiskTiers = () => {
                   </div>
                 </div>
                 
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground mb-2">
                   {tier.description}
+                </p>
+                <p className="text-xs text-muted-foreground/80 font-mono">
+                  {tier.formula}
                 </p>
               </CardContent>
             </Card>
@@ -98,14 +105,22 @@ const SimpleRiskTiers = () => {
         
         <div className="text-center mt-12">
           <p className="text-muted-foreground mb-4">
-            Heroes protect lower tiers and earn the highest yields
+            Average APY: 8.73% | Stress test: Tier1 $0 loss, Tier4 $80 loss on $10k | Performance fee: 20%
           </p>
-          <Card className="inline-block p-4 bg-gradient-to-r from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20 border-purple-200 dark:border-purple-800">
-            <div className="flex items-center gap-2 text-purple-600">
-              <TrendingUp className="w-5 h-5" />
-              <span className="font-medium">Waterfall protection: Heroes absorb losses first, earn rewards first</span>
-            </div>
-          </Card>
+          <div className="flex flex-wrap justify-center gap-4">
+            <Card className="inline-block p-3 bg-gradient-to-r from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20 border-purple-200 dark:border-purple-800">
+              <div className="flex items-center gap-2 text-purple-600 text-sm">
+                <TrendingUp className="w-4 h-4" />
+                <span className="font-medium">Waterfall: Heroes absorb losses first, earn surplus first</span>
+              </div>
+            </Card>
+            <Card className="inline-block p-3 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
+              <div className="flex items-center gap-2 text-blue-600 text-sm">
+                <Shield className="w-4 h-4" />
+                <span className="font-medium">Multisig 3/5 → DAO Q1 2026</span>
+              </div>
+            </Card>
+          </div>
         </div>
       </div>
     </section>
