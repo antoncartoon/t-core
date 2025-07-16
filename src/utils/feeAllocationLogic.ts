@@ -101,7 +101,7 @@ export const getFeeAllocationSummary = () => {
       color: 'primary',
     },
     {
-      name: 'Insurance Buffer',
+      name: 'Hero Buffer',
       percentage: FEE_ALLOCATION.insuranceBuffer * 100,
       description: 'High-risk tier protection',
       color: 'warning',

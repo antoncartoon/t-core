@@ -30,7 +30,7 @@ const PerformanceFeeDisplay: React.FC<PerformanceFeeDisplayProps> = ({
     'Bonus Yield': TrendingUp,
     'TDD Buyback': DollarSign,
     'Protocol Revenue': Zap,
-    'Insurance Buffer': Shield,
+    'Hero Buffer': Shield,
   };
 
   return (
