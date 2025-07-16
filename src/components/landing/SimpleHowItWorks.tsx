@@ -6,20 +6,20 @@ const SimpleHowItWorks = () => {
   const steps = [
     {
       icon: Wallet,
-      title: 'Connect & Deposit',
-      description: 'Connect your wallet and deposit USDC to start earning immediately.',
+      title: 'Депонируйте стейблкоины',
+      description: 'Mint TDD 1:1 из USDC, USDT, DAI для начала инвестирования.',
       color: 'text-blue-600'
     },
     {
       icon: Target,
-      title: 'Choose Risk Tier',
-      description: 'Select from Safe (6%) to Hero (35%) based on your risk tolerance.',
+      title: 'Выберите стратегию',
+      description: 'Предустановленные тиры или полностью кастомизированная позиция.',
       color: 'text-purple-600'
     },
     {
       icon: TrendingUp,
-      title: 'Earn & Compound',
-      description: 'Watch your yields grow automatically with transparent, on-chain tracking.',
+      title: 'Получайте доходность',
+      description: 'Автоматическое начисление yield с прозрачным трекингом on-chain.',
       color: 'text-green-600'
     }
   ];
@@ -29,10 +29,10 @@ const SimpleHowItWorks = () => {
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl font-light text-foreground mb-4">
-            How It Works
+            Как это работает
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Start earning in three simple steps. No complex strategies, just transparent yields.
+            Начните инвестировать в три простых шага. Никаких сложных стратегий, только прозрачная доходность.
           </p>
         </div>
         
@@ -67,10 +67,10 @@ const SimpleHowItWorks = () => {
         
         <div className="text-center mt-12">
           <p className="text-muted-foreground mb-6">
-            Ready to start earning sustainable yields?
+            Готовы начать получать устойчивую доходность?
           </p>
           <a href="/app" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium">
-            Launch App
+            Запустить приложение
             <ArrowRight className="w-4 h-4" />
           </a>
         </div>
