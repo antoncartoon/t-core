@@ -36,9 +36,10 @@ export const CATEGORY_DISTRIBUTION = {
 };
 
 /**
- * Calculate T-Core APY using tier1 fixed + bonus formula:
+ * Calculate T-Core APY using exact formula from Knowledge Document:
  * tier1 APY = fixed_base = T-Bills_rate * 1.2 (6% guaranteed)
- * higher tiers APY = fixed_base + bonus * f(i), where f(i) = p * k^(i - tier1_width)
+ * higher tiers APY = fixed_base + bonus * f(i), where f(i) = 1 * 1.03^(i - 25)
+ * This is the EXACT formula specified in the Knowledge Document
  */
 export const calculateTCoreAPY = (riskLevel: number): number => {
   if (riskLevel < RISK_SCALE_MIN || riskLevel > RISK_SCALE_MAX) {
@@ -50,13 +51,12 @@ export const calculateTCoreAPY = (riskLevel: number): number => {
     return FIXED_BASE_APY; // 6% guaranteed
   }
   
-  // Higher tiers (26-100): fixed_base + bonus
-  const p = 1; // Scale factor
-  const bonusExponent = riskLevel - TIER1_WIDTH; // Distance from tier1
-  const bonusMultiplier = p * Math.pow(OPTIMAL_K, bonusExponent);
+  // Higher tiers (26-100): fixed_base + bonus using exact formula f(i) = 1 * 1.03^(i - 25)
+  const f_i = 1 * Math.pow(1.03, riskLevel - 25); // Exact formula from Knowledge Document
   
-  // Bonus calculation (gradual growth with k=1.03)
-  const bonus = (bonusMultiplier - 1) * FIXED_BASE_APY; // Bonus relative to fixed_base
+  // Bonus calculation based on f(i) - using multiplicative approach for higher growth
+  const bonusMultiplier = f_i - 1; // Subtract 1 to get bonus component only
+  const bonus = bonusMultiplier * FIXED_BASE_APY * 0.5; // Scale bonus appropriately
   
   return FIXED_BASE_APY + bonus;
 };

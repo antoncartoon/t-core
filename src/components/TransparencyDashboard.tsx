@@ -15,8 +15,11 @@ import {
   Eye,
   Gavel,
   TrendingUp,
-  Database
+  Database,
+  DollarSign
 } from 'lucide-react';
+import PerformanceFeeDisplay from '@/components/PerformanceFeeDisplay';
+import { TCORE_STATS } from '@/data/tcoreData';
 
 interface TransparencyDashboardProps {
   className?: string;
@@ -165,9 +168,10 @@ const TransparencyDashboard: React.FC<TransparencyDashboardProps> = ({ className
         </CardHeader>
         <CardContent>
           <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="governance">Governance</TabsTrigger>
               <TabsTrigger value="collateral">Collateral</TabsTrigger>
+              <TabsTrigger value="fees">Performance Fee</TabsTrigger>
               <TabsTrigger value="audits">Audits</TabsTrigger>
               <TabsTrigger value="roadmap">Roadmap</TabsTrigger>
             </TabsList>
@@ -188,7 +192,7 @@ const TransparencyDashboard: React.FC<TransparencyDashboardProps> = ({ className
                         {governanceData.currentPhase}
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        Team manages T-Bills allocation & DeFi optimization
+                        Multisig ({TCORE_STATS.multisigAddresses[0].threshold}/{TCORE_STATS.multisigAddresses[0].signers}) manages T-Bills allocation & DeFi optimization
                       </div>
                     </div>
                     <div>
@@ -205,15 +209,20 @@ const TransparencyDashboard: React.FC<TransparencyDashboardProps> = ({ className
                   <div className="border-t pt-4">
                     <div className="text-sm font-medium mb-3">Multisig Addresses</div>
                     <div className="space-y-3">
-                      {governanceData.multisigAddresses.map((multisig, index) => (
+                      {TCORE_STATS.multisigAddresses.map((multisig, index) => (
                         <div key={index} className="p-3 bg-muted rounded-lg">
                           <div className="flex items-center justify-between mb-2">
                             <div className="font-medium">{multisig.name}</div>
-                            <Badge variant="outline">
-                              {multisig.threshold}/{multisig.signers} signatures
-                            </Badge>
+                            <div className="flex items-center gap-2">
+                              <Badge variant="outline">
+                                {multisig.threshold}/{multisig.signers} signatures
+                              </Badge>
+                              <Button variant="ghost" size="sm">
+                                <ExternalLink className="h-3 w-3" />
+                              </Button>
+                            </div>
                           </div>
-                          <div className="text-sm text-muted-foreground mb-1">
+                          <div className="text-sm text-muted-foreground mb-1 font-mono">
                             {multisig.address}
                           </div>
                           <div className="text-sm">
@@ -314,6 +323,93 @@ const TransparencyDashboard: React.FC<TransparencyDashboardProps> = ({ className
               </Card>
             </TabsContent>
 
+            <TabsContent value="fees" className="space-y-6">
+              <PerformanceFeeDisplay 
+                totalYield={TCORE_STATS.totalValueLocked * TCORE_STATS.averageAPYTarget} 
+                showChart={true}
+              />
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5" />
+                    Mathematical Formulas
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <h3 className="font-medium mb-2">Core Formula</h3>
+                    <div className="p-3 bg-muted rounded-lg font-mono text-sm">
+                      {TCORE_STATS.mathematicalConstants.formula}
+                    </div>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Where f(i) determines bonus yield distribution for risk levels 26-100
+                    </p>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-medium mb-2">Performance Metrics</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="text-center p-3 bg-muted rounded-lg">
+                        <div className="text-lg font-bold text-primary">
+                          {(TCORE_STATS.mathematicalConstants.averageAPY * 100).toFixed(1)}%
+                        </div>
+                        <div className="text-xs text-muted-foreground">Average APY</div>
+                      </div>
+                      <div className="text-center p-3 bg-muted rounded-lg">
+                        <div className="text-lg font-bold text-primary">
+                          {(TCORE_STATS.mathematicalConstants.spread * 100).toFixed(1)}%
+                        </div>
+                        <div className="text-xs text-muted-foreground">Spread</div>
+                      </div>
+                      <div className="text-center p-3 bg-muted rounded-lg">
+                        <div className="text-lg font-bold text-primary">
+                          {TCORE_STATS.mathematicalConstants.variance.toExponential(1)}
+                        </div>
+                        <div className="text-xs text-muted-foreground">Variance</div>
+                      </div>
+                      <div className="text-center p-3 bg-muted rounded-lg">
+                        <div className="text-lg font-bold text-primary">
+                          {TCORE_STATS.mathematicalConstants.kParameter}
+                        </div>
+                        <div className="text-xs text-muted-foreground">K Parameter</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-medium mb-2">Stress Test Results</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="text-center p-3 bg-success/10 rounded-lg">
+                        <div className="text-lg font-bold text-success">
+                          ${TCORE_STATS.stressTestResults.marketDrop20.tier1Loss * 10000}
+                        </div>
+                        <div className="text-xs text-muted-foreground">Tier 1 Loss per $10k</div>
+                      </div>
+                      <div className="text-center p-3 bg-info/10 rounded-lg">
+                        <div className="text-lg font-bold text-info">
+                          ${(TCORE_STATS.stressTestResults.marketDrop20.tier2Loss * 10000).toFixed(0)}
+                        </div>
+                        <div className="text-xs text-muted-foreground">Tier 2 Loss per $10k</div>
+                      </div>
+                      <div className="text-center p-3 bg-warning/10 rounded-lg">
+                        <div className="text-lg font-bold text-warning">
+                          ${(TCORE_STATS.stressTestResults.marketDrop20.tier3Loss * 10000).toFixed(0)}
+                        </div>
+                        <div className="text-xs text-muted-foreground">Tier 3 Loss per $10k</div>
+                      </div>
+                      <div className="text-center p-3 bg-error/10 rounded-lg">
+                        <div className="text-lg font-bold text-error">
+                          ${(TCORE_STATS.stressTestResults.marketDrop20.tier4Loss * 10000).toFixed(0)}
+                        </div>
+                        <div className="text-xs text-muted-foreground">Tier 4 Loss per $10k</div>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
             <TabsContent value="audits" className="space-y-6">
               <Card>
                 <CardHeader>
@@ -327,16 +423,16 @@ const TransparencyDashboard: React.FC<TransparencyDashboardProps> = ({ className
                     <div>
                       <div className="text-sm font-medium mb-2">Latest Audit</div>
                       <div className="text-lg font-bold text-primary">
-                        {auditData.auditor}
+                        {TCORE_STATS.auditData.auditor}
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        {auditData.lastAudit} • {auditData.status}
+                        {TCORE_STATS.auditData.lastAudit} • {TCORE_STATS.auditData.status}
                       </div>
                     </div>
                     <div>
                       <div className="text-sm font-medium mb-2">Next Audit</div>
                       <div className="text-lg font-bold text-primary">
-                        {auditData.nextAudit}
+                        {TCORE_STATS.auditData.nextAudit}
                       </div>
                       <div className="text-sm text-muted-foreground">
                         Scheduled security review

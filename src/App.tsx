@@ -15,6 +15,8 @@ import DeFi from "./pages/DeFi";
 import FAQ from "./pages/FAQ";
 import Transparency from "./pages/Transparency";
 import Docs from "./pages/Docs";
+import Disclaimer from "./pages/Disclaimer";
+import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 import { RiskRangeProvider } from "@/contexts/RiskRangeContext";
 
@@ -40,6 +42,8 @@ const AppRouter = () => (
               <Route path="/transparency" element={<Transparency />} />
               <Route path="/docs" element={<Docs />} />
               <Route path="/faq" element={<FAQ />} />
+              <Route path="/disclaimer" element={<Disclaimer />} />
+              <Route path="/terms" element={<Terms />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

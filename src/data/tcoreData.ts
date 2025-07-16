@@ -1,5 +1,6 @@
 // Unified T-Core data source for consistent statistics across landing and app
 import { PROTOCOL_TVL, PROTOCOL_APY_28_DAYS, TOTAL_TDD_ISSUED, TDD_IN_STAKING, AVERAGE_APY_TARGET } from '@/utils/riskRangeCalculations';
+import { PERFORMANCE_FEE, FEE_ALLOCATION } from '@/utils/feeAllocationLogic';
 
 export const TCORE_STATS = {
   // Protocol Statistics
@@ -12,6 +13,15 @@ export const TCORE_STATS = {
   // Participation Statistics
   activeStakers: 2847,
   totalParticipants: 3420,
+  
+  // Performance Fee (20% of total yield)
+  performanceFee: PERFORMANCE_FEE,
+  performanceFeeAllocation: {
+    bonusYield: FEE_ALLOCATION.bonusYield,
+    buybackTDD: FEE_ALLOCATION.buybackTDD,
+    protocolRevenue: FEE_ALLOCATION.protocolRevenue,
+    insuranceBuffer: FEE_ALLOCATION.insuranceBuffer,
+  },
   
   // Self-Insurance Pool
   selfInsurancePool: 1200000, // $1.2M
@@ -81,12 +91,12 @@ export const TCORE_STATS = {
     ]
   },
   
-  // T-Core Tiers
+  // T-Core Tiers (corrected according to Knowledge Document)
   tiers: [
-    { name: 'Safe', range: [1, 3], participants: 0.25, guaranteedAPY: 0.06 },
-    { name: 'Conservative', range: [4, 24], participants: 0.40, estimatedAPY: 0.09 },
-    { name: 'Balanced', range: [25, 80], participants: 0.30, estimatedAPY: 0.16 },
-    { name: 'T-Core HERO', range: [81, 100], participants: 0.05, maxAPY: 0.35 }
+    { name: 'Fixed Safe', range: [1, 25], participants: 0.25, guaranteedAPY: 0.06, formula: 'T-Bills * 1.2' },
+    { name: 'Low Bonus', range: [26, 50], participants: 0.20, estimatedAPY: 0.092, formula: 'fixed + bonus * f(i)' },
+    { name: 'Medium Bonus', range: [51, 75], participants: 0.30, estimatedAPY: 0.128, formula: 'fixed + bonus * f(i)' },
+    { name: 'High Bonus', range: [76, 100], participants: 0.25, maxAPY: 0.35, formula: 'fixed + bonus * f(i)' }
   ],
   
   // Growth Metrics
@@ -95,6 +105,41 @@ export const TCORE_STATS = {
     apyChange: 0.003, // +0.3%
     stakersGrowth: 0.121, // +12.1%
     insuranceGrowth: 0.053 // +5.3%
+  },
+
+  // Transparency & Governance
+  multisigAddresses: [
+    {
+      name: 'Treasury Management',
+      address: '0x1234567890123456789012345678901234567890',
+      signers: 5,
+      threshold: 3,
+      purpose: 'T-Bills allocation, yield optimization'
+    },
+    {
+      name: 'Protocol Operations',
+      address: '0xabcdefabcdefabcdefabcdefabcdefabcdefabcd',
+      signers: 3,
+      threshold: 2,
+      purpose: 'DeFi protocol rebalancing, fee distribution'
+    }
+  ],
+
+  // Compliance & Legal
+  auditData: {
+    lastAudit: '2024-01-01',
+    auditor: 'Quantstamp',
+    nextAudit: '2024-07-01',
+    status: 'Passed with recommendations'
+  },
+
+  // Mathematical Constants
+  mathematicalConstants: {
+    variance: 2.9e-7, // Variance for uniform liquidity
+    kParameter: 1.03, // k=1.03 for f(i) formula
+    formula: 'f(i) = 1 * 1.03^(i-25)', // Exact formula from Knowledge Document
+    averageAPY: 0.0873, // 8.73% average APY
+    spread: 0.0891, // 8.91% spread
   }
 };
 

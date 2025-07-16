@@ -114,13 +114,26 @@ const LandingFooter = () => {
           </div>
         </div>
 
-        <div className="border-t border-border mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            © 2025 T-Core. All rights reserved.
-          </p>
-          <p className="text-sm text-muted-foreground mt-2 sm:mt-0">
-            Built with transparency and trust in mind.
-          </p>
+        <div className="border-t border-border mt-12 pt-8 space-y-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between">
+            <p className="text-sm text-muted-foreground">
+              © 2025 T-Core. All rights reserved.
+            </p>
+            <p className="text-sm text-muted-foreground mt-2 sm:mt-0">
+              Built with transparency and trust in mind.
+            </p>
+          </div>
+          
+          <div className="text-xs text-muted-foreground space-y-2">
+            <p>
+              <strong>Risk Disclaimer:</strong> T-Core is experimental DeFi. No guaranteed returns, risk of loss. 
+              Not investment advice. Performance fee 20% allocated to bonus/buyback/protocol revenue/insurance buffer.
+            </p>
+            <p>
+              <strong>Centralized Management:</strong> Multisig security (3/5 signatures) for current operations, 
+              transitioning to full decentralization Q1 2026 with governance token and DAO control.
+            </p>
+          </div>
         </div>
       </div>
     </footer>
