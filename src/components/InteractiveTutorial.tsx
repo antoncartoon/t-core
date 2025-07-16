@@ -33,7 +33,7 @@ const TUTORIAL_STEPS: TutorialStep[] = [
   {
     id: 'welcome',
     title: 'Welcome to T-Core',
-    description: 'Learn how to maximize your DeFi yields with T-Core\'s risk-optimized strategies backed by T-Bills.',
+    description: 'Learn how to maximize your DeFi yields with T-Core\'s risk-optimized strategies.',
     target: 'hero',
     icon: Play,
     highlight: true
@@ -41,7 +41,7 @@ const TUTORIAL_STEPS: TutorialStep[] = [
   {
     id: 'risk-selection',
     title: 'Choose Your Risk Level',
-    description: 'Select from 4 risk tiers: Conservative, Balanced, Aggressive, and T-Core HERO based on your comfort level.',
+    description: 'Select from 4 risk tiers: Conservative, Balanced, Aggressive, and T-Core HERO based on your comfort level. Pro users can create custom tiers.',
     target: 'risk-calculator',
     icon: Target,
     action: 'Try adjusting the risk slider'
