@@ -19,33 +19,43 @@ const DynamicPerformanceFee = () => {
 
   const scenarios = [
     {
-      name: 'Стабильная работа',
-      description: 'Протокол работает стабильно, пег поддерживается',
+      name: 'Stable Operations',
+      description: 'Protocol operates normally, TDD peg is maintained',
       allocations: [
-        { name: 'Bonus Yield', value: 25, color: '#10b981', icon: TrendingUp, description: 'Бонусы участникам' },
-        { name: 'Buyback TDD', value: 25, color: '#3b82f6', icon: Shield, description: 'Поддержка пега' },
-        { name: 'Protocol Revenue', value: 25, color: '#8b5cf6', icon: Users, description: 'Команда и развитие' },
-        { name: 'Hero Tier Support', value: 25, color: '#f59e0b', icon: Zap, description: 'Страховой буфер' }
+        { name: 'Bonus Yield', value: 25, color: '#10b981', icon: TrendingUp, description: 'Enhanced rewards for participants' },
+        { name: 'Buyback TDD', value: 25, color: '#3b82f6', icon: Shield, description: 'Peg stability support' },
+        { name: 'Protocol Revenue', value: 25, color: '#8b5cf6', icon: Users, description: 'Team and development' },
+        { name: 'Hero Tier Support', value: 25, color: '#f59e0b', icon: Zap, description: 'Insurance buffer replenishment' }
       ]
     },
     {
-      name: 'Депег TDD',
-      description: 'TDD отклонился от пега, нужно больше buyback',
+      name: 'TDD Depeg Event',
+      description: 'TDD deviates from peg, requires increased buyback support',
       allocations: [
-        { name: 'Bonus Yield', value: 15, color: '#10b981', icon: TrendingUp, description: 'Бонусы участникам' },
-        { name: 'Buyback TDD', value: 45, color: '#3b82f6', icon: Shield, description: 'Поддержка пега' },
-        { name: 'Protocol Revenue', value: 20, color: '#8b5cf6', icon: Users, description: 'Команда и развитие' },
-        { name: 'Hero Tier Support', value: 20, color: '#f59e0b', icon: Zap, description: 'Страховой буфер' }
+        { name: 'Bonus Yield', value: 15, color: '#10b981', icon: TrendingUp, description: 'Enhanced rewards for participants' },
+        { name: 'Buyback TDD', value: 45, color: '#3b82f6', icon: Shield, description: 'Peg stability support' },
+        { name: 'Protocol Revenue', value: 20, color: '#8b5cf6', icon: Users, description: 'Team and development' },
+        { name: 'Hero Tier Support', value: 20, color: '#f59e0b', icon: Zap, description: 'Insurance buffer replenishment' }
       ]
     },
     {
-      name: 'Приток в Safe',
-      description: 'Много ликвидности в безрисковые пулы',
+      name: 'Safe Tier Influx',
+      description: 'High liquidity inflow to safe tiers, need more incentives',
       allocations: [
-        { name: 'Bonus Yield', value: 35, color: '#10b981', icon: TrendingUp, description: 'Бонусы участникам' },
-        { name: 'Buyback TDD', value: 15, color: '#3b82f6', icon: Shield, description: 'Поддержка пега' },
-        { name: 'Protocol Revenue', value: 20, color: '#8b5cf6', icon: Users, description: 'Команда и развитие' },
-        { name: 'Hero Tier Support', value: 30, color: '#f59e0b', icon: Zap, description: 'Страховой буфер' }
+        { name: 'Bonus Yield', value: 35, color: '#10b981', icon: TrendingUp, description: 'Enhanced rewards for participants' },
+        { name: 'Buyback TDD', value: 15, color: '#3b82f6', icon: Shield, description: 'Peg stability support' },
+        { name: 'Protocol Revenue', value: 20, color: '#8b5cf6', icon: Users, description: 'Team and development' },
+        { name: 'Hero Tier Support', value: 30, color: '#f59e0b', icon: Zap, description: 'Insurance buffer replenishment' }
+      ]
+    },
+    {
+      name: 'Stress Test Mode',
+      description: 'Market volatility requires enhanced hero tier protection',
+      allocations: [
+        { name: 'Bonus Yield', value: 20, color: '#10b981', icon: TrendingUp, description: 'Enhanced rewards for participants' },
+        { name: 'Buyback TDD', value: 20, color: '#3b82f6', icon: Shield, description: 'Peg stability support' },
+        { name: 'Protocol Revenue', value: 15, color: '#8b5cf6', icon: Users, description: 'Team and development' },
+        { name: 'Hero Tier Support', value: 45, color: '#f59e0b', icon: Zap, description: 'Insurance buffer replenishment' }
       ]
     }
   ];
@@ -89,9 +99,9 @@ const DynamicPerformanceFee = () => {
     <div className="w-full max-w-5xl mx-auto p-6 bg-card rounded-lg border">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
         <div>
-          <h3 className="text-2xl font-light mb-2">Динамическое распределение Performance Fee</h3>
+          <h3 className="text-2xl font-light mb-2">Dynamic Performance Fee Allocation</h3>
           <p className="text-muted-foreground">
-            20% от общей доходности распределяется в зависимости от потребностей протокола
+            20% of total yield is distributed based on protocol needs for optimal stability
           </p>
         </div>
         <div className="flex gap-2 mt-4 sm:mt-0">
@@ -110,7 +120,7 @@ const DynamicPerformanceFee = () => {
 
       <div className="mb-6">
         <Badge variant="outline" className="mb-4">
-          Сценарий: {currentData.name}
+          Scenario: {currentData.name}
         </Badge>
         <p className="text-sm text-muted-foreground mb-6">
           {currentData.description}
@@ -168,12 +178,12 @@ const DynamicPerformanceFee = () => {
       </div>
 
       <div className="mt-8 p-4 bg-muted/20 rounded-lg">
-        <h4 className="font-medium mb-2">Алгоритм распределения:</h4>
+        <h4 className="font-medium mb-2">Allocation Algorithm:</h4>
         <div className="text-sm text-muted-foreground space-y-1">
-          <div>• <strong>Bonus Yield:</strong> Увеличивается при притоке ликвидности в Safe тиры</div>
-          <div>• <strong>Buyback TDD:</strong> Активируется при депеге для поддержки стабильности</div>
-          <div>• <strong>Protocol Revenue:</strong> Стабильная часть для развития и операций</div>
-          <div>• <strong>Hero Tier Support:</strong> Компенсация за страхование других участников</div>
+          <div>• <strong>Bonus Yield:</strong> Increases with liquidity influx to Safe tiers</div>
+          <div>• <strong>Buyback TDD:</strong> Activates during depeg events for stability support</div>
+          <div>• <strong>Protocol Revenue:</strong> Stable portion for development and operations</div>
+          <div>• <strong>Hero Tier Support:</strong> Compensation for insuring other participants</div>
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 import { Shield, DollarSign, TrendingUp, Lock, Clock } from 'lucide-react';
+import DynamicPerformanceFeeCompact from './DynamicPerformanceFeeCompact';
 
 const TransparencyPreview = () => {
   // Performance fee allocation data (as per Knowledge document)
@@ -89,46 +90,16 @@ const TransparencyPreview = () => {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* Performance Fee Allocation */}
+          {/* Dynamic Performance Fee Allocation */}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <DollarSign className="w-5 h-5 text-blue-600" />
-                Performance Fee 20% Allocation
+                Dynamic Performance Fee 20% Allocation
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={feeAllocation}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={100}
-                      paddingAngle={2}
-                      dataKey="value"
-                    >
-                      {feeAllocation.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip formatter={(value) => `${value}%`} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="grid grid-cols-2 gap-2 mt-4">
-                {feeAllocation.map((item, index) => (
-                  <div key={index} className="flex items-center gap-2 text-sm">
-                    <div 
-                      className="w-3 h-3 rounded-full" 
-                      style={{ backgroundColor: item.color }}
-                    ></div>
-                    <span>{item.name}</span>
-                  </div>
-                ))}
-              </div>
+              <DynamicPerformanceFeeCompact />
             </CardContent>
           </Card>
 
