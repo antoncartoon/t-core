@@ -8,6 +8,7 @@ import { RedeemProvider } from "@/contexts/RedeemContext";
 import { DistributionProvider } from "@/contexts/DistributionContext";
 import PWAInstallPrompt from "@/components/PWAInstallPrompt";
 import OfflineIndicator from "@/components/OfflineIndicator";
+import { EditModeControls } from "@/components/EditModeControls";
 import Landing from "./pages/Landing";
 import App from "./pages/App";
 import Portfolio from "./pages/Portfolio";
@@ -33,6 +34,7 @@ const AppRouter = () => (
           <Sonner />
           <PWAInstallPrompt />
           <OfflineIndicator />
+          <EditModeControls />
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Landing />} />

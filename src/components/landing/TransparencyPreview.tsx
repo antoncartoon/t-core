@@ -4,44 +4,48 @@ import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, 
 import { Shield, DollarSign, TrendingUp, Lock, Clock } from 'lucide-react';
 import DynamicPerformanceFeeCompact from './DynamicPerformanceFeeCompact';
 import { TCORE_STATS } from '@/data/tcoreData';
+import { EditableText } from '@/components/EditableText';
+import { useContentManagement } from '@/contexts/ContentManagementContext';
 
 const TransparencyPreview = () => {
+  const { content } = useContentManagement();
+  
   // Performance fee allocation data (as per Knowledge document)
   const feeAllocation = [
     { name: 'Bonus Yield', value: 25, color: '#22c55e' },
     { name: 'Buyback TDD', value: 25, color: '#3b82f6' },
     { name: 'Protocol Revenue', value: 25, color: '#8b5cf6' },
-    { name: 'Insurance Buffer', value: 25, color: '#f59e0b' }
+    { name: 'Hero Buffer', value: 25, color: '#f59e0b' }
   ];
 
   // Key metrics as per Knowledge document
   const metrics = [
     {
       icon: Lock,
-      label: 'Overcollateralization',
+      label: content.transparency.metrics.overcollateralization.label,
       value: '>105%',
-      description: 'Real asset backing',
+      description: content.transparency.metrics.overcollateralization.description,
       color: 'text-green-600'
     },
     {
       icon: DollarSign,
-      label: 'Performance Fee',
+      label: content.transparency.metrics.performanceFee.label,
       value: '20%',
-      description: 'Transparent allocation',
+      description: content.transparency.metrics.performanceFee.description,
       color: 'text-blue-600'
     },
     {
       icon: TrendingUp,
-      label: 'Surplus to Tier4',
+      label: content.transparency.metrics.surplusToTier4.label,
       value: '~74%',
-      description: 'Insurance compensation',
+      description: content.transparency.metrics.surplusToTier4.description,
       color: 'text-purple-600'
     },
     {
       icon: Clock,
-      label: 'Decentralization',
+      label: content.transparency.metrics.decentralization.label,
       value: 'Q1 2026',
-      description: 'DAO governance launch',
+      description: content.transparency.metrics.decentralization.description,
       color: 'text-orange-600'
     }
   ];
@@ -57,13 +61,19 @@ const TransparencyPreview = () => {
     <section className="py-16 sm:py-20 bg-background">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-light text-foreground mb-4">
-            Transparency & Security
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Centralized management with multisig security (3/5 signatures), quarterly audits, 
-            and full on-chain verification. Roadmap to complete decentralization.
-          </p>
+          <EditableText
+            path="transparency.subtitle"
+            value={content.transparency.subtitle}
+            as="h2"
+            className="text-3xl sm:text-4xl font-light text-foreground mb-4"
+          />
+          <EditableText
+            path="transparency.description"
+            value={content.transparency.description}
+            as="p"
+            className="text-lg text-muted-foreground max-w-3xl mx-auto"
+            type="textarea"
+          />
         </div>
 
         {/* Key Metrics Grid */}
@@ -168,29 +178,56 @@ const TransparencyPreview = () => {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Shield className="w-5 h-5 text-green-600" />
-                Security Measures
+                <EditableText
+                  path="transparency.security.title"
+                  value={content.transparency.security.title}
+                />
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-start gap-3">
                 <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
                 <div>
-                  <div className="font-medium">Multisig 3/5 Signatures</div>
-                  <div className="text-sm text-muted-foreground">Team wallet with Gnosis Safe standards</div>
+                  <EditableText
+                    path="transparency.security.measures.multisig.title"
+                    value={content.transparency.security.measures.multisig.title}
+                    className="font-medium"
+                  />
+                  <EditableText
+                    path="transparency.security.measures.multisig.description"
+                    value={content.transparency.security.measures.multisig.description}
+                    className="text-sm text-muted-foreground"
+                  />
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
                 <div>
-                  <div className="font-medium">Quarterly Audits</div>
-                  <div className="text-sm text-muted-foreground">External security reviews (e.g., Quantstamp)</div>
+                  <EditableText
+                    path="transparency.security.measures.audits.title"
+                    value={content.transparency.security.measures.audits.title}
+                    className="font-medium"
+                  />
+                  <EditableText
+                    path="transparency.security.measures.audits.description"
+                    value={content.transparency.security.measures.audits.description}
+                    className="text-sm text-muted-foreground"
+                  />
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
                 <div>
-                  <div className="font-medium">On-Chain Verification</div>
-                  <div className="text-sm text-muted-foreground">All transactions verifiable on Etherscan</div>
+                  <EditableText
+                    path="transparency.security.measures.onchain.title"
+                    value={content.transparency.security.measures.onchain.title}
+                    className="font-medium"
+                  />
+                  <EditableText
+                    path="transparency.security.measures.onchain.description"
+                    value={content.transparency.security.measures.onchain.description}
+                    className="text-sm text-muted-foreground"
+                  />
                 </div>
               </div>
             </CardContent>
@@ -200,29 +237,56 @@ const TransparencyPreview = () => {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Clock className="w-5 h-5 text-orange-600" />
-                Decentralization Roadmap
+                <EditableText
+                  path="transparency.roadmap.title"
+                  value={content.transparency.roadmap.title}
+                />
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-start gap-3">
                 <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
                 <div>
-                  <div className="font-medium">Current: Centralized Management</div>
-                  <div className="text-sm text-muted-foreground">Multisig for security and efficiency</div>
+                  <EditableText
+                    path="transparency.roadmap.phases.current.title"
+                    value={content.transparency.roadmap.phases.current.title}
+                    className="font-medium"
+                  />
+                  <EditableText
+                    path="transparency.roadmap.phases.current.description"
+                    value={content.transparency.roadmap.phases.current.description}
+                    className="text-sm text-muted-foreground"
+                  />
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-2 h-2 bg-orange-500 rounded-full mt-2"></div>
                 <div>
-                  <div className="font-medium">Q1 2026: Governance Token</div>
-                  <div className="text-sm text-muted-foreground">DAO voting on bonus distribution and upgrades</div>
+                  <EditableText
+                    path="transparency.roadmap.phases.governance.title"
+                    value={content.transparency.roadmap.phases.governance.title}
+                    className="font-medium"
+                  />
+                  <EditableText
+                    path="transparency.roadmap.phases.governance.description"
+                    value={content.transparency.roadmap.phases.governance.description}
+                    className="text-sm text-muted-foreground"
+                  />
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <div className="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
                 <div>
-                  <div className="font-medium">Full Decentralization</div>
-                  <div className="text-sm text-muted-foreground">Community control over all protocol parameters</div>
+                  <EditableText
+                    path="transparency.roadmap.phases.decentralization.title"
+                    value={content.transparency.roadmap.phases.decentralization.title}
+                    className="font-medium"
+                  />
+                  <EditableText
+                    path="transparency.roadmap.phases.decentralization.description"
+                    value={content.transparency.roadmap.phases.decentralization.description}
+                    className="text-sm text-muted-foreground"
+                  />
                 </div>
               </div>
             </CardContent>

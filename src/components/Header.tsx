@@ -7,6 +7,8 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import WalletDropdown from './WalletDropdown';
 import MobileMenu from './MobileMenu';
 import GlobalSearch from './GlobalSearch';
+import { EditModeToggle } from './EditModeControls';
+import { useContentManagement } from '@/contexts/ContentManagementContext';
 
 interface HeaderProps {
   isConnected: boolean;
@@ -18,6 +20,7 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const isMobile = useIsMobile();
+  const { content } = useContentManagement();
 
   return (
     <>
@@ -40,7 +43,7 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
                   `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
                 }
               >
-                Dashboard
+                {content.navigation.dashboard}
               </NavLink>
             ) : (
               <NavLink 
@@ -49,7 +52,7 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
                   `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
                 }
               >
-                Home
+                {content.navigation.home}
               </NavLink>
             )}
             {isConnected && (
@@ -60,7 +63,7 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
                     `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
                   }
                 >
-                  Portfolio
+                  {content.navigation.portfolio}
                 </NavLink>
                 <NavLink 
                   to="/defi" 
@@ -68,7 +71,7 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
                     `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
                   }
                 >
-                  DeFi
+                  {content.navigation.defi}
                 </NavLink>
               </>
             )}
@@ -78,7 +81,7 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
                 `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
               }
             >
-              Transparency
+              {content.navigation.transparency}
             </NavLink>
             <NavLink 
               to="/docs" 
@@ -86,7 +89,7 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
                 `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
               }
             >
-              Docs
+              {content.navigation.docs}
             </NavLink>
             <NavLink 
               to="/faq" 
@@ -94,11 +97,13 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
                 `text-sm transition-colors ${isActive ? 'text-foreground font-medium' : 'text-muted-foreground hover:text-foreground'}`
               }
             >
-              FAQ
+              {content.navigation.faq}
             </NavLink>
           </nav>
 
           <div className="flex items-center space-x-2">
+            <EditModeToggle />
+            
             {isConnected && (
               <Button
                 variant="ghost"
@@ -115,7 +120,7 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
             ) : (
               <Button onClick={onConnect} size={isMobile ? "sm" : "sm"} className="hidden sm:flex text-xs sm:text-sm h-8 sm:h-9">
                 <Wallet className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                Connect
+                {content.common.connect}
               </Button>
             )}
             
