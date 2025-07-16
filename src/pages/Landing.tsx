@@ -6,7 +6,7 @@ import TDDExplainer from '@/components/landing/TDDExplainer';
 import SimpleWhyTCore from '@/components/landing/SimpleWhyTCore';
 import SimpleRiskTiers from '@/components/landing/SimpleRiskTiers';
 import SimpleHowItWorks from '@/components/landing/SimpleHowItWorks';
-import KeyStats from '@/components/landing/KeyStats';
+import StatsSection from '@/components/landing/StatsSection';
 import TransparencyPreview from '@/components/landing/TransparencyPreview';
 import CTASection from '@/components/landing/CTASection';
 import LandingFooter from '@/components/landing/LandingFooter';
@@ -27,7 +27,7 @@ const Landing = () => {
         <SimpleWhyTCore />
         <SimpleRiskTiers />
         <SimpleHowItWorks />
-        <KeyStats />
+        <StatsSection />
         <TransparencyPreview />
         <CTASection />
       </main>

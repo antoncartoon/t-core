@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 import { Shield, DollarSign, TrendingUp, Lock, Clock } from 'lucide-react';
 import DynamicPerformanceFeeCompact from './DynamicPerformanceFeeCompact';
+import { TCORE_STATS } from '@/data/tcoreData';
 
 const TransparencyPreview = () => {
   // Performance fee allocation data (as per Knowledge document)
@@ -45,14 +46,12 @@ const TransparencyPreview = () => {
     }
   ];
 
-  // Yield sources breakdown (60% fixed, 40% bonus)
-  const yieldSources = [
-    { name: 'T-Bills', percentage: 25 },
-    { name: 'AAVE', percentage: 20 },
-    { name: 'JLP', percentage: 15 },
-    { name: 'LP Farming', percentage: 15 },
-    { name: 'Protocol Revenue', percentage: 25 }
-  ];
+  // Real yield sources from tcoreData (Anti-Ponzi breakdown)
+  const yieldSources = TCORE_STATS.yieldSources.sources.map(source => ({
+    name: source.name,
+    percentage: Math.round(source.allocation * 100),
+    apy: source.apy * 100
+  }));
 
   return (
     <section className="py-16 sm:py-20 bg-background">
@@ -112,7 +111,7 @@ const TransparencyPreview = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-64">
+              <div className="h-64 mb-4">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={yieldSources} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                     <XAxis 
@@ -123,13 +122,41 @@ const TransparencyPreview = () => {
                       height={60}
                     />
                     <YAxis tick={{ fontSize: 12 }} />
-                    <Tooltip formatter={(value) => `${value}%`} />
+                    <Tooltip formatter={(value, name) => [`${value}%`, name === 'percentage' ? 'Allocation' : name]} />
                     <Bar dataKey="percentage" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div className="mt-4 text-sm text-muted-foreground">
-                <p>60% Fixed yields + 40% Performance bonus from real DeFi strategies</p>
+              
+              {/* Yield Sources Detail */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+                {yieldSources.map((source, index) => (
+                  <div key={index} className="flex justify-between items-center p-2 bg-muted/30 rounded">
+                    <div className="flex items-center gap-2">
+                      <div className={`w-2 h-2 rounded-full ${
+                        source.name === 'T-Bills' ? 'bg-green-500' :
+                        source.name === 'AAVE' ? 'bg-blue-500' :
+                        source.name === 'JLP' ? 'bg-yellow-500' :
+                        source.name === 'LP Farming' ? 'bg-purple-500' :
+                        'bg-orange-500'
+                      }`} />
+                      <span className="text-sm font-medium">{source.name}</span>
+                    </div>
+                    <div className="text-sm">
+                      <span className="text-primary font-medium">{source.percentage}%</span>
+                      <span className="text-muted-foreground ml-1">({source.apy.toFixed(1)}% APY)</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
+                <div className="text-sm font-medium text-green-700 dark:text-green-300 text-center">
+                  {Math.round(TCORE_STATS.yieldSources.fixed * 100)}% Fixed Yield + {Math.round(TCORE_STATS.yieldSources.bonus * 100)}% Performance Bonus
+                </div>
+                <div className="text-xs text-green-600 dark:text-green-400 mt-1 text-center">
+                  Sustainable, non-ponzi yield structure from real DeFi protocols
+                </div>
               </div>
             </CardContent>
           </Card>
