@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { NavLink } from 'react-router-dom';
 import { ArrowRight, Play, Shield, TrendingUp, Lock } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { T_BILL_RATE, FIXED_BASE_MULTIPLIER, FIXED_BASE_APY } from '@/utils/riskRangeCalculations';
 
 interface SimpleHeroSectionProps {
   onStartTutorial?: () => void;
@@ -15,10 +16,14 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
     <section className="relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20 py-16 sm:py-24">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-light text-foreground mb-6 sm:mb-8">
-            <span className="text-green-600 font-medium">T-Bills *1.2 Fixed</span> +{' '}
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-light text-foreground mb-4 sm:mb-6">
+            <span className="text-green-600 font-medium">{(FIXED_BASE_APY * 100).toFixed(0)}% Guaranteed Safe</span> +{' '}
             <span className="text-primary font-medium">Dynamic Bonus Yields</span>
           </h1>
+          
+          <p className="text-sm text-muted-foreground mb-8 sm:mb-12">
+            Гарантированная доходность рассчитывается как текущая ставка T-Bills ({(T_BILL_RATE * 100).toFixed(0)}%) × {FIXED_BASE_MULTIPLIER} = {(FIXED_BASE_APY * 100).toFixed(0)}%
+          </p>
           
           <p className="text-lg sm:text-xl text-muted-foreground mb-8 sm:mb-12 max-w-2xl mx-auto">
             Профессионально управляемые стейблкоин стратегии с прозрачными комиссиями
@@ -27,7 +32,7 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
           <div className="flex flex-wrap justify-center gap-4 mb-6 text-sm text-muted-foreground">
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              Safe: T-Bills * 1.2 (мин. 25% базовой доходности)
+              Safe: {(FIXED_BASE_APY * 100).toFixed(0)}% гарантированно (мин. 25% базовой доходности)
             </span>
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 bg-primary rounded-full"></span>
