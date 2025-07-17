@@ -17,7 +17,7 @@ const TDDExplainer = () => {
         </div>
 
         {/* Process Flow */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Step 1 */}
           <div className="text-center">
             <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -48,6 +48,17 @@ const TDDExplainer = () => {
             <h3 className="font-medium text-foreground mb-2">3. Earn Yields</h3>
             <p className="text-sm text-muted-foreground">
               Receive transparent, sustainable returns with performance fees
+            </p>
+          </div>
+
+          {/* Step 4 */}
+          <div className="text-center">
+            <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <ArrowRight className="w-8 h-8 text-purple-600" />
+            </div>
+            <h3 className="font-medium text-foreground mb-2">4. Trade NFT</h3>
+            <p className="text-sm text-muted-foreground">
+              Use your NFT on secondary DeFi markets for greater flexibility
             </p>
           </div>
         </div>
