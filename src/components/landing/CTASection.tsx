@@ -18,8 +18,8 @@ const CTASection = () => {
             </h2>
             
             <p className="text-lg text-muted-foreground mb-8 sm:mb-12 max-w-2xl mx-auto">
-              Join thousands of users already earning optimized yields on their stablecoins. 
-              Fair distribution, transparent rewards, and stablecoin-only strategies.
+              Join thousands of users already earning optimized yields across diversified DeFi strategies. 
+              Fair distribution, transparent rewards, and risk-managed approach.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
@@ -40,12 +40,17 @@ const CTASection = () => {
             <div className="mt-8 sm:mt-12 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8 text-sm text-muted-foreground">
               <div className="flex items-center justify-center space-x-2">
                 <div className="w-2 h-2 rounded-full bg-green-500" />
-                <span>Stablecoin Only</span>
+                <span>Diversified Assets</span>
               </div>
               
               <div className="flex items-center justify-center space-x-2">
                 <div className="w-2 h-2 rounded-full bg-purple-500" />
                 <span>Fair Distribution</span>
+              </div>
+              
+              <div className="flex items-center justify-center space-x-2">
+                <div className="w-2 h-2 rounded-full bg-blue-500" />
+                <span>Risk-Managed</span>
               </div>
             </div>
           </div>
