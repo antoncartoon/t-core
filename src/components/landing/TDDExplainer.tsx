@@ -36,7 +36,7 @@ const TDDExplainer = () => {
             </div>
             <h3 className="font-medium text-foreground mb-2">2. Choose Risk Tier</h3>
             <p className="text-sm text-muted-foreground">
-              Select your preferred risk/reward level from safe to hero
+              Select your preferred risk/reward level from safe to hero and get NFT for staked TDD positions
             </p>
           </div>
 
