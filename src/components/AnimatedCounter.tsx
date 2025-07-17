@@ -20,6 +20,16 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
   const [count, setCount] = useState(0);
   const [isVisible, setIsVisible] = useState(false);
 
+  const formatNumber = (num: number): string => {
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(1) + 'M';
+    }
+    if (num >= 1000) {
+      return (num / 1000).toFixed(1) + 'K';
+    }
+    return num.toFixed(decimals);
+  };
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -61,7 +71,7 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
       id={`counter-${end}`} 
       className={`transition-all duration-300 ${className}`}
     >
-      {prefix}{count.toFixed(decimals)}{suffix}
+      {prefix}{formatNumber(count)}{suffix}
     </span>
   );
 };
