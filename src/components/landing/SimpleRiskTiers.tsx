@@ -11,38 +11,38 @@ const SimpleRiskTiers = () => {
     color: 'text-green-600',
     bgColor: 'bg-green-50 dark:bg-green-950/20',
     borderColor: 'border-green-200 dark:border-green-800',
-    formula: 'Fixed: T-Bills * 1.2'
+    formula: 'Fixed rate guaranteed'
   }, {
     name: 'Conservative',
     apy: '~9%',
     risk: 'Low Risk',
-    description: 'Fixed + small bonus f(i)',
+    description: 'Fixed + small bonus yield',
     icon: Shield,
     color: 'text-blue-600',
     bgColor: 'bg-blue-50 dark:bg-blue-950/20',
     borderColor: 'border-blue-200 dark:border-blue-800',
-    formula: 'f(i) = 1.03^(i-25), small bonus'
+    formula: 'Fixed + small bonus'
   }, {
     name: 'Balanced',
     apy: '~13%',
     risk: 'Medium Risk',
-    description: 'Moderate bonus + surplus ~18%',
+    description: 'Moderate bonus yield',
     icon: Star,
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-50 dark:bg-yellow-950/20',
     borderColor: 'border-yellow-200 dark:border-yellow-800',
-    formula: 'Medium f(i) + surplus pool'
+    formula: 'Fixed + medium bonus'
   }, {
     name: 'Hero',
     apy: 'Up to 35%',
     risk: 'High Risk',
-    description: 'Max bonus + surplus ~74%',
+    description: 'Maximum bonus yield',
     icon: Crown,
     color: 'text-purple-600',
     bgColor: 'bg-gradient-to-br from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20',
     borderColor: 'border-purple-200 dark:border-purple-800',
     isHero: true,
-    formula: 'High f(i) + 74% surplus share'
+    formula: 'Fixed + maximum bonus'
   }];
   return <section className="py-16 sm:py-20 bg-muted/20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -88,13 +88,13 @@ const SimpleRiskTiers = () => {
         
         <div className="text-center mt-12">
           <p className="text-muted-foreground mb-4">
-            Average APY: 8.73% | Stress test: Tier1 $0 loss, Tier4 $80 loss on $10k | Performance fee: 20%
+            *Current rates | Average APY: 8.73% | Stress test: Tier1 $0 loss, Tier4 $80 loss on $10k | Performance fee: 20%
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Card className="inline-block p-3 bg-gradient-to-r from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20 border-purple-200 dark:border-purple-800">
               <div className="flex items-center gap-2 text-purple-600 text-sm">
                 <TrendingUp className="w-4 h-4" />
-                <span className="font-medium">Waterfall: Heroes absorb losses first, earn surplus first</span>
+                <span className="font-medium">Waterfall: Heroes absorb losses first, earn bonus yield first</span>
               </div>
             </Card>
             <Card className="inline-block p-3 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
