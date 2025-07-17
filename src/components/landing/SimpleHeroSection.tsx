@@ -32,7 +32,7 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
           <div className="flex flex-wrap justify-center gap-4 mb-6 text-sm text-muted-foreground">
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-              Safe: {(FIXED_BASE_APY * 100).toFixed(0)}% guaranteed (min. 25% base yield)
+              Safe: {(FIXED_BASE_APY * 100).toFixed(0)}% guaranteed
             </span>
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 bg-primary rounded-full"></span>
