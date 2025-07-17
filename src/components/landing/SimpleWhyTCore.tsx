@@ -13,7 +13,7 @@ const SimpleWhyTCore = () => {
     {
       icon: TrendingUp,
       title: 'Scalable Returns',
-      description: 'Choose your risk level from 6% safe to 35% heroic yields. Higher risk, higher reward.',
+      description: 'Choose your risk level from 6% safe to unlimited heroic yields. Higher risk, higher reward potential.',
       color: 'text-primary'
     },
     {
