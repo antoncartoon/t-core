@@ -10,8 +10,9 @@ const TDDExplainer = () => {
             What is <span className="text-primary font-medium">TDD</span>?
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            TDD (T-Core Distribution Dollar) is a risk-tranched stablecoin backed by T-Bills and DeFi strategies. 
-            Centralized management with multisig security, transitioning to full DAO governance in Q1 2026.
+            TDD (T-Core Distribution Dollar) is a stablecoin backed by T-Bills and DeFi strategies. 
+            Earn risk-tranched yields through staking with centralized management and multisig security, 
+            transitioning to full DAO governance in Q1 2026.
           </p>
         </div>
 
