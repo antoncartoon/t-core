@@ -50,6 +50,11 @@ const InteractiveRiskYieldChart = () => {
   const data = generateCurveData();
   const currentRisk = riskLevel[0];
   const currentData = data.find(d => d.risk === Math.round(currentRisk / 2) * 2) || data[0];
+  
+  // Calculate dynamic APY ranges
+  const minBaseAPY = data[0].baseYield;
+  const maxBaseAPY = data[data.length - 1].baseYield;
+  const maxBonusAPY = data[data.length - 1].bonusYield;
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
@@ -83,7 +88,7 @@ const InteractiveRiskYieldChart = () => {
           Interactive Risk-Yield Curve
         </h3>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Base APY grows smoothly from 6% to 15%, while bonus yield increases progressively with risk
+          Base APY grows smoothly from {minBaseAPY.toFixed(1)}% to {maxBaseAPY.toFixed(1)}%, while bonus yield increases progressively with risk up to {maxBonusAPY.toFixed(1)}%
         </p>
       </div>
 
