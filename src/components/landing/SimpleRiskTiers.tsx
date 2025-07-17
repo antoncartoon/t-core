@@ -85,12 +85,7 @@ const SimpleRiskTiers = () => {
         <div className="text-center mt-12">
           
           <div className="flex flex-wrap justify-center gap-4">
-            <Card className="inline-block p-3 bg-gradient-to-r from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20 border-purple-200 dark:border-purple-800">
-              <div className="flex items-center gap-2 text-purple-600 text-sm">
-                <TrendingUp className="w-4 h-4" />
-                <span className="font-medium">Waterfall: Heroes absorb losses first, earn surplus first</span>
-              </div>
-            </Card>
+            
             <Card className="inline-block p-3 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
               <div className="flex items-center gap-2 text-blue-600 text-sm">
                 <Shield className="w-4 h-4" />
