@@ -16,6 +16,15 @@ const TDDExplainer = () => {
           </p>
         </div>
 
+        <div className="text-center mb-12">
+          <h3 className="text-xl sm:text-2xl font-light text-foreground mb-4">
+            How It Works
+          </h3>
+          <p className="text-muted-foreground max-w-3xl mx-auto">
+            Start investing in four simple steps. No complex strategies, just transparent yield.
+          </p>
+        </div>
+
         {/* Process Flow */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           {/* Step 1 */}
@@ -64,7 +73,7 @@ const TDDExplainer = () => {
         </div>
 
         {/* Key Benefits */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 mb-12">
           <div className="text-center p-6 bg-background rounded-lg border">
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Shield className="w-6 h-6 text-green-600" />
@@ -94,6 +103,17 @@ const TDDExplainer = () => {
               Distributed across: bonus yields, buyback mechanisms, hero tier buffer
             </p>
           </div>
+        </div>
+
+        {/* CTA Section */}
+        <div className="text-center">
+          <p className="text-muted-foreground mb-6">
+            Ready to start earning stable yield?
+          </p>
+          <a href="/app" className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium">
+            Launch App
+            <ArrowRight className="w-4 h-4" />
+          </a>
         </div>
       </div>
     </section>

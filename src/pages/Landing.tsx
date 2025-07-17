@@ -5,7 +5,7 @@ import SimpleHeroSection from '@/components/landing/SimpleHeroSection';
 import TDDExplainer from '@/components/landing/TDDExplainer';
 import SimpleWhyTCore from '@/components/landing/SimpleWhyTCore';
 import SimpleRiskTiers from '@/components/landing/SimpleRiskTiers';
-import SimpleHowItWorks from '@/components/landing/SimpleHowItWorks';
+
 import StatsSection from '@/components/landing/StatsSection';
 import TransparencyPreview from '@/components/landing/TransparencyPreview';
 import SecurityEmphasis from '@/components/landing/SecurityEmphasis';
@@ -27,7 +27,7 @@ const Landing = () => {
         <TDDExplainer />
         <SimpleWhyTCore />
         <SimpleRiskTiers />
-        <SimpleHowItWorks />
+        
         <StatsSection />
         <TransparencyPreview />
         <SecurityEmphasis />
