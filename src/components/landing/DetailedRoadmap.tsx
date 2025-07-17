@@ -31,7 +31,7 @@ const DetailedRoadmap = () => {
       borderColor: 'border-purple-200 dark:border-purple-800',
       features: [
         { name: 'Governance Token (TCORE)', status: 'planned', description: 'Выпуск токена управления для голосования' },
-        { name: 'Голосование по распределению бонусов', status: 'planned', description: 'Сообщество решает параметры f(i) и surplus' },
+        { name: 'Голосование по распределению бонусов', status: 'planned', description: 'Сообщество решает параметры f(i) и bonus yield' },
         { name: 'Выбор стратегий инвестирования', status: 'planned', description: 'DAO голосует за протоколы и аллокации' },
         { name: 'Управление Performance Fee', status: 'planned', description: 'Голосование по распределению комиссии' }
       ]

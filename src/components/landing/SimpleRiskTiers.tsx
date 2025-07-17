@@ -26,23 +26,23 @@ const SimpleRiskTiers = () => {
     name: 'Balanced',
     apy: '~13%',
     risk: 'Medium Risk',
-    description: 'Moderate bonus + surplus ~18%',
+    description: 'Moderate bonus yield ~18%',
     icon: Star,
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-50 dark:bg-yellow-950/20',
     borderColor: 'border-yellow-200 dark:border-yellow-800',
-    formula: 'Medium f(i) + surplus pool'
+    formula: 'Medium f(i) + bonus pool'
   }, {
     name: 'Hero',
     apy: 'Up to 35%',
     risk: 'High Risk',
-    description: 'Max bonus + surplus ~74%',
+    description: 'Max bonus yield ~74%',
     icon: Crown,
     color: 'text-purple-600',
     bgColor: 'bg-gradient-to-br from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20',
     borderColor: 'border-purple-200 dark:border-purple-800',
     isHero: true,
-    formula: 'High f(i) + 74% surplus share'
+    formula: 'High f(i) + 74% bonus share'
   }];
   return <section className="py-16 sm:py-20 bg-muted/20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -90,7 +90,7 @@ const SimpleRiskTiers = () => {
             <Card className="inline-block p-3 bg-gradient-to-r from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20 border-purple-200 dark:border-purple-800">
               <div className="flex items-center gap-2 text-purple-600 text-sm">
                 <TrendingUp className="w-4 h-4" />
-                <span className="font-medium">Waterfall: Heroes absorb losses first, earn surplus first</span>
+                <span className="font-medium">Waterfall: Heroes absorb losses first, earn bonus yield first</span>
               </div>
             </Card>
             
