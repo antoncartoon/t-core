@@ -3,7 +3,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Shield, Star, Crown, TrendingUp } from 'lucide-react';
 const SimpleRiskTiers = () => {
   const tiers = [{
-    name: 'Safe (1-25)',
+    name: 'Safe',
     apy: '6%',
     risk: 'Zero Loss',
     description: 'T-Bills*1.2 fixed guarantee',
@@ -13,7 +13,7 @@ const SimpleRiskTiers = () => {
     borderColor: 'border-green-200 dark:border-green-800',
     formula: 'Fixed: T-Bills * 1.2'
   }, {
-    name: 'Conservative (26-50)',
+    name: 'Conservative',
     apy: '~9%',
     risk: 'Low Risk',
     description: 'Fixed + small bonus f(i)',
@@ -23,7 +23,7 @@ const SimpleRiskTiers = () => {
     borderColor: 'border-blue-200 dark:border-blue-800',
     formula: 'f(i) = 1.03^(i-25), small bonus'
   }, {
-    name: 'Balanced (51-75)',
+    name: 'Balanced',
     apy: '~13%',
     risk: 'Medium Risk',
     description: 'Moderate bonus + surplus ~18%',
@@ -33,7 +33,7 @@ const SimpleRiskTiers = () => {
     borderColor: 'border-yellow-200 dark:border-yellow-800',
     formula: 'Medium f(i) + surplus pool'
   }, {
-    name: 'Hero (76-100)',
+    name: 'Hero',
     apy: 'Up to 35%',
     risk: 'High Risk',
     description: 'Max bonus + surplus ~74%',
