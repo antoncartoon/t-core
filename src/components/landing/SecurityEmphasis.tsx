@@ -7,15 +7,15 @@ const SecurityEmphasis = () => {
   const securityFeatures = [
     {
       icon: Shield,
-      title: "Stablecoin Only Strategy",
-      description: "We never invest in volatile assets, meme coins, or speculative tokens. Your principal remains stable.",
-      highlights: ["No volatility exposure", "Principal protection", "Stable value maintenance"]
+      title: "Diversified Asset Strategy",
+      description: "We focus on solid assets like stablecoins and established pairs (ETH/USDC), avoiding volatile meme coins and speculative tokens.",
+      highlights: ["Established asset pairs", "Risk-managed exposure", "Proven liquidity pools"]
     },
     {
       icon: Lock,
       title: "Battle-Tested Protocols",
-      description: "We only deploy to proven DeFi protocols like AAVE, Compound, and institutional CeFi platforms.",
-      highlights: ["Audited protocols only", "Multi-signature security", "Insurance coverage"]
+      description: "We utilize the best DeFi protocols in each risk category, selecting only audited and proven platforms.",
+      highlights: ["Audited protocols only", "Multi-signature security", "Best-in-class selection"]
     },
     {
       icon: Eye,
@@ -26,9 +26,9 @@ const SecurityEmphasis = () => {
   ];
 
   const riskComparison = [
-    { aspect: "Asset Type", traditional: "Stocks, Bonds, Crypto", tcore: "Stablecoins Only" },
-    { aspect: "Volatility", traditional: "High (±20-50%)", tcore: "Minimal (±0.1%)" },
-    { aspect: "Principal Risk", traditional: "Significant", tcore: "Protected" },
+    { aspect: "Asset Type", traditional: "Stocks, Bonds, Crypto", tcore: "Stablecoins & Blue-chip pairs" },
+    { aspect: "Volatility", traditional: "High (±20-50%)", tcore: "Managed (±0.1-5%)" },
+    { aspect: "Principal Risk", traditional: "Significant", tcore: "Minimized" },
     { aspect: "Yield Source", traditional: "Speculation", tcore: "DeFi Optimization" }
   ];
 
@@ -41,7 +41,7 @@ const SecurityEmphasis = () => {
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
             Our high yields come from optimization and efficiency, not from taking on dangerous risks. 
-            Your stablecoins stay stable while earning optimized returns.
+            We focus on solid assets and proven protocols while earning optimized returns.
           </p>
         </div>
 
