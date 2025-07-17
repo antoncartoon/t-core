@@ -7,7 +7,7 @@ const SimpleWhyTCore = () => {
     {
       icon: Shield,
       title: 'Safety First',
-      description: 'Guaranteed 6% minimum return for Safe tier backed by T-Bills. No risk of principal loss.',
+      description: 'Guaranteed 6% minimum return for Safe tier backed by T-Bills + Bluechip DeFi. Minimal risk exposure.',
       color: 'text-green-600'
     },
     {
