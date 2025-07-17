@@ -25,7 +25,7 @@ const TDDExplainer = () => {
             </div>
             <h3 className="font-medium text-foreground mb-2">1. Deposit Stablecoins</h3>
             <p className="text-sm text-muted-foreground">
-              Convert USDC, USDT, DAI or other stablecoins into TDD tokens
+              Mint your TDD by depositing USDC, USDT, DAI or other stablecoins
             </p>
           </div>
 
