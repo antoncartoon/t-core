@@ -12,7 +12,7 @@ const TDDExplainer = () => {
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             TDD (T-Core Distribution Dollar) is a stablecoin backed by T-Bills and DeFi strategies. 
             Earn risk-tranched yields through staking with centralized management and multisig security, 
-            transitioning to full DAO governance in Q1 2026.
+            transitioning to full DAO governance in Q1 2027.
           </p>
         </div>
 
