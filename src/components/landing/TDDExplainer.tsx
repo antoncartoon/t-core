@@ -69,9 +69,9 @@ const TDDExplainer = () => {
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Shield className="w-6 h-6 text-green-600" />
             </div>
-            <h4 className="font-medium text-foreground mb-2">Fixed Guarantee (Tier 1)</h4>
+            <h4 className="font-medium text-foreground mb-2">Risk Position Constructor</h4>
             <p className="text-sm text-muted-foreground">
-              6% APY = T-Bills*1.2 with zero loss protection
+              Build your custom risk portfolio according to expected returns
             </p>
           </div>
 
