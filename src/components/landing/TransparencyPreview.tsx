@@ -227,9 +227,9 @@ const TransparencyPreview = () => {
           <div className="text-center text-sm text-muted-foreground">
             <p className="font-medium mb-2">⚠️ Important Disclaimers</p>
             <p>
-              T-Core is experimental DeFi. No guaranteed returns, risk of loss. Not investment advice. 
-              Use at own risk. Performance fee 20% allocated to bonus/buyback/protocol revenue/insurance buffer. 
-              Centralized management with multisig for security, subject to roadmap decentralization.
+              Past performance does not guarantee future results. DeFi protocols involve significant risks including 
+              smart contract vulnerabilities, counterparty risks, impermanent loss, and potential total loss of funds. 
+              Market conditions can change rapidly and yields may vary significantly. This is not investment advice.
             </p>
           </div>
         </div>
