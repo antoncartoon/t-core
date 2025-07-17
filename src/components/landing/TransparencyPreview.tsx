@@ -183,7 +183,7 @@ const TransparencyPreview = () => {
                 <div className="w-2 h-2 bg-purple-500 rounded-full mt-2"></div>
                 <div>
                   <div className="font-medium">On-Chain Verification</div>
-                  <div className="text-sm text-muted-foreground">All operations verifiable on Etherscan</div>
+                  <div className="text-sm text-muted-foreground">All operations verifiable on blockchain explorers</div>
                 </div>
               </div>
             </CardContent>
