@@ -28,22 +28,20 @@ const InteractiveRiskYieldChart = () => {
     const data = [];
     for (let i = 0; i <= 100; i += 2) {
       const risk = i;
-      // Base exponential curve: 6% to 35%
-      const baseYield = 6 + (Math.pow(i / 100, 1.3) * 29);
+      // Realistic base APY: 6% to 15% (conservative growth)
+      const baseYield = 6 + (Math.pow(i / 100, 0.7) * 9);
       
-      // Liquidity depth bonus (higher for mid-range risks)
-      const liquidityMultiplier = 1 + (Math.sin((i / 100) * Math.PI) * 0.4);
+      // Progressive bonus yield: exponential growth with risk
+      const bonusYield = Math.pow(i / 100, 2) * 20;
       
-      // Risk multiplier with diminishing returns
-      const riskMultiplier = 1 + (Math.pow(i / 100, 0.8) * 0.3);
-      
-      const finalYield = baseYield * liquidityMultiplier * riskMultiplier;
+      // Total yield = base + bonus (max ~35% at Hero tier)
+      const totalYield = baseYield + bonusYield;
       
       data.push({ 
         risk, 
-        yield: Math.min(finalYield, 45), // Cap at 45%
-        baseYield: Math.min(baseYield, 35),
-        bonusYield: Math.min(finalYield - baseYield, 10)
+        yield: totalYield,
+        baseYield: baseYield,
+        bonusYield: bonusYield
       });
     }
     return data;
@@ -85,7 +83,7 @@ const InteractiveRiskYieldChart = () => {
           Interactive Risk-Yield Curve
         </h3>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Adjust the risk level to see how your potential yield changes with liquidity depth bonuses
+          Base APY grows smoothly from 6% to 15%, while bonus yield increases progressively with risk
         </p>
       </div>
 
@@ -120,9 +118,13 @@ const InteractiveRiskYieldChart = () => {
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data} margin={{ top: 10, right: 30, left: 20, bottom: 5 }}>
                 <defs>
-                  <linearGradient id="yieldGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.1}/>
+                  <linearGradient id="baseGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.6}/>
+                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.2}/>
+                  </linearGradient>
+                  <linearGradient id="bonusGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(262, 83%, 58%)" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="hsl(262, 83%, 58%)" stopOpacity={0.3}/>
                   </linearGradient>
                 </defs>
                 <XAxis 
@@ -149,12 +151,24 @@ const InteractiveRiskYieldChart = () => {
                   }}
                 />
                 <Tooltip content={<CustomTooltip />} />
+                {/* Base Yield Area */}
                 <Area 
                   type="monotone" 
-                  dataKey="yield" 
+                  dataKey="baseYield" 
+                  stackId="1"
                   stroke="hsl(var(--primary))" 
-                  strokeWidth={2}
-                  fill="url(#yieldGradient)"
+                  strokeWidth={1}
+                  fill="url(#baseGradient)"
+                  fillOpacity={animationProgress}
+                />
+                {/* Bonus Yield Area */}
+                <Area 
+                  type="monotone" 
+                  dataKey="bonusYield" 
+                  stackId="1"
+                  stroke="hsl(262, 83%, 58%)" 
+                  strokeWidth={1}
+                  fill="url(#bonusGradient)"
                   fillOpacity={animationProgress}
                 />
                 
@@ -211,7 +225,7 @@ const InteractiveRiskYieldChart = () => {
             <div className="flex items-center gap-2 text-purple-600 text-sm">
               <TrendingUp className="w-4 h-4" />
               <span className="font-medium">
-                Liquidity Depth Bonus: Higher yields available at optimal risk ranges due to concentrated liquidity
+                Progressive Bonus Yield: Higher risk tiers earn exponentially more bonus yield to incentivize taking additional risk
               </span>
             </div>
           </div>
