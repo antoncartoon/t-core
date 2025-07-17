@@ -91,7 +91,7 @@ const TDDExplainer = () => {
             </div>
             <h4 className="font-medium text-foreground mb-2">Performance Fee 20%</h4>
             <p className="text-sm text-muted-foreground">
-              25% bonus, 25% buyback, 25% protocol, 25% insurance buffer
+              Distributed across: bonus yields, buyback mechanisms, protocol development, insurance buffer
             </p>
           </div>
         </div>
