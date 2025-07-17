@@ -39,7 +39,7 @@ const TransparencyPreview = () => {
     color: 'text-blue-600'
   }, {
     icon: TrendingUp,
-    label: 'Bonus Yield to Tier 4',
+    label: 'Bonus Yield to Heroes',
     value: '~74%',
     description: 'Heroes earn residual',
     color: 'text-purple-600'
