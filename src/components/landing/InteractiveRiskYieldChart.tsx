@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, ReferenceLine, Tooltip } from 'recharts';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent } from '@/components/ui/card';
-import { Shield, Star, Crown, TrendingUp } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Shield, Star, Crown, TrendingUp, AlertTriangle } from 'lucide-react';
 
 const InteractiveRiskYieldChart = () => {
   const [riskLevel, setRiskLevel] = useState([25]);
@@ -234,6 +235,14 @@ const InteractiveRiskYieldChart = () => {
               </span>
             </div>
           </div>
+
+          {/* Disclaimer */}
+          <Alert className="mt-4 border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20">
+            <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+            <AlertDescription className="text-amber-700 dark:text-amber-300 text-sm">
+              <strong>Демонстрационный инструмент:</strong> Этот интерактивный блок создан для демонстрации. Реальная доходность может отличаться, так как зависит от текущей доходности протокола, распределения ликвидности по зонам риска и распределения инсентивов.
+            </AlertDescription>
+          </Alert>
         </CardContent>
       </Card>
     </div>
