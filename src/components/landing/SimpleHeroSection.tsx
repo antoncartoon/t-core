@@ -40,7 +40,7 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
             </span>
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-              Hero: up to 35%+ depending on liquidity
+              Hero: unlimited upside potential
             </span>
           </div>
           
