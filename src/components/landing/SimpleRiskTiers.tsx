@@ -79,9 +79,7 @@ const SimpleRiskTiers = () => {
                 <p className="text-sm text-muted-foreground mb-2">
                   {tier.description}
                 </p>
-                <p className="text-xs text-muted-foreground/80 font-mono">
-                  {tier.formula}
-                </p>
+                
               </CardContent>
             </Card>)}
         </div>
