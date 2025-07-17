@@ -81,7 +81,7 @@ const TDDExplainer = () => {
             </div>
             <h4 className="font-medium text-foreground mb-2">Overcollateralized &gt;105%</h4>
             <p className="text-sm text-muted-foreground">
-              Real yield sources: AAVE, JLP, LP farming
+              Real yield sources: T-Bills, AAVE, JLP, LP farming
             </p>
           </div>
 
