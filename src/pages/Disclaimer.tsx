@@ -76,7 +76,7 @@ const Disclaimer = () => {
               <div>
                 <h3 className="font-medium mb-2">Decentralization Timeline</h3>
                 <p className="text-sm text-muted-foreground">
-                  Full decentralization and governance are planned for Q1 2025, including a governance 
+                  Full decentralization and governance are planned for Q1 2027, including a governance 
                   token for voting on bonus distribution, surplus allocation, and protocol upgrades. 
                   Current centralized aspects will transition to community control.
                 </p>

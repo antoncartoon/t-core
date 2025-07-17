@@ -46,7 +46,7 @@ const TransparencyPreview = () => {
   }, {
     icon: Clock,
     label: 'Decentralization',
-    value: 'Q1 2025',
+    value: 'Q1 2027',
     description: 'DAO governance launch',
     color: 'text-orange-600'
   }];

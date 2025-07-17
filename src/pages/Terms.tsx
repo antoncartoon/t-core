@@ -82,7 +82,7 @@ const Terms = () => {
               <div>
                 <h3 className="font-medium mb-2">Decentralization Roadmap</h3>
                 <p className="text-sm text-muted-foreground">
-                  Full decentralization and governance transition planned for Q1 2025. A governance token 
+                  Full decentralization and governance transition planned for Q1 2027. A governance token 
                   will enable community voting on bonus distribution, surplus allocation, and protocol upgrades.
                 </p>
               </div>

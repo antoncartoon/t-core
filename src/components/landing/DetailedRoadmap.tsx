@@ -39,7 +39,7 @@ const DetailedRoadmap = () => {
     {
       phase: 'Этап 2',
       status: 'future',
-      timeframe: '2025 Q1 - Q2',
+      timeframe: '2027 Q1 - Q2',
       icon: Vote,
       color: 'text-green-600',
       bgColor: 'bg-green-50 dark:bg-green-950/20',
@@ -54,7 +54,7 @@ const DetailedRoadmap = () => {
     {
       phase: 'Этап 3',
       status: 'future',
-      timeframe: '2025 Q3+',
+      timeframe: '2027 Q3+',
       icon: Zap,
       color: 'text-orange-600',
       bgColor: 'bg-orange-50 dark:bg-orange-950/20',

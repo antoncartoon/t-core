@@ -131,7 +131,7 @@ const LandingFooter = () => {
             </p>
             <p>
               <strong>Centralized Management:</strong> Multisig security (3/5 signatures) for current operations, 
-              transitioning to full decentralization Q1 2025 with governance token and DAO control.
+              transitioning to full decentralization Q1 2027 with governance token and DAO control.
             </p>
           </div>
         </div>
