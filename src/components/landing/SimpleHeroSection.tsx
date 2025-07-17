@@ -21,9 +21,6 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
             <span className="text-primary font-medium">Dynamic Bonus Yields</span>
           </h1>
           
-          <p className="text-sm text-muted-foreground mb-8 sm:mb-12">
-            Guaranteed yield calculated as current T-Bills rate ({(T_BILL_RATE * 100).toFixed(0)}%) × {FIXED_BASE_MULTIPLIER} = {(FIXED_BASE_APY * 100).toFixed(0)}%
-          </p>
           
           <p className="text-lg sm:text-xl text-muted-foreground mb-8 sm:mb-12 max-w-2xl mx-auto">
             Professionally managed stablecoin strategies with transparent fees
