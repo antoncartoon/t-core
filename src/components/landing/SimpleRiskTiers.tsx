@@ -6,43 +6,39 @@ const SimpleRiskTiers = () => {
     name: 'Safe',
     apy: '6%',
     risk: 'Zero Loss',
-    description: 'T-Bills*1.2 fixed guarantee',
+    description: 'T-Bills backed guarantee',
     icon: Shield,
     color: 'text-green-600',
     bgColor: 'bg-green-50 dark:bg-green-950/20',
-    borderColor: 'border-green-200 dark:border-green-800',
-    formula: 'Fixed: T-Bills * 1.2'
+    borderColor: 'border-green-200 dark:border-green-800'
   }, {
     name: 'Conservative',
     apy: '~9%',
     risk: 'Low Risk',
-    description: 'Fixed + small bonus f(i)',
+    description: 'Fixed + small bonus yield',
     icon: Shield,
     color: 'text-blue-600',
     bgColor: 'bg-blue-50 dark:bg-blue-950/20',
-    borderColor: 'border-blue-200 dark:border-blue-800',
-    formula: 'f(i) = 1.03^(i-25), small bonus'
+    borderColor: 'border-blue-200 dark:border-blue-800'
   }, {
     name: 'Balanced',
     apy: '~13%',
     risk: 'Medium Risk',
-    description: 'Moderate bonus + surplus ~18%',
+    description: 'Moderate bonus yield',
     icon: Star,
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-50 dark:bg-yellow-950/20',
-    borderColor: 'border-yellow-200 dark:border-yellow-800',
-    formula: 'Medium f(i) + surplus pool'
+    borderColor: 'border-yellow-200 dark:border-yellow-800'
   }, {
     name: 'Hero',
     apy: 'Up to 35%',
     risk: 'High Risk',
-    description: 'Max bonus + surplus ~74%',
+    description: 'Maximum bonus yield',
     icon: Crown,
     color: 'text-purple-600',
     bgColor: 'bg-gradient-to-br from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20',
     borderColor: 'border-purple-200 dark:border-purple-800',
-    isHero: true,
-    formula: 'High f(i) + 74% surplus share'
+    isHero: true
   }];
   return <section className="py-16 sm:py-20 bg-muted/20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
