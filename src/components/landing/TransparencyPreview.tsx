@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 import { Shield, DollarSign, TrendingUp, Lock, Clock } from 'lucide-react';
 import DynamicPerformanceFeeCompact from './DynamicPerformanceFeeCompact';
+import IncentiveTimer from '@/components/IncentiveTimer';
 import { TCORE_STATS } from '@/data/tcoreData';
 const TransparencyPreview = () => {
   // Performance fee allocation data (as per Knowledge document)
@@ -40,7 +41,7 @@ const TransparencyPreview = () => {
   }, {
     icon: TrendingUp,
     label: 'Bonus Yield to Heroes',
-    value: '~74%',
+    value: '', // Empty since we use timer component
     description: 'Heroes earn residual',
     color: 'text-purple-600'
   }, {
@@ -76,7 +77,11 @@ const TransparencyPreview = () => {
                   <metric.icon className={`w-6 h-6 ${metric.color}`} />
                 </div>
                 <div className={`text-xl font-bold ${metric.color} mb-1`}>
-                  {metric.value}
+                  {metric.label === 'Bonus Yield to Heroes' ? (
+                    <IncentiveTimer compact />
+                  ) : (
+                    metric.value
+                  )}
                 </div>
                 <div className="text-sm font-medium text-foreground mb-1">
                   {metric.label}
