@@ -16,12 +16,12 @@ const SimpleRiskTiers = () => {
     name: 'Conservative',
     apy: '~9%',
     risk: 'Low Risk',
-    description: 'Fixed + small bonus f(i)',
+    description: 'Fixed + small bonus yield',
     icon: Shield,
     color: 'text-blue-600',
     bgColor: 'bg-blue-50 dark:bg-blue-950/20',
     borderColor: 'border-blue-200 dark:border-blue-800',
-    formula: 'f(i) = 1.03^(i-25), small bonus'
+    formula: 'Small bonus yield'
   }, {
     name: 'Balanced',
     apy: '~13%',
@@ -31,7 +31,7 @@ const SimpleRiskTiers = () => {
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-50 dark:bg-yellow-950/20',
     borderColor: 'border-yellow-200 dark:border-yellow-800',
-    formula: 'Medium f(i) + bonus pool'
+    formula: 'Medium bonus + bonus pool'
   }, {
     name: 'Hero',
     apy: 'Up to 35%',
@@ -42,7 +42,7 @@ const SimpleRiskTiers = () => {
     bgColor: 'bg-gradient-to-br from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20',
     borderColor: 'border-purple-200 dark:border-purple-800',
     isHero: true,
-    formula: 'High f(i) + 74% bonus share'
+    formula: 'High bonus + 74% bonus share'
   }];
   return <section className="py-16 sm:py-20 bg-muted/20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
