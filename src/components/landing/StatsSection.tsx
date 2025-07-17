@@ -57,7 +57,7 @@ const StatsSection = () => {
                   <div className="flex flex-col items-center text-center">
                     <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-primary mb-2 sm:mb-3" />
                     <div className="text-xl sm:text-2xl font-bold text-foreground mb-1">
-                      {stat.label === 'Total Value Locked' ? <AnimatedCounter end={TCORE_STATS.totalValueLocked} prefix="$" suffix="M" decimals={1} /> : stat.label === 'T-Core APY' ? <AnimatedCounter end={TCORE_STATS.protocolAPY28Days * 100} suffix="%" decimals={2} /> : stat.label === 'Active Stakers' ? <AnimatedCounter end={TCORE_STATS.activeStakers} decimals={0} /> : stat.label === 'Self-Insurance Pool' ? <AnimatedCounter end={TCORE_STATS.selfInsurancePool} prefix="$" suffix="M" decimals={1} /> : stat.value}
+                      {stat.label === 'Total Value Locked' ? <AnimatedCounter end={TCORE_STATS.totalValueLocked / 1000000} prefix="$" suffix="M" decimals={1} /> : stat.label === 'T-Core APY' ? <AnimatedCounter end={TCORE_STATS.protocolAPY28Days * 100} suffix="%" decimals={2} /> : stat.label === 'Active Stakers' ? <AnimatedCounter end={TCORE_STATS.activeStakers} decimals={0} /> : stat.label === 'Self-Insurance Pool' ? <AnimatedCounter end={TCORE_STATS.selfInsurancePool / 1000000} prefix="$" suffix="M" decimals={1} /> : stat.value}
                     </div>
                     <div className="text-xs sm:text-sm text-muted-foreground mb-1">
                       {stat.label}
