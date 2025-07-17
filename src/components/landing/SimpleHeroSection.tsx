@@ -23,7 +23,7 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
           
           
           <p className="text-lg sm:text-xl text-muted-foreground mb-8 sm:mb-12 max-w-2xl mx-auto">
-            Professionally managed crypto strategies with transparent fees
+            Professionally managed DeFi strategies with transparent fees
           </p>
           
           <div className="flex flex-wrap justify-center gap-4 mb-6 text-sm text-muted-foreground">
