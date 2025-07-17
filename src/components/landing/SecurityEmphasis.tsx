@@ -26,8 +26,8 @@ const SecurityEmphasis = () => {
   ];
 
   const riskComparison = [
-    { aspect: "Asset Type", traditional: "Stocks, Bonds, Crypto", tcore: "Stablecoins & Blue-chip pairs" },
-    { aspect: "Volatility", traditional: "High (±20-50%)", tcore: "Managed (±0.1-5%)" },
+    { aspect: "Asset Type", traditional: "Stocks, Bonds, Crypto", tcore: "Stablecoins, Blue-chip pairs & Tokenized T-bills" },
+    { aspect: "Volatility", traditional: "High", tcore: "Managed" },
     { aspect: "Principal Risk", traditional: "Significant", tcore: "Minimized" },
     { aspect: "Yield Source", traditional: "Speculation", tcore: "DeFi Optimization" }
   ];
