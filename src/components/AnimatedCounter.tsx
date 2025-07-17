@@ -21,6 +21,12 @@ const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
   const [isVisible, setIsVisible] = useState(false);
 
   const formatNumber = (num: number): string => {
+    // If suffix is already provided (like "M"), use original formatting
+    if (suffix) {
+      return num.toFixed(decimals);
+    }
+    
+    // Auto-format large numbers only when no suffix is provided
     if (num >= 1000000) {
       return (num / 1000000).toFixed(1) + 'M';
     }
