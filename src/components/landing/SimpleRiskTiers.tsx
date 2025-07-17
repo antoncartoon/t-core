@@ -6,39 +6,43 @@ const SimpleRiskTiers = () => {
     name: 'Safe',
     apy: '6%',
     risk: 'Zero Loss',
-    description: 'T-Bills backed guarantee',
+    description: 'T-Bills*1.2 fixed guarantee',
     icon: Shield,
     color: 'text-green-600',
     bgColor: 'bg-green-50 dark:bg-green-950/20',
-    borderColor: 'border-green-200 dark:border-green-800'
+    borderColor: 'border-green-200 dark:border-green-800',
+    formula: 'Fixed: T-Bills * 1.2'
   }, {
     name: 'Conservative',
     apy: '~9%',
     risk: 'Low Risk',
-    description: 'Fixed + small bonus yield',
+    description: 'Fixed + small bonus f(i)',
     icon: Shield,
     color: 'text-blue-600',
     bgColor: 'bg-blue-50 dark:bg-blue-950/20',
-    borderColor: 'border-blue-200 dark:border-blue-800'
+    borderColor: 'border-blue-200 dark:border-blue-800',
+    formula: 'f(i) = 1.03^(i-25), small bonus'
   }, {
     name: 'Balanced',
     apy: '~13%',
     risk: 'Medium Risk',
-    description: 'Moderate bonus yield',
+    description: 'Moderate bonus + surplus ~18%',
     icon: Star,
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-50 dark:bg-yellow-950/20',
-    borderColor: 'border-yellow-200 dark:border-yellow-800'
+    borderColor: 'border-yellow-200 dark:border-yellow-800',
+    formula: 'Medium f(i) + surplus pool'
   }, {
     name: 'Hero',
     apy: 'Up to 35%',
     risk: 'High Risk',
-    description: 'Maximum bonus yield',
+    description: 'Max bonus + surplus ~74%',
     icon: Crown,
     color: 'text-purple-600',
     bgColor: 'bg-gradient-to-br from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20',
     borderColor: 'border-purple-200 dark:border-purple-800',
-    isHero: true
+    isHero: true,
+    formula: 'High f(i) + 74% surplus share'
   }];
   return <section className="py-16 sm:py-20 bg-muted/20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -89,12 +93,7 @@ const SimpleRiskTiers = () => {
                 <span className="font-medium">Waterfall: Heroes absorb losses first, earn surplus first</span>
               </div>
             </Card>
-            <Card className="inline-block p-3 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
-              <div className="flex items-center gap-2 text-blue-600 text-sm">
-                <Shield className="w-4 h-4" />
-                <span className="font-medium">Multisig 3/5 → DAO Q1 2026</span>
-              </div>
-            </Card>
+            
           </div>
         </div>
       </div>
