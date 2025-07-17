@@ -240,7 +240,7 @@ const InteractiveRiskYieldChart = () => {
           <Alert className="mt-4 border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20">
             <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             <AlertDescription className="text-amber-700 dark:text-amber-300 text-sm">
-              <strong>Демонстрационный инструмент:</strong> Этот интерактивный блок создан для демонстрации. Реальная доходность может отличаться, так как зависит от текущей доходности протокола, распределения ликвидности по зонам риска и распределения инсентивов.
+              <strong>Demonstration Tool:</strong> This interactive block is created for demonstration purposes. Actual yields may vary as they depend on current protocol yields, liquidity distribution across risk zones, and incentive distribution.
             </AlertDescription>
           </Alert>
         </CardContent>
