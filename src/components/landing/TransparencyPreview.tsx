@@ -93,7 +93,7 @@ const TransparencyPreview = () => {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <DollarSign className="w-5 h-5 text-blue-600" />
-                Dynamic Performance Fee 20% Allocation
+                Dynamic Performance Fee Allocation
               </CardTitle>
             </CardHeader>
             <CardContent>

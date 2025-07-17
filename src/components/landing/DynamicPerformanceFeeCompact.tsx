@@ -5,7 +5,7 @@ import { Play, Pause, RotateCcw, TrendingUp, Shield, Users, Zap } from 'lucide-r
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 const DynamicPerformanceFeeCompact = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [currentScenario, setCurrentScenario] = useState(0);
 
   const scenarios = [
