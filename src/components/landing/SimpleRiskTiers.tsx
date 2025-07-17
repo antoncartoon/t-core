@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Shield, Star, Crown, TrendingUp } from 'lucide-react';
+import InteractiveRiskYieldChart from './InteractiveRiskYieldChart';
 const SimpleRiskTiers = () => {
   const tiers = [{
     name: 'Safe',
@@ -96,6 +97,8 @@ const SimpleRiskTiers = () => {
             
           </div>
         </div>
+
+        <InteractiveRiskYieldChart />
       </div>
     </section>;
 };
