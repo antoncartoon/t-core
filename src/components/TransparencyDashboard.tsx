@@ -32,7 +32,7 @@ const TransparencyDashboard: React.FC<TransparencyDashboardProps> = ({ className
     structure: "Centralized → Hybrid → Decentralized",
     currentPhase: "Centralized Management",
     decentralizationProgress: 25,
-    nextMilestone: "DAO Token Launch (Q1 2026)",
+    nextMilestone: "DAO Token Launch (Q1 2025)",
     multisigAddresses: [
       {
         name: "Treasury Management",
@@ -125,7 +125,7 @@ const TransparencyDashboard: React.FC<TransparencyDashboardProps> = ({ className
       {
         phase: "Phase 3: Hybrid Governance",
         status: "upcoming",
-        date: "Q1 2026",
+        date: "Q1 2025",
         items: [
           "DAO token launch",
           "Community governance voting",
@@ -135,7 +135,7 @@ const TransparencyDashboard: React.FC<TransparencyDashboardProps> = ({ className
       {
         phase: "Phase 4: Full Decentralization",
         status: "planned",
-        date: "Q3 2026",
+        date: "Q3 2025",
         items: [
           "Community-controlled treasury",
           "Decentralized protocol upgrades",
