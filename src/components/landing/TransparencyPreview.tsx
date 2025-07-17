@@ -106,7 +106,7 @@ const TransparencyPreview = () => {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-green-600" />
-                Real Yield Sources (Anti-Ponzi)
+                Real Yield Sources
               </CardTitle>
             </CardHeader>
             <CardContent>

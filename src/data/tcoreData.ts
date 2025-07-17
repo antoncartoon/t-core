@@ -78,16 +78,15 @@ export const TCORE_STATS = {
     }
   },
   
-  // Yield Sources (Anti-Ponzi Breakdown)
+  // Yield Sources (Real DeFi Protocol Yields)
   yieldSources: {
     fixed: 0.6, // 60% fixed yield
-    bonus: 0.4, // 40% bonus from protocol revenue
+    bonus: 0.4, // 40% bonus yield
     sources: [
-      { name: 'T-Bills', allocation: 0.25, apy: 0.05 },
-      { name: 'AAVE', allocation: 0.20, apy: 0.045 },
-      { name: 'JLP', allocation: 0.15, apy: 0.12 },
-      { name: 'LP Farming', allocation: 0.15, apy: 0.15 },
-      { name: 'Protocol Revenue', allocation: 0.25, apy: 0.18 }
+      { name: 'T-Bills', allocation: 0.40, apy: 0.05 },
+      { name: 'AAVE', allocation: 0.25, apy: 0.045 },
+      { name: 'JLP', allocation: 0.20, apy: 0.12 },
+      { name: 'LP Farming', allocation: 0.15, apy: 0.15 }
     ]
   },
   
