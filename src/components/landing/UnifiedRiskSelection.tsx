@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,11 +10,11 @@ const UnifiedRiskSelection = () => {
   const [activeTier, setActiveTier] = useState(0);
   const [animationCycle, setAnimationCycle] = useState(0);
 
-  // Define tiers with accurate bucket ranges
+  // Define tiers with accurate bucket ranges as tuples
   const tiers = [
     {
       name: 'Safe',
-      bucketRange: [0, 9],
+      bucketRange: [0, 9] as [number, number],
       description: 'T-Bills × 1.2 guarantee',
       icon: Shield,
       color: 'text-green-600',
@@ -25,7 +24,7 @@ const UnifiedRiskSelection = () => {
     },
     {
       name: 'Conservative', 
-      bucketRange: [10, 29],
+      bucketRange: [10, 29] as [number, number],
       description: 'Stable yield strategy',
       icon: Shield,
       color: 'text-blue-600',
@@ -35,7 +34,7 @@ const UnifiedRiskSelection = () => {
     },
     {
       name: 'Balanced',
-      bucketRange: [30, 59],
+      bucketRange: [30, 59] as [number, number],
       description: 'Optimized risk/reward',
       icon: Star,
       color: 'text-yellow-600',
@@ -45,7 +44,7 @@ const UnifiedRiskSelection = () => {
     },
     {
       name: 'Hero',
-      bucketRange: [60, 99],
+      bucketRange: [60, 99] as [number, number],
       description: 'Maximum yield potential',
       icon: Crown,
       color: 'text-purple-600',
