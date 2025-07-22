@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, Legend, Tooltip } from 'recharts';
 import MobileGestureHandler from '../MobileGestureHandler';
-import { AnimatedCounter } from '../AnimatedCounter';
+import AnimatedCounter from '../AnimatedCounter';
 import { DISTRIBUTION_PARAMS } from '@/utils/tcoreCalculations';
 
 const MobileRiskAnalytics = () => {

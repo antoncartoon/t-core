@@ -8,7 +8,7 @@ import { AlertTriangle, DollarSign, Shield, TrendingDown, History, BarChart3 } f
 import { formatCurrency, formatPercentage } from '@/data/tcoreData';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { useIsMobile } from '@/hooks/use-mobile';
-import MobileGestureHandler from '../MobileGestureHandler';
+import MobileGestureHandler from '@/components/MobileGestureHandler';
 
 interface HistoricalScenario {
   name: string;

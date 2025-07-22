@@ -194,7 +194,7 @@ const RiskRangeSwiper: React.FC<RiskRangeSwipeProps> = ({
           <button
             key={index}
             className={`px-2 py-1 rounded-md text-xs ${preset.color}`}
-            onClick={() => selectPresetRange(preset)}
+            onClick={() => selectPresetRange({ range: preset.range as [number, number] })}
           >
             {preset.name} ({preset.range[0]}-{preset.range[1]})
           </button>
