@@ -64,26 +64,26 @@ const TZCompliantStakingInterface = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Quick Strategies */}
       <QuickStrategies onSelectStrategy={handleStrategySelect} />
 
       {/* Main Staking Interface */}
       <Card className="border-2 border-primary/20">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calculator className="h-5 w-5" />
-            T-Core Staking Interface (ТЗ Compliant)
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
+            <Calculator className="h-5 w-5 flex-shrink-0" />
+            <span>T-Core Staking Interface</span>
           </CardTitle>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground leading-relaxed">
             Enter amount, select bucket range (0-99), and see real-time APY predictions and risk analysis
           </p>
         </CardHeader>
         
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-4 sm:space-y-6">
           {/* Amount Input */}
           <div className="space-y-2">
-            <Label htmlFor="amount">Сумма TDD</Label>
+            <Label htmlFor="amount" className="text-sm font-medium">Amount in TDD</Label>
             <div className="relative">
               <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -92,17 +92,17 @@ const TZCompliantStakingInterface = () => {
                 placeholder="Enter amount..."
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="pl-10 text-lg"
+                className="pl-10 text-base sm:text-lg h-12"
               />
             </div>
           </div>
 
           {/* Bucket Range Slider */}
           <div className="space-y-4">
-            <Label>Диапазон риска (bucket'ов 0-99)</Label>
+            <Label className="text-sm font-medium">Risk Range (buckets 0-99)</Label>
             
             <div className="space-y-4">
-              <div className="px-3">
+              <div className="px-2 sm:px-3">
                 <Slider
                   value={bucketRange}
                   onValueChange={(value) => setBucketRange(value as [number, number])}
@@ -113,26 +113,26 @@ const TZCompliantStakingInterface = () => {
                 />
               </div>
               
-              <div className="flex items-center justify-between text-sm">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-2 text-sm">
                 <div className="flex items-center gap-2">
-                  <span>От:</span>
-                  <Badge variant="outline" className={startTier.color}>
+                  <span className="whitespace-nowrap">From:</span>
+                  <Badge variant="outline" className={`${startTier.color} text-xs`}>
                     {bucketRange[0]} ({startTier.name})
                   </Badge>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span>До:</span>
-                  <Badge variant="outline" className={endTier.color}>
+                  <span className="whitespace-nowrap">To:</span>
+                  <Badge variant="outline" className={`${endTier.color} text-xs`}>
                     {bucketRange[1]} ({endTier.name})
                   </Badge>
                 </div>
               </div>
               
               {!isSingleTier && (
-                <Alert>
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertDescription>
-                    Ваш диапазон охватывает несколько тиров: {startTier.name} → {endTier.name}
+                <Alert className="mt-3">
+                  <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+                  <AlertDescription className="text-sm leading-relaxed">
+                    Your range spans multiple tiers: {startTier.name} → {endTier.name}
                   </AlertDescription>
                 </Alert>
               )}
@@ -142,7 +142,7 @@ const TZCompliantStakingInterface = () => {
           {/* Auto-calculation notice */}
           {numericAmount > 0 && (
             <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
-              <p className="text-sm text-green-700 dark:text-green-400">
+              <p className="text-sm text-green-700 dark:text-green-400 leading-relaxed">
                 ✅ Auto-calculating based on your inputs • Live preview enabled
               </p>
             </div>
@@ -155,33 +155,33 @@ const TZCompliantStakingInterface = () => {
         <>
           {/* Predicted Yield */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingDown className="h-5 w-5 text-green-500" />
-                Прогнозируемая доходность
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <TrendingDown className="h-5 w-5 text-green-500 flex-shrink-0" />
+                <span>Predicted Yield</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="text-center p-4 bg-green-50 dark:bg-green-950/20 rounded-lg">
-                  <div className="text-2xl font-bold text-green-600">
+                  <div className="text-2xl sm:text-3xl font-bold text-green-600">
                     {calculationResults.yield.percentAPY.toFixed(2)}%
                   </div>
-                  <div className="text-sm text-green-700">Годовая доходность</div>
+                  <div className="text-sm text-green-700 dark:text-green-400 mt-1">Annual Yield</div>
                 </div>
                 <div className="text-center p-4 bg-green-50 dark:bg-green-950/20 rounded-lg">
-                  <div className="text-2xl font-bold text-green-600">
+                  <div className="text-2xl sm:text-3xl font-bold text-green-600">
                     ${calculationResults.yield.dollarYield.toLocaleString()}
                   </div>
-                  <div className="text-sm text-green-700">Прибыль в год</div>
+                  <div className="text-sm text-green-700 dark:text-green-400 mt-1">Annual Profit</div>
                 </div>
               </div>
               
               <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-                <p className="text-xs text-muted-foreground">
-                  <strong>Формула ТЗ:</strong> APY(r) = APY_safe + (APY_protocol - APY_safe) × r^1.5
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  <strong>Formula:</strong> APY(r) = APY_safe + (APY_protocol - APY_safe) × r^1.5
                   <br />
-                  где r = (средний bucket) / 99 = {((bucketRange[0] + bucketRange[1]) / 2 / 99).toFixed(3)}
+                  where r = (average bucket) / 99 = {((bucketRange[0] + bucketRange[1]) / 2 / 99).toFixed(3)}
                 </p>
               </div>
             </CardContent>
@@ -189,46 +189,46 @@ const TZCompliantStakingInterface = () => {
 
           {/* Stress Loss Scenarios */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5 text-red-500" />
-                Потери при стресс-сценариях
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <AlertTriangle className="h-5 w-5 text-red-500 flex-shrink-0" />
+                <span>Stress Test Scenarios</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {[
-                  { label: '-1% TVL', data: calculationResults.stress.scenario1, color: 'text-yellow-600' },
-                  { label: '-5% TVL', data: calculationResults.stress.scenario5, color: 'text-orange-600' },
-                  { label: '-10% TVL', data: calculationResults.stress.scenario10, color: 'text-red-600' }
+                  { label: '-1% TVL', data: calculationResults.stress.scenario1, color: 'text-yellow-600 dark:text-yellow-400' },
+                  { label: '-5% TVL', data: calculationResults.stress.scenario5, color: 'text-orange-600 dark:text-orange-400' },
+                  { label: '-10% TVL', data: calculationResults.stress.scenario10, color: 'text-red-600 dark:text-red-400' }
                 ].map((scenario, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Badge variant="outline" className={scenario.color}>
+                  <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3 bg-muted/30 rounded-lg">
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                      <Badge variant="outline" className={`${scenario.color} flex-shrink-0 text-xs`}>
                         {scenario.label}
                       </Badge>
-                      <div>
-                        <div className={`font-semibold ${scenario.color}`}>
-                          {scenario.data.lossPercent.toFixed(2)}% потери
+                      <div className="min-w-0 flex-1">
+                        <div className={`font-semibold ${scenario.color} text-sm`}>
+                          {scenario.data.lossPercent.toFixed(2)}% loss
                         </div>
-                        <div className="text-sm text-muted-foreground">
+                        <div className="text-sm text-muted-foreground truncate">
                           ${scenario.data.dollarLoss.toLocaleString()}
                         </div>
                       </div>
                     </div>
                     <Progress 
                       value={Math.min(scenario.data.lossPercent, 100)} 
-                      className="w-24 h-2" 
+                      className="w-full sm:w-24 h-2 flex-shrink-0" 
                     />
                   </div>
                 ))}
               </div>
               
               <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-                <p className="text-xs text-muted-foreground">
-                  <strong>Формула ТЗ:</strong> Loss = min(residual_loss, user_position) / user_position
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  <strong>Formula:</strong> Loss = min(residual_loss, user_position) / user_position
                   <br />
-                  Потери распределяются сверху вниз (bucket 99 → 0)
+                  Losses are distributed from top to bottom (bucket 99 → 0)
                 </p>
               </div>
             </CardContent>
@@ -236,20 +236,20 @@ const TZCompliantStakingInterface = () => {
 
           {/* APY by Buckets Chart */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5" />
-                APR по bucket'ам и ваша позиция
+            <CardHeader className="pb-4">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <BarChart3 className="h-5 w-5 flex-shrink-0" />
+                <span>APR by Buckets & Your Position</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="h-64 w-full bg-muted/30 rounded-lg p-4 overflow-x-auto">
-                  <div className="flex items-end justify-between h-full min-w-[800px]">
+                  <div className="flex items-end justify-between h-full min-w-[400px] sm:min-w-[800px]">
                     {apyData.filter((_, i) => i % 5 === 0).map((data, index) => (
                       <div key={index} className="flex flex-col items-center gap-1">
                         <div 
-                          className={`w-4 rounded-t-sm transition-all duration-300 ${
+                          className={`w-3 sm:w-4 rounded-t-sm transition-all duration-300 ${
                             data.isSelected 
                               ? 'bg-primary shadow-lg border-2 border-primary-foreground animate-pulse' 
                               : 'bg-muted-foreground/50'
@@ -259,7 +259,7 @@ const TZCompliantStakingInterface = () => {
                         <div className="text-xs text-muted-foreground">{data.bucket}</div>
                         {data.isSelected && (
                           <Badge variant="default" className="text-[8px] px-1 animate-bounce">
-                            Ваша
+                            Your
                           </Badge>
                         )}
                       </div>
@@ -267,22 +267,22 @@ const TZCompliantStakingInterface = () => {
                   </div>
                 </div>
                 
-                <div className="grid grid-cols-4 gap-2 text-xs">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-green-500 rounded-sm" />
-                    <span>Safe (0-9)</span>
+                    <div className="w-3 h-3 bg-green-500 rounded-sm flex-shrink-0" />
+                    <span className="truncate">Safe (0-9)</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-blue-500 rounded-sm" />
-                    <span>Conservative (10-29)</span>
+                    <div className="w-3 h-3 bg-blue-500 rounded-sm flex-shrink-0" />
+                    <span className="truncate">Conservative (10-29)</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-yellow-500 rounded-sm" />
-                    <span>Balanced (30-59)</span>
+                    <div className="w-3 h-3 bg-yellow-500 rounded-sm flex-shrink-0" />
+                    <span className="truncate">Balanced (30-59)</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-red-500 rounded-sm" />
-                    <span>Hero (60-99)</span>
+                    <div className="w-3 h-3 bg-red-500 rounded-sm flex-shrink-0" />
+                    <span className="truncate">Hero (60-99)</span>
                   </div>
                 </div>
               </div>

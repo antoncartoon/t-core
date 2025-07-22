@@ -58,12 +58,12 @@ const FloatingStakingButton = () => {
         {/* Tooltip */}
         <div className="absolute bottom-16 right-0 mb-2 bg-background border border-border rounded-lg p-3 shadow-lg min-w-48 animate-fade-in">
           <div className="flex items-center gap-2 mb-1">
-            <Badge variant="secondary" className="bg-green-100 text-green-800">
+            <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400">
               NEW
             </Badge>
-            <span className="font-semibold text-sm">ТЗ Compliant Staking</span>
+            <span className="font-semibold text-sm">T-Core Staking</span>
           </div>
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-muted-foreground leading-relaxed">
             Advanced waterfall distribution, bonus yield optimization, and stress testing now available!
           </p>
           

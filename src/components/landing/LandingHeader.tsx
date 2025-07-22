@@ -34,7 +34,7 @@ const LandingHeader = ({ onStartTutorial, onStartStakingTutorial }: LandingHeade
             className="text-sm text-primary hover:text-primary/80 transition-colors font-medium flex items-center gap-1"
           >
             <Calculator className="w-4 h-4" />
-            Advanced Staking
+            Staking
           </NavLink>
           <a href="#security" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             Security
@@ -67,7 +67,7 @@ const LandingHeader = ({ onStartTutorial, onStartStakingTutorial }: LandingHeade
               variant="ghost" 
               size="sm" 
               onClick={onStartStakingTutorial}
-              className="text-sm text-green-600 hover:text-green-700"
+              className="text-sm text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
             >
               <BookOpen className="w-4 h-4 mr-2" />
               Staking Guide
@@ -81,7 +81,7 @@ const LandingHeader = ({ onStartTutorial, onStartStakingTutorial }: LandingHeade
               variant="ghost" 
               size="sm" 
               onClick={onStartStakingTutorial}
-              className="md:hidden text-green-600"
+              className="md:hidden text-green-600 dark:text-green-400"
             >
               <BookOpen className="w-4 h-4" />
             </Button>
