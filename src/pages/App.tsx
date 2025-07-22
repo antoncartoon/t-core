@@ -8,7 +8,7 @@ import MobileDepositCard from '@/components/MobileDepositCard';
 import StakingCard from '@/components/StakingCard';
 import MobileStakingCard from '@/components/MobileStakingCard';
 import RangeStakingCard from '@/components/RangeStakingCard';
-import RedeemCard from '@/components/RedeemCard';
+import { RedeemCard } from '@/components/RedeemCard';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Clock, Zap, TrendingUp, AlertTriangle } from 'lucide-react';
