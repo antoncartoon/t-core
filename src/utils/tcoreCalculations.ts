@@ -1,9 +1,48 @@
-import { LiquidityTick, ProtocolParams, YieldDistribution, LossDistribution, NFTPosition, RiskRange } from '@/types/tcore';
+import { DISTRIBUTION_PARAMS } from '@/types/riskTiers';
+import { NFTPosition, ProtocolParams, YieldDistribution } from '@/types/tcore';
 
 // Constants
 export const MIN_RISK_LEVEL = 1;
 export const MAX_RISK_LEVEL = 100;
-export const PROTOCOL_FEE_RANGE = { start: 95, end: 100 }; // Protocol fees go to levels 95-100
+export const FIXED_BASE_APY = 0.05 * DISTRIBUTION_PARAMS.FIXED_BASE_MULTIPLIER; // T-Bills × 1.2
+export const OPTIMAL_K = DISTRIBUTION_PARAMS.OPTIMAL_K;
+
+/**
+ * Calculate bonus yield factor using T-Core formula: f(i) = 1 * k^(i-25)
+ */
+export const calculateBonusFactor = (riskLevel: number): number => {
+  if (riskLevel <= DISTRIBUTION_PARAMS.TIER1_WIDTH) return 0;
+  return Math.pow(OPTIMAL_K, riskLevel - DISTRIBUTION_PARAMS.TIER1_WIDTH);
+};
+
+/**
+ * Calculate APY for a risk level using T-Core formula
+ */
+export const calculateRiskLevelAPY = (riskLevel: number): number => {
+  // Tier1 (1-25): guaranteed fixed APY
+  if (riskLevel <= DISTRIBUTION_PARAMS.TIER1_WIDTH) {
+    return FIXED_BASE_APY;
+  }
+  
+  // Higher tiers: fixed_base + bonus using f(i)
+  const bonusFactor = calculateBonusFactor(riskLevel);
+  return FIXED_BASE_APY + (bonusFactor - 1) * FIXED_BASE_APY * 0.5;
+};
+
+/**
+ * Calculate surplus distribution to higher tiers using waterfall model
+ */
+export const calculateSurplusDistribution = (
+  totalYield: number,
+  tier1Stake: number
+): number => {
+  const guaranteedYield = tier1Stake * FIXED_BASE_APY;
+  return Math.max(0, totalYield - guaranteedYield);
+};
+
+import { LiquidityTick, RiskRange } from '@/types/tcore';
+
+// Protocol fees go to levels 95-100
 
 /**
  * Calculate effective stake per level: s_i = s/(b-a+1)

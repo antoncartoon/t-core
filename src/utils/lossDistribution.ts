@@ -1,5 +1,4 @@
-
-import { TIER_DEFINITIONS } from '@/types/riskTiers';
+import { DISTRIBUTION_PARAMS } from '@/types/riskTiers';
 
 export interface LossDistributionResult {
   tierLosses: Map<number, number>;
@@ -7,6 +6,9 @@ export interface LossDistributionResult {
   remainingInsurancePool: number;
 }
 
+/**
+ * Calculate loss distribution using T-Core waterfall model
+ */
 export const distributeLosses = (
   totalLoss: number,
   tierLiquidity: Record<number, number>,
@@ -17,27 +19,30 @@ export const distributeLosses = (
   let remainingLoss = totalLoss;
   let remainingInsurance = insurancePool;
 
-  // Start from Hero tier (highest risk) and move down
-  for (let i = TIER_DEFINITIONS.HERO.max; i >= 0; i--) {
-    const tierAmount = tierLiquidity[i] || 0;
-    
-    if (remainingLoss <= 0) {
-      tierLosses.set(i, 0);
-      insuranceCoverage.set(i, 0);
-      continue;
-    }
+  // Protect tier1 (1-25) completely
+  for (let i = 1; i <= DISTRIBUTION_PARAMS.TIER1_WIDTH; i++) {
+    tierLosses.set(i, 0);
+    insuranceCoverage.set(i, 0);
+  }
 
-    // Calculate loss for this tier
-    const tierLoss = Math.min(remainingLoss, tierAmount);
-    
-    // Try to cover with insurance (prioritize higher tiers)
+  // Distribute losses from highest risk down using f(i)
+  for (let i = 100; i > DISTRIBUTION_PARAMS.TIER1_WIDTH; i--) {
+    if (remainingLoss <= 0) break;
+
+    const tierAmount = tierLiquidity[i] || 0;
+    if (tierAmount <= 0) continue;
+
+    // Calculate loss for this tier based on f(i)
+    const bonusFactor = Math.pow(OPTIMAL_K, i - DISTRIBUTION_PARAMS.TIER1_WIDTH);
+    const lossWeight = bonusFactor / 100; // Normalize to 0-1
+    const tierLoss = Math.min(remainingLoss * lossWeight, tierAmount);
+
+    // Try to cover with insurance
     const coverage = Math.min(tierLoss, remainingInsurance);
     remainingInsurance -= coverage;
     
-    // Record actual loss after insurance
     tierLosses.set(i, tierLoss - coverage);
     insuranceCoverage.set(i, coverage);
-    
     remainingLoss -= tierLoss;
   }
 
