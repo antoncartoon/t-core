@@ -5,6 +5,7 @@ import { AreaChart, TrendingDown, Shield, Activity } from 'lucide-react';
 import { TierUtilizationChart } from './TierUtilizationChart';
 import { PositionHealthMonitor } from './PositionHealthMonitor';
 import InsurancePoolStatus from '../waterfall/InsurancePoolStatus';
+import RiskDistributionChart from './RiskDistributionChart';
 
 const RiskAnalyticsDashboard = () => {
   return (
@@ -50,9 +51,7 @@ const RiskAnalyticsDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
-            <div className="text-sm text-muted-foreground">
-              Risk distribution visualization coming soon...
-            </div>
+            <RiskDistributionChart />
           </CardContent>
         </Card>
       </div>
