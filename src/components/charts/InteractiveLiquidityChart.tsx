@@ -1,6 +1,6 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
-import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, ReferenceLine, Tooltip, BarChart, Bar } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, ReferenceLine, ReferenceArea, Tooltip, BarChart, Bar } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { calculatePrecisionAPY, getTierForBucket } from '@/utils/tzFormulas';
@@ -12,12 +12,12 @@ interface InteractiveLiquidityChartProps {
   liquidityData?: Array<{ bucket: number; liquidity: number }>;
 }
 
-// Predefined tier ranges for quick selection
+// Predefined tier ranges for quick selection with colors
 const TIER_PRESETS = [
-  { name: 'Safe', range: [0, 9] as [number, number], color: '#22c55e', description: 'Guaranteed T-Bills yield' },
-  { name: 'Conservative', range: [10, 29] as [number, number], color: '#3b82f6', description: 'Moderate risk, steady returns' },
-  { name: 'Balanced', range: [30, 59] as [number, number], color: '#eab308', description: 'Higher yield potential' },
-  { name: 'Hero', range: [60, 99] as [number, number], color: '#ef4444', description: 'Maximum yield, absorbs losses first' }
+  { name: 'Safe', range: [0, 9] as [number, number], color: '#22c55e', bgColor: 'hsl(142, 76%, 36%)', description: 'Guaranteed T-Bills yield' },
+  { name: 'Conservative', range: [10, 29] as [number, number], color: '#3b82f6', bgColor: 'hsl(221, 83%, 53%)', description: 'Moderate risk, steady returns' },
+  { name: 'Balanced', range: [30, 59] as [number, number], color: '#eab308', bgColor: 'hsl(48, 96%, 53%)', description: 'Higher yield potential' },
+  { name: 'Hero', range: [60, 99] as [number, number], color: '#ef4444', bgColor: 'hsl(0, 84%, 60%)', description: 'Maximum yield, absorbs losses first' }
 ];
 
 const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
@@ -29,25 +29,40 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<number | null>(null);
 
-  // Generate yield curve data
+  // Generate yield curve data with tier information
   const yieldCurveData = useMemo(() => {
     const data = [];
-    for (let i = 0; i <= 99; i += 2) {
+    for (let i = 0; i <= 99; i += 1) {
       const apy = calculatePrecisionAPY(i) * 100;
       const tier = getTierForBucket(i);
       const liquidity = liquidityData.find(l => Math.abs(l.bucket - i) <= 1)?.liquidity || 0;
+      
+      // Assign tier data for coloring
+      let tierIndex = 0;
+      if (i >= 10 && i <= 29) tierIndex = 1;
+      else if (i >= 30 && i <= 59) tierIndex = 2;
+      else if (i >= 60 && i <= 99) tierIndex = 3;
       
       data.push({
         bucket: i,
         apy,
         liquidity,
-        tierColor: tier.color,
-        tierName: tier.name,
+        tierColor: TIER_PRESETS[tierIndex].color,
+        tierName: TIER_PRESETS[tierIndex].name,
+        tierIndex,
         isInRange: i >= selectedRange[0] && i <= selectedRange[1]
       });
     }
     return data;
   }, [selectedRange, liquidityData]);
+
+  // Create separate data arrays for each tier
+  const tierData = useMemo(() => {
+    return TIER_PRESETS.map((preset, index) => ({
+      ...preset,
+      data: yieldCurveData.filter(d => d.tierIndex === index)
+    }));
+  }, [yieldCurveData]);
 
   // Handle chart interactions
   const handleChartClick = useCallback((data: any) => {
@@ -97,7 +112,7 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
           <p className="text-sm text-primary">
             {`APY: ${data.apy.toFixed(2)}%`}
           </p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm" style={{ color: data.tierColor }}>
             {`Tier: ${data.tierName}`}
           </p>
           {data.liquidity > 0 && (
@@ -147,17 +162,17 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">Yield Curve & Liquidity Distribution</CardTitle>
+            <CardTitle className="text-lg">Yield Curve & Risk Tier Distribution</CardTitle>
             <Badge variant="outline" className="text-xs">
               Selected: {selectedRange[0]}-{selectedRange[1]}
             </Badge>
           </div>
           <p className="text-sm text-muted-foreground">
-            Click or drag to select risk range. Higher buckets = higher yield + higher risk.
+            Click or drag to select risk range. Each colored zone represents a different risk tier with progressive yield.
           </p>
         </CardHeader>
         <CardContent>
-          {/* Yield Curve */}
+          {/* Yield Curve with Colored Tiers */}
           <div className="h-64 mb-4">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
@@ -169,14 +184,19 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
                 margin={{ top: 10, right: 30, left: 20, bottom: 5 }}
               >
                 <defs>
-                  <linearGradient id="yieldGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="selectedGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.2}/>
-                  </linearGradient>
+                  {/* Create gradients for each tier */}
+                  {TIER_PRESETS.map((preset, index) => (
+                    <React.Fragment key={preset.name}>
+                      <linearGradient id={`${preset.name.toLowerCase()}Gradient`} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={preset.bgColor} stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor={preset.bgColor} stopOpacity={0.2}/>
+                      </linearGradient>
+                      <linearGradient id={`${preset.name.toLowerCase()}Selected`} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={preset.bgColor} stopOpacity={0.9}/>
+                        <stop offset="95%" stopColor={preset.bgColor} stopOpacity={0.4}/>
+                      </linearGradient>
+                    </React.Fragment>
+                  ))}
                 </defs>
                 
                 <XAxis 
@@ -194,16 +214,46 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
                 />
                 <Tooltip content={<CustomTooltip />} />
                 
-                {/* Base yield curve */}
+                {/* Background tier zones */}
+                {TIER_PRESETS.map((preset, index) => (
+                  <ReferenceArea
+                    key={`bg-${preset.name}`}
+                    x1={preset.range[0]}
+                    x2={preset.range[1]}
+                    fill={preset.bgColor}
+                    fillOpacity={0.1}
+                  />
+                ))}
+
+                {/* Main yield curve with tier-based coloring */}
                 <Area
                   type="monotone"
                   dataKey="apy"
                   stroke="hsl(var(--primary))"
-                  fill="url(#yieldGradient)"
                   strokeWidth={2}
+                  fill="url(#yieldGradient)"
+                  fillOpacity={0.3}
                 />
 
+                {/* Tier boundary lines */}
+                {[9.5, 29.5, 59.5].map((boundary, index) => (
+                  <ReferenceLine 
+                    key={`boundary-${index}`}
+                    x={boundary} 
+                    stroke="hsl(var(--border))" 
+                    strokeDasharray="2 2"
+                    strokeOpacity={0.6}
+                  />
+                ))}
+
                 {/* Highlight selected range */}
+                <ReferenceArea
+                  x1={selectedRange[0]}
+                  x2={selectedRange[1]}
+                  fill="hsl(var(--primary))"
+                  fillOpacity={0.2}
+                />
+                
                 <ReferenceLine 
                   x={selectedRange[0]} 
                   stroke="hsl(var(--primary))" 
@@ -218,6 +268,20 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
                 />
               </AreaChart>
             </ResponsiveContainer>
+          </div>
+
+          {/* Tier Legend */}
+          <div className="grid grid-cols-4 gap-2 mb-4">
+            {TIER_PRESETS.map((preset, index) => (
+              <div key={preset.name} className="flex items-center gap-2 text-xs">
+                <div 
+                  className="w-3 h-3 rounded-full" 
+                  style={{ backgroundColor: preset.color }}
+                />
+                <span className="font-medium">{preset.name}</span>
+                <span className="text-muted-foreground">({preset.range[0]}-{preset.range[1]})</span>
+              </div>
+            ))}
           </div>
 
           {/* Liquidity Histogram */}
@@ -236,7 +300,7 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
                 <YAxis hide />
                 <Bar 
                   dataKey="liquidity" 
-                  fill="hsl(var(--muted-foreground))"
+                  fill={(entry: any) => entry?.tierColor || 'hsl(var(--muted-foreground))'}
                   opacity={0.6}
                 />
               </BarChart>
