@@ -5,7 +5,7 @@ import LandingHeader from '@/components/landing/LandingHeader';
 import SimpleHeroSection from '@/components/landing/SimpleHeroSection';
 import TDDExplainer from '@/components/landing/TDDExplainer';
 import SimpleWhyTCore from '@/components/landing/SimpleWhyTCore';
-import SimpleRiskTiers from '@/components/landing/SimpleRiskTiers';
+import UnifiedRiskSelection from '@/components/landing/UnifiedRiskSelection';
 import LiveStakingPreview from '@/components/landing/LiveStakingPreview';
 import StatsSection from '@/components/landing/StatsSection';
 import TransparencyPreview from '@/components/landing/TransparencyPreview';
@@ -48,7 +48,9 @@ const Landing = () => {
         />
         <TDDExplainer />
         <SimpleWhyTCore />
-        <SimpleRiskTiers />
+        
+        {/* NEW: Unified Risk Selection (replaces SimpleRiskTiers) */}
+        <UnifiedRiskSelection />
         
         {/* NEW: Live Staking Preview */}
         <LiveStakingPreview />
