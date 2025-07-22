@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { TrendingUp, Target, Calculator, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useRiskRange } from '@/contexts/RiskRangeContext';
 import { analyzeRiskRange } from '@/utils/riskRangeCalculations';
-import RangeSelector from './RangeSelector';
+import RiskTierSelector from './enhanced/RiskTierSelector';
 
 const RangeStakingCard = () => {
   const [amount, setAmount] = useState('');
@@ -91,7 +90,7 @@ const RangeStakingCard = () => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Target className="w-5 h-5 text-blue-600" />
+            <Target className="w-5 h-5 text-primary" />
             <span>Concentrated Liquidity Position</span>
           </CardTitle>
         </CardHeader>
@@ -199,11 +198,11 @@ const RangeStakingCard = () => {
           <Button 
             onClick={handleStake} 
             disabled={!amount || isLoading || stakeAmount > availableBalance}
-            className="w-full bg-blue-600 hover:bg-blue-700"
+            className="w-full"
           >
             {isLoading ? (
               <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
                 <span>Creating Position...</span>
               </div>
             ) : (
@@ -216,11 +215,10 @@ const RangeStakingCard = () => {
         </CardContent>
       </Card>
 
-      {/* Range Selector */}
-      <RangeSelector
+      {/* Risk Tier Selector */}
+      <RiskTierSelector
         value={riskRange}
         onChange={setRiskRange}
-        liquidityData={liquidityData}
         amount={stakeAmount}
       />
     </div>
