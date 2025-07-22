@@ -9,10 +9,9 @@ import {
   ArrowRight, 
   ArrowLeft, 
   Calculator, 
-  TrendingDown, 
-  BarChart3, 
-  Shield, 
-  Zap,
+  Target, 
+  Coins, 
+  BarChart3,
   CheckCircle,
   Play
 } from 'lucide-react';
@@ -23,55 +22,36 @@ interface TutorialStep {
   description: string;
   icon: React.ElementType;
   example?: string;
-  formula?: string;
-  visual?: React.ReactNode;
 }
 
 const STAKING_TUTORIAL_STEPS: TutorialStep[] = [
   {
     id: 'welcome',
-    title: 'Welcome to ТЗ Compliant Staking',
-    description: 'Learn how to maximize yields with waterfall distribution, bonus optimization, and stress testing using exact mathematical formulas.',
+    title: 'Welcome to T-Core Staking',
+    description: 'Earn yields on your TDD tokens with T-Core\'s risk-optimized staking system. Choose your risk level and start earning immediately.',
     icon: Play,
-    example: 'Start with $10,000 TDD and see potential returns across different risk tiers.'
+    example: 'Start with $1,000 TDD and see potential returns across different risk levels.'
   },
   {
-    id: 'risk-architecture',
-    title: 'Risk Architecture: 100 Buckets',
-    description: 'Risk curve is divided into 100 buckets (0-99) across 4 main tiers: Safe (0-9), Conservative (10-29), Balanced (30-59), Hero (60-99).',
+    id: 'risk-selection',
+    title: 'Choose Your Risk Level',
+    description: 'Select from 4 simple tiers: Safe (6% APY), Conservative (8% APY), Balanced (12% APY), or Hero (25%+ APY). Higher risk means higher potential returns.',
+    icon: Target,
+    example: 'New users often start with Safe or Conservative tiers to get familiar with the system.'
+  },
+  {
+    id: 'staking-process',
+    title: 'Simple Staking Process',
+    description: 'Just three easy steps: Enter your amount → Select your risk tier → Click "Stake". Your position becomes an NFT that you can manage anytime.',
+    icon: Coins,
+    example: 'Staking $5,000 in Balanced tier takes less than 30 seconds and starts earning immediately.'
+  },
+  {
+    id: 'manage-positions',
+    title: 'Manage Your Positions',
+    description: 'View your earnings in real-time, unstake anytime with no penalties, and track all your NFT positions from the portfolio dashboard.',
     icon: BarChart3,
-    formula: 'APY(r) = APY_safe + (APY_protocol - APY_safe) × r^1.5',
-    example: 'Bucket 50 → r = 50/99 = 0.505 → APY = 5.16% + (10% - 5.16%) × 0.505^1.5 = 8.6%'
-  },
-  {
-    id: 'waterfall-distribution',
-    title: 'Waterfall Distribution System',
-    description: 'Yields flow from Safe → Conservative → Balanced → Hero. Losses flow in reverse: Hero absorbs first, then Balanced, etc.',
-    icon: TrendingDown,
-    example: 'If protocol earns 10% APY: Safe gets guaranteed 5.16%, Conservative 7%, Balanced 9%, Hero gets residual.'
-  },
-  {
-    id: 'bonus-yield',
-    title: 'Bonus Yield Mechanism',
-    description: '50% of performance fee incentivizes underweight tiers. Target distribution: Safe 10%, Conservative 20%, Balanced 30%, Hero 40%.',
-    icon: Zap,
-    formula: 'bonus_i = (fee_pool × (target_weight_i - current_weight_i)) / sum_positive_deltas',
-    example: 'If Hero tier is underweight by 10%, it gets bonus APY boost: +1.2% Bonus Yield'
-  },
-  {
-    id: 'stress-testing',
-    title: 'Stress Loss Scenarios',
-    description: 'See exact loss percentages for -1%, -5%, -10% TVL scenarios. Losses distributed from highest buckets down.',
-    icon: Shield,
-    formula: 'Loss = min(residual_loss, user_position) / user_position',
-    example: 'Hero tier (bucket 75) in -5% TVL scenario: 3.2% position loss, Safe tier (bucket 5): 0% loss'
-  },
-  {
-    id: 'interface-tour',
-    title: 'Interactive Interface Features',
-    description: 'Auto-calculation, quick strategies, visual heatmaps, and real-time APY predictions as you adjust parameters.',
-    icon: Calculator,
-    example: 'Try Quick Strategies: Safe Haven (6.0% APY), Conservative (8.5%), Balanced Growth (14.2%), Hero Maximizer (35%+)'
+    example: 'Check your yields daily, unstake partially, or move between risk tiers as your strategy evolves.'
   }
 ];
 
@@ -137,15 +117,22 @@ const StakingOnboardingTutorial: React.FC<StakingOnboardingTutorialProps> = ({
                 <div>
                   <h3 className="text-2xl font-semibold mb-2">Ready to Start Staking!</h3>
                   <p className="text-muted-foreground">
-                    You now understand T-Core's advanced staking system with waterfall distribution, bonus optimization, and stress testing.
+                    You're all set to start earning yields with T-Core staking. For detailed formulas and technical information, check out our FAQ and Transparency sections.
                   </p>
                 </div>
-                <NavLink to="/staking">
-                  <Button size="lg" className="bg-primary hover:bg-primary/90">
-                    <Calculator className="w-4 h-4 mr-2" />
-                    Launch Staking Interface
-                  </Button>
-                </NavLink>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <NavLink to="/staking">
+                    <Button size="lg" className="bg-primary hover:bg-primary/90">
+                      <Calculator className="w-4 h-4 mr-2" />
+                      Start Staking
+                    </Button>
+                  </NavLink>
+                  <NavLink to="/faq">
+                    <Button variant="outline" size="lg">
+                      Learn More (FAQ)
+                    </Button>
+                  </NavLink>
+                </div>
               </div>
             ) : (
               <div className="space-y-6">
@@ -155,25 +142,28 @@ const StakingOnboardingTutorial: React.FC<StakingOnboardingTutorialProps> = ({
                   </div>
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
-                    <p className="text-muted-foreground leading-relaxed mb-4">
+                    <p className="text-muted-foreground leading-relaxed mb-4 text-lg">
                       {step.description}
                     </p>
                     
-                    {step.formula && (
-                      <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800 mb-4">
-                        <div className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-1">Formula:</div>
-                        <code className="text-sm font-mono text-blue-700 dark:text-blue-300">{step.formula}</code>
-                      </div>
-                    )}
-                    
                     {step.example && (
-                      <div className="p-4 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
-                        <div className="text-sm font-medium text-green-800 dark:text-green-200 mb-1">Example:</div>
-                        <p className="text-sm text-green-700 dark:text-green-300">{step.example}</p>
+                      <div className="p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                        <div className="text-sm font-medium text-blue-800 dark:text-blue-200 mb-1">💡 Tip:</div>
+                        <p className="text-sm text-blue-700 dark:text-blue-300">{step.example}</p>
                       </div>
                     )}
                   </div>
                 </div>
+
+                {/* Quick info for technical users */}
+                {currentStep === STAKING_TUTORIAL_STEPS.length - 1 && (
+                  <div className="mt-6 p-4 bg-muted/30 rounded-lg border">
+                    <p className="text-sm text-muted-foreground text-center">
+                      Want to dive deeper into waterfall distribution, bonus yield mechanics, and mathematical formulas? 
+                      Visit our <strong>FAQ</strong> and <strong>Transparency</strong> sections after completing this tutorial.
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -188,7 +178,7 @@ const StakingOnboardingTutorial: React.FC<StakingOnboardingTutorialProps> = ({
                   disabled={currentStep === 0}
                   className="flex items-center space-x-2"
                 >
-                  <ArrowLeft className="w-4 h-4" />
+                  <ArrowLeft className="w-4 w-4" />
                   <span>Previous</span>
                 </Button>
                 
