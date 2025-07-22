@@ -2,7 +2,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Play } from 'lucide-react';
+import { ArrowRight, Play, Calculator } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LandingHeaderProps {
@@ -28,6 +28,13 @@ const LandingHeader = ({ onStartTutorial }: LandingHeaderProps) => {
           <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             How it Works
           </a>
+          <NavLink 
+            to="/staking" 
+            className="text-sm text-primary hover:text-primary/80 transition-colors font-medium flex items-center gap-1"
+          >
+            <Calculator className="w-4 h-4" />
+            Staking
+          </NavLink>
           <a href="#security" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
             Security
           </a>
@@ -67,6 +74,11 @@ const LandingHeader = ({ onStartTutorial }: LandingHeaderProps) => {
               <Play className="w-4 h-4" />
             </Button>
           )}
+          <NavLink to="/staking" className="md:hidden">
+            <Button variant="outline" size="sm">
+              <Calculator className="w-3 h-3" />
+            </Button>
+          </NavLink>
           <NavLink to="/app">
             <Button size={isMobile ? "sm" : "default"} className="text-xs sm:text-sm">
               Launch App

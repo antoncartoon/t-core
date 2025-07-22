@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,6 +20,7 @@ import Docs from "./pages/Docs";
 import Disclaimer from "./pages/Disclaimer";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
+import Staking from "./pages/Staking";
 import { RiskRangeProvider } from "@/contexts/RiskRangeContext";
 
 const queryClient = new QueryClient();
@@ -39,6 +41,7 @@ const AppRouter = () => (
             <Routes>
               <Route path="/" element={<Landing />} />
               <Route path="/app" element={<App />} />
+              <Route path="/staking" element={<Staking />} />
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/defi" element={<DeFi />} />
               <Route path="/transparency" element={<Transparency />} />

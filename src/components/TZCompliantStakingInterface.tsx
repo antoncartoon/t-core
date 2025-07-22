@@ -11,6 +11,7 @@ import { calculateTZCompliantAPY, calculatePredictedYield, calculateStressScenar
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
+import QuickStrategies from '@/components/staking/QuickStrategies';
 
 const TZCompliantStakingInterface = () => {
   const [amount, setAmount] = useState<string>('');
@@ -34,6 +35,18 @@ const TZCompliantStakingInterface = () => {
     });
   };
 
+  // Auto-calculate when parameters change
+  React.useEffect(() => {
+    if (numericAmount > 0) {
+      handleCalculate();
+    }
+  }, [numericAmount, bucketRange]);
+
+  // Handle strategy selection from QuickStrategies
+  const handleStrategySelect = (range: [number, number]) => {
+    setBucketRange(range);
+  };
+
   // Get tier info for current range
   const startTier = getTierForBucket(bucketRange[0]);
   const endTier = getTierForBucket(bucketRange[1]);
@@ -52,6 +65,9 @@ const TZCompliantStakingInterface = () => {
 
   return (
     <div className="space-y-6">
+      {/* Quick Strategies */}
+      <QuickStrategies onSelectStrategy={handleStrategySelect} />
+
       {/* Main Staking Interface */}
       <Card className="border-2 border-primary/20">
         <CardHeader>
@@ -60,7 +76,7 @@ const TZCompliantStakingInterface = () => {
             T-Core Staking Interface (ТЗ Compliant)
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Enter amount, select bucket range (0-99), and calculate your predicted yield and risks
+            Enter amount, select bucket range (0-99), and see real-time APY predictions and risk analysis
           </p>
         </CardHeader>
         
@@ -123,20 +139,18 @@ const TZCompliantStakingInterface = () => {
             </div>
           </div>
 
-          {/* Calculate Button */}
-          <Button 
-            onClick={handleCalculate}
-            disabled={numericAmount <= 0}
-            className="w-full" 
-            size="lg"
-          >
-            <Calculator className="mr-2 h-4 w-4" />
-            Рассчитать
-          </Button>
+          {/* Auto-calculation notice */}
+          {numericAmount > 0 && (
+            <div className="p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
+              <p className="text-sm text-green-700 dark:text-green-400">
+                ✅ Auto-calculating based on your inputs • Live preview enabled
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
 
-      {/* Results */}
+      {/* Results - now shown automatically */}
       {calculationResults && (
         <>
           {/* Predicted Yield */}
@@ -235,16 +249,16 @@ const TZCompliantStakingInterface = () => {
                     {apyData.filter((_, i) => i % 5 === 0).map((data, index) => (
                       <div key={index} className="flex flex-col items-center gap-1">
                         <div 
-                          className={`w-4 rounded-t-sm ${
+                          className={`w-4 rounded-t-sm transition-all duration-300 ${
                             data.isSelected 
-                              ? 'bg-primary shadow-lg border-2 border-primary-foreground' 
+                              ? 'bg-primary shadow-lg border-2 border-primary-foreground animate-pulse' 
                               : 'bg-muted-foreground/50'
                           }`}
-                          style={{ height: `${(data.apy / 25) * 100}%` }}
+                          style={{ height: `${Math.max((data.apy / 25) * 100, 5)}%` }}
                         />
                         <div className="text-xs text-muted-foreground">{data.bucket}</div>
                         {data.isSelected && (
-                          <Badge variant="default" className="text-[8px] px-1">
+                          <Badge variant="default" className="text-[8px] px-1 animate-bounce">
                             Ваша
                           </Badge>
                         )}

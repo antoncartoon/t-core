@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { NavLink } from 'react-router-dom';
-import { ArrowRight, Play, Shield, TrendingUp, Lock } from 'lucide-react';
+import { ArrowRight, Play, Shield, TrendingUp, Lock, Calculator } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { T_BILL_RATE, FIXED_BASE_MULTIPLIER, FIXED_BASE_APY } from '@/utils/riskRangeCalculations';
 
@@ -42,16 +43,28 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
           </div>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 sm:mb-16">
-            <NavLink to="/app">
+            <NavLink to="/staking">
               <Button 
                 size={isMobile ? "default" : "lg"} 
-                className="w-full sm:w-auto text-base font-medium px-8 py-6 h-auto"
+                className="w-full sm:w-auto text-base font-medium px-8 py-6 h-auto bg-primary hover:bg-primary/90"
               >
-                Start Investing
+                <Calculator className="w-4 h-4 mr-2" />
+                Advanced Staking
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </NavLink>
             
+            <NavLink to="/app">
+              <Button 
+                variant="outline"
+                size={isMobile ? "default" : "lg"} 
+                className="w-full sm:w-auto text-base font-medium px-8 py-6 h-auto"
+              >
+                Launch Dashboard
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </NavLink>
+
             {onStartTutorial && (
               <Button 
                 variant="outline" 
