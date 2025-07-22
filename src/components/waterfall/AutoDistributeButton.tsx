@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Loader2 } from 'lucide-react';
+import { Sparkles, Loader2, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRiskRange } from '@/contexts/RiskRangeContext';
 import { TIER_DEFINITIONS } from '@/types/riskTiers';
@@ -124,9 +124,12 @@ const AutoDistributeButton = ({ amount, onDistribute }: AutoDistributeButtonProp
       // Apply the distribution
       onDistribute(distributionPlan);
       
+      // Detailed toast message showing which tiers are being filled
+      const tierNames = underweightedTiers.map(t => TIER_DEFINITIONS[t.tier as keyof typeof TIER_DEFINITIONS].name).join(', ');
+      
       toast({
         title: "Auto-distribution applied",
-        description: `Your ${amount.toFixed(2)} TDD has been optimally distributed across ${underweightedTiers.length} underweighted tiers.`,
+        description: `Your ${amount.toFixed(2)} TDD has been optimally distributed across ${underweightedTiers.length} underweighted tiers: ${tierNames}.`,
       });
     } catch (error) {
       console.error("Auto-distribution error:", error);
@@ -141,24 +144,37 @@ const AutoDistributeButton = ({ amount, onDistribute }: AutoDistributeButtonProp
   };
 
   return (
-    <Button 
-      onClick={autoDistribute}
-      disabled={loading || amount <= 0}
-      className="w-full"
-      variant="outline"
-    >
-      {loading ? (
-        <>
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          Optimizing distribution...
-        </>
-      ) : (
-        <>
-          <Sparkles className="mr-2 h-4 w-4" />
-          Auto-distribute to underweighted tiers
-        </>
+    <div className="space-y-2">
+      <Button 
+        onClick={autoDistribute}
+        disabled={loading || amount <= 0}
+        className="w-full"
+        variant="outline"
+      >
+        {loading ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Optimizing distribution...
+          </>
+        ) : (
+          <>
+            <Sparkles className="mr-2 h-4 w-4" />
+            Auto-distribute to underweighted tiers
+          </>
+        )}
+      </Button>
+      
+      {amount <= 0 && (
+        <div className="flex items-center justify-center text-xs text-muted-foreground">
+          <AlertTriangle className="h-3 w-3 mr-1" />
+          <span>Enter an amount to enable auto-distribution</span>
+        </div>
       )}
-    </Button>
+      
+      <div className="text-xs text-muted-foreground mt-1">
+        <span className="font-medium">Target distribution:</span> Safe 10% / Conservative 20% / Balanced 30% / Hero 40%
+      </div>
+    </div>
   );
 };
 

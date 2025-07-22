@@ -12,6 +12,8 @@ import RiskAnalyticsDashboard from './analytics/RiskAnalyticsDashboard';
 import { DISTRIBUTION_PARAMS } from '@/utils/tcoreCalculations';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MobileRiskAnalytics from './mobile/MobileRiskAnalytics';
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { InfoCircled } from "lucide-react";
 
 const ComprehensiveStakingDashboard = () => {
   const [activeTab, setActiveTab] = useState('stake');
@@ -19,6 +21,15 @@ const ComprehensiveStakingDashboard = () => {
   
   return (
     <div className="space-y-6">
+      {/* Feature Notice */}
+      <Alert variant="default" className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-200 dark:border-blue-800">
+        <InfoCircled className="h-4 w-4 text-blue-500" />
+        <AlertTitle>New Features Available</AlertTitle>
+        <AlertDescription className="text-muted-foreground">
+          Try our new waterfall distribution model, bonus yield mechanism, and auto-distribution feature for optimized returns.
+        </AlertDescription>
+      </Alert>
+      
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid grid-cols-2 md:grid-cols-4">
           <TabsTrigger value="stake" className="flex items-center gap-2">
@@ -36,10 +47,14 @@ const ComprehensiveStakingDashboard = () => {
             <span className="hidden md:inline">Risk Analytics</span>
             <span className="md:hidden">Analytics</span>
           </TabsTrigger>
-          <TabsTrigger value="bonus" className="flex items-center gap-2">
+          <TabsTrigger value="bonus" className="flex items-center gap-2 relative">
             <Flame className="h-4 w-4" />
             <span className="hidden md:inline">Bonus Yield</span>
             <span className="md:hidden">Bonus</span>
+            <span className="absolute -top-1 -right-1 flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-500"></span>
+            </span>
           </TabsTrigger>
         </TabsList>
         

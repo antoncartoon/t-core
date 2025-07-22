@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { TrendingUp, Target, Calculator, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useRiskRange } from '@/contexts/RiskRangeContext';
 import { analyzeRiskRange } from '@/utils/riskRangeCalculations';
 import RiskTierSelector from './enhanced/RiskTierSelector';
+import AutoDistributeButton from './waterfall/AutoDistributeButton';
+import { Separator } from '@/components/ui/separator';
 
 const RangeStakingCard = () => {
   const [amount, setAmount] = useState('');
@@ -81,6 +84,25 @@ const RangeStakingCard = () => {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Handle distribution from the AutoDistributeButton
+  const handleAutoDistribute = (ranges: Array<{ range: [number, number]; weight: number }>) => {
+    if (stakeAmount <= 0) return;
+    
+    // Convert the optimized ranges to a single range
+    // This is a simplification - in a real implementation, we'd create multiple positions
+    if (ranges.length > 0) {
+      // Find min and max from all ranges
+      const minRisk = Math.min(...ranges.map(r => r.range[0]));
+      const maxRisk = Math.max(...ranges.map(r => r.range[1]));
+      setRiskRange([minRisk, maxRisk]);
+      
+      toast({
+        title: "Auto-distribution applied",
+        description: `Your position will be optimized across the risk range ${minRisk}-${maxRisk}.`,
+      });
     }
   };
 
@@ -192,6 +214,16 @@ const RangeStakingCard = () => {
             <p className="text-xs text-muted-foreground mt-1">
               Based on current protocol yield and your risk range
             </p>
+          </div>
+
+          {/* Auto-distribute Button */}
+          <div className="mt-4">
+            <Separator className="my-4" />
+            <h3 className="text-sm font-medium mb-2">Optimize Your Position</h3>
+            <AutoDistributeButton 
+              amount={stakeAmount} 
+              onDistribute={handleAutoDistribute} 
+            />
           </div>
 
           {/* Stake Button */}

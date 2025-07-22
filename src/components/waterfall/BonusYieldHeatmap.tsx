@@ -1,10 +1,11 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Flame, Info } from 'lucide-react';
+import { Flame, Info, Lightbulb } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { TIER_DEFINITIONS } from '@/types/riskTiers';
 import { DISTRIBUTION_PARAMS } from '@/utils/tcoreCalculations';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface BonusYieldHeatmapProps {
   targetDistribution?: Record<string, number>;
@@ -122,6 +123,14 @@ const BonusYieldHeatmap = ({
         </div>
       </CardHeader>
       <CardContent>
+        <Alert variant="default" className="bg-orange-50 dark:bg-orange-950/20 border-orange-200 dark:border-orange-800 mb-4">
+          <Lightbulb className="h-4 w-4 text-orange-500" />
+          <AlertDescription className="text-muted-foreground text-sm">
+            Positions in <span className="text-orange-500 font-medium">orange areas</span> receive bonus yield from the performance fee redistribution, 
+            incentivizing liquidity in underweighted risk tiers.
+          </AlertDescription>
+        </Alert>
+        
         <div className="space-y-4">
           <div className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-2">

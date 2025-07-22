@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { TrendingDown, Info, Zap } from 'lucide-react';
+import { TrendingDown, Info, Zap, ShieldAlert, BarChart3 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import WaterfallChart from '../WaterfallChart';
@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import BonusYieldHeatmap from './BonusYieldHeatmap';
 import { DISTRIBUTION_PARAMS } from '@/utils/tcoreCalculations';
 import { Progress } from '@/components/ui/progress';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const WaterfallDashboardEnhanced = () => {
   const bonusPoolAmount = 125000; // Example value in USD
@@ -58,6 +59,13 @@ const WaterfallDashboardEnhanced = () => {
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
+        <Alert variant="default" className="bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
+          <AlertDescription className="text-muted-foreground text-sm">
+            <span className="font-medium text-primary">Waterfall Distribution:</span> Lower risk tiers receive yield first; higher risk tiers absorb losses first.
+            This creates natural insurance where hero tiers protect lower tiers in exchange for higher potential yields.
+          </AlertDescription>
+        </Alert>
+        
         <Tabs defaultValue="waterfall">
           <TabsList className="grid grid-cols-3 mb-4">
             <TabsTrigger value="waterfall">Yield Waterfall</TabsTrigger>
@@ -79,6 +87,60 @@ const WaterfallDashboardEnhanced = () => {
                 <br />
                 Where f(i) = {DISTRIBUTION_PARAMS.OPTIMAL_K}^(i - {DISTRIBUTION_PARAMS.TIER1_WIDTH}) for higher tiers, creating exponential bonus weighting.
               </p>
+            </div>
+            
+            {/* Loss Cascading */}
+            <div className="mt-4 p-4 bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <ShieldAlert className="h-5 w-5 text-red-500" />
+                <h3 className="font-medium">Loss Cascading Mechanism</h3>
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">
+                Losses are absorbed in reverse order: Hero tier first, then Balanced, Conservative, and finally Safe.
+                This creates a natural protection mechanism for lower-risk positions.
+              </p>
+              
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span>Hero Tier (76-100)</span>
+                    <span>First to absorb losses</span>
+                  </div>
+                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-red-500 w-[80%]" />
+                  </div>
+                </div>
+                
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span>Balanced Tier (51-75)</span>
+                    <span>Second to absorb</span>
+                  </div>
+                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-orange-500 w-[60%]" />
+                  </div>
+                </div>
+                
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span>Conservative Tier (26-50)</span>
+                    <span>Third to absorb</span>
+                  </div>
+                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-yellow-500 w-[20%]" />
+                  </div>
+                </div>
+                
+                <div className="space-y-1">
+                  <div className="flex justify-between text-xs">
+                    <span>Safe Tier (1-25)</span>
+                    <span>Protected by all higher tiers</span>
+                  </div>
+                  <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-green-500 w-[5%]" />
+                  </div>
+                </div>
+              </div>
             </div>
           </TabsContent>
           
@@ -156,6 +218,59 @@ const WaterfallDashboardEnhanced = () => {
                 {DISTRIBUTION_PARAMS.FEE_ALLOCATION.PROTOCOL * 100}% as protocol revenue, and 
                 {DISTRIBUTION_PARAMS.FEE_ALLOCATION.INSURANCE * 100}% to replenish high-risk tiers for insurance buffer.
               </p>
+            </div>
+            
+            {/* Enhanced Performance Fee Visualization */}
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20 p-4 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <BarChart3 className="h-5 w-5 text-blue-500" />
+                <h3 className="font-medium">Performance Fee Visualization</h3>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">Total Protocol Yield</p>
+                  <div className="h-6 w-full bg-muted rounded-md overflow-hidden">
+                    <div className="h-full bg-blue-200 dark:bg-blue-700 w-full flex items-center px-2 text-xs">
+                      100%
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-1">
+                  <p className="text-xs text-muted-foreground">After Performance Fee</p>
+                  <div className="h-6 w-full bg-muted rounded-md overflow-hidden flex">
+                    <div className="h-full bg-blue-300 dark:bg-blue-600 w-[80%] flex items-center px-2 text-xs">
+                      80% (User Yield)
+                    </div>
+                    <div className="h-full bg-indigo-300 dark:bg-indigo-600 w-[20%] flex items-center justify-center text-xs">
+                      20%
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-4">
+                <p className="text-xs text-muted-foreground mb-1">Performance Fee Breakdown (20%)</p>
+                <div className="h-6 w-full bg-muted rounded-md overflow-hidden flex">
+                  <div className="h-full flex items-center justify-center px-1 text-xs text-white" 
+                       style={{ width: '25%', backgroundColor: '#f59e0b' }}>
+                    Bonus
+                  </div>
+                  <div className="h-full flex items-center justify-center px-1 text-xs text-white" 
+                       style={{ width: '25%', backgroundColor: '#3b82f6' }}>
+                    Buyback
+                  </div>
+                  <div className="h-full flex items-center justify-center px-1 text-xs text-white" 
+                       style={{ width: '25%', backgroundColor: '#10b981' }}>
+                    Protocol
+                  </div>
+                  <div className="h-full flex items-center justify-center px-1 text-xs text-white" 
+                       style={{ width: '25%', backgroundColor: '#6366f1' }}>
+                    Insurance
+                  </div>
+                </div>
+              </div>
             </div>
           </TabsContent>
         </Tabs>
