@@ -67,8 +67,8 @@ export const calculateStressScenarios = (
     let positionLoss = 0;
     for (let i = position.riskRange.min; i <= position.riskRange.max; i++) {
       const tierLoss = distribution.tierLosses.get(i) || 0;
-      const tierLiquidity = tierLiquidity[i] || 1; // Avoid division by zero
-      const lossRatio = tierLoss / tierLiquidity;
+      const tierAmount = tierLiquidity[i] || 1; // Avoid division by zero
+      const lossRatio = tierLoss / tierAmount;
       positionLoss += (position.amount / (position.riskRange.max - position.riskRange.min + 1)) * lossRatio;
     }
 
