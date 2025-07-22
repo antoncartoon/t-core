@@ -15,6 +15,8 @@ export interface NFTPosition {
   currentValue: number;
   earnedAmount: number;
   status: 'active' | 'unstaked';
+  expectedAPY: number;
+  tier: string;
   metadata: {
     contractAddress: string;
     tokenURI: string;

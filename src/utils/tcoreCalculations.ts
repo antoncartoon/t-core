@@ -331,6 +331,8 @@ export const simulateScenarios = (
       currentValue: amount,
       earnedAmount: 0,
       status: 'active',
+      expectedAPY: 0.08, // Default 8% for simulation
+      tier: 'BALANCED', // Default tier for simulation
       metadata: {
         contractAddress: '',
         tokenURI: '',
