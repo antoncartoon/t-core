@@ -1,10 +1,12 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Loader2, AlertTriangle } from 'lucide-react';
+import { Sparkles, Loader2, AlertTriangle, Target, TrendingUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useRiskRange } from '@/contexts/RiskRangeContext';
 import { TIER_DEFINITIONS } from '@/types/riskTiers';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 interface AutoDistributeButtonProps {
   amount: number;
@@ -59,12 +61,20 @@ const AutoDistributeButton = ({ amount, onDistribute }: AutoDistributeButtonProp
     HERO: 0.40
   };
   
+  // Mock current distribution for demo
+  const DEMO_CURRENT = {
+    SAFE: 0.45,      // 35% overweight
+    CONSERVATIVE: 0.25, // 5% overweight  
+    BALANCED: 0.20,     // 10% underweight
+    HERO: 0.10         // 30% underweight
+  };
+  
   const autoDistribute = async () => {
     setLoading(true);
     
     try {
-      // Get current distribution
-      const currentDistribution = calculateCurrentDistribution();
+      // Use demo data for visualization
+      const currentDistribution = DEMO_CURRENT;
       
       // Calculate delta from target
       const delta = {
@@ -75,62 +85,69 @@ const AutoDistributeButton = ({ amount, onDistribute }: AutoDistributeButtonProp
       };
       
       // Only allocate to underweighted tiers (positive delta)
-      const underweightedTiers: Array<{ tier: string; delta: number }> = [];
+      const underweightedTiers: Array<{ tier: string; delta: number; bonus: number }> = [];
       
       Object.keys(delta).forEach(tier => {
         if (delta[tier as keyof typeof delta] > 0) {
+          const bonusAPY = tier === 'BALANCED' ? 1.2 : tier === 'HERO' ? 3.5 : 0;
           underweightedTiers.push({
             tier,
-            delta: delta[tier as keyof typeof delta]
+            delta: delta[tier as keyof typeof delta],
+            bonus: bonusAPY
           });
         }
       });
       
-      // If all tiers are at or above target, distribute evenly
+      // Simulate calculation for 1.5 seconds with progress
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      let distributionPlan: Array<{ range: [number, number]; weight: number }> = [];
+      
       if (underweightedTiers.length === 0) {
-        toast({
-          title: "All tiers at or above target",
-          description: "Distributing evenly across all tiers",
-        });
-        
-        onDistribute([
+        // If all tiers are at or above target, distribute evenly
+        distributionPlan = [
           { range: [TIER_DEFINITIONS.SAFE.min, TIER_DEFINITIONS.SAFE.max], weight: 0.25 },
           { range: [TIER_DEFINITIONS.CONSERVATIVE.min, TIER_DEFINITIONS.CONSERVATIVE.max], weight: 0.25 },
           { range: [TIER_DEFINITIONS.BALANCED.min, TIER_DEFINITIONS.BALANCED.max], weight: 0.25 },
           { range: [TIER_DEFINITIONS.HERO.min, TIER_DEFINITIONS.HERO.max], weight: 0.25 }
-        ]);
+        ];
         
-        setLoading(false);
-        return;
+        toast({
+          title: "✅ All tiers at target",
+          description: "Distributing evenly across all tiers since none are underweight.",
+        });
+      } else {
+        // Calculate total delta to normalize weights
+        const totalDelta = underweightedTiers.reduce((sum, tier) => sum + tier.delta, 0);
+        
+        // Generate distribution plan for underweight tiers only
+        distributionPlan = underweightedTiers.map(tier => {
+          const weight = tier.delta / totalDelta;
+          const tierDef = TIER_DEFINITIONS[tier.tier as keyof typeof TIER_DEFINITIONS];
+          
+          return {
+            range: [tierDef.min, tierDef.max] as [number, number],
+            weight
+          };
+        });
+        
+        // Enhanced success message with details
+        const tierDetails = underweightedTiers.map(t => {
+          const tierName = TIER_DEFINITIONS[t.tier as keyof typeof TIER_DEFINITIONS].name;
+          const weight = Math.round((t.delta / totalDelta) * 100);
+          return `${tierName} ${weight}% (+${t.bonus.toFixed(1)}% bonus)`;
+        }).join(', ');
+        
+        toast({
+          title: "🎯 Auto-distribution optimized!",
+          description: `${amount.toLocaleString()} TDD allocated to underweight tiers: ${tierDetails}`,
+          duration: 8000,
+        });
       }
-      
-      // Calculate total delta to normalize weights
-      const totalDelta = underweightedTiers.reduce((sum, tier) => sum + tier.delta, 0);
-      
-      // Generate distribution plan
-      const distributionPlan = underweightedTiers.map(tier => {
-        const weight = tier.delta / totalDelta;
-        const tierDef = TIER_DEFINITIONS[tier.tier as keyof typeof TIER_DEFINITIONS];
-        
-        return {
-          range: [tierDef.min, tierDef.max] as [number, number],
-          weight
-        };
-      });
-      
-      // Simulate calculation for 1 second
-      await new Promise(resolve => setTimeout(resolve, 1000));
       
       // Apply the distribution
       onDistribute(distributionPlan);
       
-      // Detailed toast message showing which tiers are being filled
-      const tierNames = underweightedTiers.map(t => TIER_DEFINITIONS[t.tier as keyof typeof TIER_DEFINITIONS].name).join(', ');
-      
-      toast({
-        title: "Auto-distribution applied",
-        description: `Your ${amount.toFixed(2)} TDD has been optimally distributed across ${underweightedTiers.length} underweighted tiers: ${tierNames}.`,
-      });
     } catch (error) {
       console.error("Auto-distribution error:", error);
       toast({
@@ -143,38 +160,95 @@ const AutoDistributeButton = ({ amount, onDistribute }: AutoDistributeButtonProp
     }
   };
 
+  // Show current underweight opportunities
+  const underweightTiers = Object.keys(TARGET_DISTRIBUTION).filter(tier => {
+    const current = DEMO_CURRENT[tier as keyof typeof DEMO_CURRENT];
+    const target = TARGET_DISTRIBUTION[tier as keyof typeof TARGET_DISTRIBUTION];
+    return current < target;
+  });
+
+  const totalBonusAvailable = underweightTiers.reduce((sum, tier) => {
+    return sum + (tier === 'BALANCED' ? 1.2 : tier === 'HERO' ? 3.5 : 0);
+  }, 0);
+
   return (
-    <div className="space-y-2">
-      <Button 
-        onClick={autoDistribute}
-        disabled={loading || amount <= 0}
-        className="w-full"
-        variant="outline"
-      >
-        {loading ? (
-          <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Optimizing distribution...
-          </>
-        ) : (
-          <>
-            <Sparkles className="mr-2 h-4 w-4" />
-            Auto-distribute to underweighted tiers
-          </>
-        )}
-      </Button>
-      
-      {amount <= 0 && (
-        <div className="flex items-center justify-center text-xs text-muted-foreground">
-          <AlertTriangle className="h-3 w-3 mr-1" />
-          <span>Enter an amount to enable auto-distribution</span>
+    <Card className="border-2 border-orange-200 dark:border-orange-800 bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-950/20 dark:to-yellow-950/20">
+      <CardContent className="p-4 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Target className="h-5 w-5 text-orange-600" />
+            <span className="font-medium">Auto-Distribution</span>
+            <Badge variant="secondary" className="bg-orange-100 text-orange-800 text-xs">
+              AI Powered
+            </Badge>
+          </div>
+          {underweightTiers.length > 0 && (
+            <Badge variant="outline" className="border-orange-300 text-orange-700">
+              +{totalBonusAvailable.toFixed(1)}% Bonus Available
+            </Badge>
+          )}
         </div>
-      )}
-      
-      <div className="text-xs text-muted-foreground mt-1">
-        <span className="font-medium">Target distribution:</span> Safe 10% / Conservative 20% / Balanced 30% / Hero 40%
-      </div>
-    </div>
+        
+        {underweightTiers.length > 0 && (
+          <div className="bg-white/50 dark:bg-gray-800/50 p-3 rounded-lg">
+            <div className="text-sm font-medium mb-2 flex items-center gap-1">
+              <TrendingUp className="h-4 w-4 text-green-600" />
+              Underweight Opportunities
+            </div>
+            <div className="space-y-1">
+              {underweightTiers.map(tier => {
+                const current = DEMO_CURRENT[tier as keyof typeof DEMO_CURRENT];
+                const target = TARGET_DISTRIBUTION[tier as keyof typeof TARGET_DISTRIBUTION];
+                const deficit = Math.round((target - current) * 100);
+                const bonus = tier === 'BALANCED' ? 1.2 : tier === 'HERO' ? 3.5 : 0;
+                
+                return (
+                  <div key={tier} className="flex justify-between text-xs">
+                    <span>{TIER_DEFINITIONS[tier as keyof typeof TIER_DEFINITIONS].name}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground">{deficit}% under target</span>
+                      {bonus > 0 && (
+                        <span className="text-orange-600 font-medium">+{bonus}% bonus</span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+        
+        <Button 
+          onClick={autoDistribute}
+          disabled={loading || amount <= 0}
+          className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-white"
+          size="lg"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Calculating optimal distribution...
+            </>
+          ) : (
+            <>
+              <Sparkles className="mr-2 h-4 w-4" />
+              Auto-distribute ${amount.toLocaleString()} TDD
+            </>
+          )}
+        </Button>
+        
+        {amount <= 0 && (
+          <div className="flex items-center justify-center text-xs text-muted-foreground">
+            <AlertTriangle className="h-3 w-3 mr-1" />
+            <span>Enter an amount to enable auto-distribution</span>
+          </div>
+        )}
+        
+        <div className="text-xs text-center text-muted-foreground">
+          <span className="font-medium">Smart allocation</span> targets underweight tiers for maximum bonus yield
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
