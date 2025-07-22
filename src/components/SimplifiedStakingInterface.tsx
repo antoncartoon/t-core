@@ -7,13 +7,15 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useTCore } from '@/contexts/TCoreContext';
+import { useWallet } from '@/contexts/WalletContext';
 import { Shield, TrendingUp, Calculator, Info } from 'lucide-react';
 import InteractiveLiquidityChart from './charts/InteractiveLiquidityChart';
 import StakingStressTestPanel from './charts/StakingStressTestPanel';
 import { calculatePredictedYield, getTierForBucket } from '@/utils/tzFormulas';
 
 export const SimplifiedStakingInterface = () => {
-  const { getAvailableBalance, createNFTPosition, tcoreState } = useTCore();
+  const { createNFTPosition, tcoreState } = useTCore();
+  const { getAvailableBalance } = useWallet();
   const { toast } = useToast();
   
   const [amount, setAmount] = useState<string>('');
