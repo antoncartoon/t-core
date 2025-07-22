@@ -23,7 +23,6 @@ import Docs from "./pages/Docs";
 import Disclaimer from "./pages/Disclaimer";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
-import Staking from "./pages/Staking";
 
 const queryClient = new QueryClient();
 
@@ -46,11 +45,6 @@ const AppRouter = () => (
                     <Route path="/app" element={
                       <ProtectedRoute>
                         <App />
-                      </ProtectedRoute>
-                    } />
-                    <Route path="/staking" element={
-                      <ProtectedRoute>
-                        <Staking />
                       </ProtectedRoute>
                     } />
                     <Route path="/portfolio" element={
