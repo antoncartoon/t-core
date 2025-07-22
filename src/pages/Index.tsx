@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/contexts/AuthContext';
 import Header from '@/components/Header';
 import StatsOverview from '@/components/StatsOverview';
 import MobileStatsOverview from '@/components/MobileStatsOverview';
@@ -7,35 +8,23 @@ import DepositCard from '@/components/DepositCard';
 import MobileDepositCard from '@/components/MobileDepositCard';
 import StakingCard from '@/components/StakingCard';
 import MobileStakingCard from '@/components/MobileStakingCard';
-import WalletConnect from '@/components/WalletConnect';
 import BuybackBurnDashboard from '@/components/BuybackBurnDashboard';
 import SurplusPoolDashboard from '@/components/SurplusPoolDashboard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Index = () => {
-  const [isConnected, setIsConnected] = useState(false);
-  const [walletAddress, setWalletAddress] = useState('');
+  const { isConnected } = useAuth();
   const isMobile = useIsMobile();
 
-  const handleConnect = (provider?: string) => {
-    // Simulate wallet connection
-    setTimeout(() => {
-      setIsConnected(true);
-      setWalletAddress('0x742d35Cc6634C0532925a3b8D4542DfC3d4e18ef');
-    }, 1500);
-  };
-
+  // This component should only render when user is connected
+  // ProtectedRoute handles wallet connection flow
   if (!isConnected) {
-    return <WalletConnect onConnect={handleConnect} />;
+    return null;
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <Header 
-        isConnected={isConnected} 
-        onConnect={handleConnect}
-        walletAddress={walletAddress}
-      />
+      <Header />
       
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-12">
         <div className="mb-8 sm:mb-16 text-center">
