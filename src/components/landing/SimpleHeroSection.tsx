@@ -2,15 +2,16 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { NavLink } from 'react-router-dom';
-import { ArrowRight, Play, Shield, TrendingUp, Lock, Calculator } from 'lucide-react';
+import { ArrowRight, Play, Shield, TrendingUp, Lock, Calculator, BookOpen } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { T_BILL_RATE, FIXED_BASE_MULTIPLIER, FIXED_BASE_APY } from '@/utils/riskRangeCalculations';
 
 interface SimpleHeroSectionProps {
   onStartTutorial?: () => void;
+  onStartStakingTutorial?: () => void;
 }
 
-const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
+const SimpleHeroSection = ({ onStartTutorial, onStartStakingTutorial }: SimpleHeroSectionProps) => {
   const isMobile = useIsMobile();
   
   return (
@@ -24,7 +25,7 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
           
           
           <p className="text-lg sm:text-xl text-muted-foreground mb-8 sm:mb-12 max-w-2xl mx-auto">
-            Professionally managed DeFi strategies with transparent fees
+            ТЗ Compliant staking with waterfall distribution, bonus yield optimization, and mathematical precision
           </p>
           
           <div className="flex flex-wrap justify-center gap-4 mb-6 text-sm text-muted-foreground">
@@ -34,11 +35,11 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
             </span>
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 bg-primary rounded-full"></span>
-              Bonus: higher tiers earn more
+              Bonus: mathematical optimization
             </span>
             <span className="flex items-center gap-1">
               <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-              Hero: unlimited upside potential
+              Hero: waterfall residuals
             </span>
           </div>
           
@@ -46,14 +47,26 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
             <NavLink to="/staking">
               <Button 
                 size={isMobile ? "default" : "lg"} 
-                className="w-full sm:w-auto text-base font-medium px-8 py-6 h-auto bg-primary hover:bg-primary/90"
+                className="w-full sm:w-auto text-base font-medium px-8 py-6 h-auto bg-primary hover:bg-primary/90 animate-pulse"
               >
                 <Calculator className="w-4 h-4 mr-2" />
-                Advanced Staking
+                ТЗ Compliant Staking
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </NavLink>
             
+            {onStartStakingTutorial && (
+              <Button 
+                variant="outline"
+                size={isMobile ? "default" : "lg"} 
+                className="w-full sm:w-auto text-base font-medium px-8 py-6 h-auto border-green-500 text-green-600 hover:bg-green-50"
+                onClick={onStartStakingTutorial}
+              >
+                <BookOpen className="w-4 h-4 mr-2" />
+                Learn Staking System
+              </Button>
+            )}
+
             <NavLink to="/app">
               <Button 
                 variant="outline"
@@ -73,34 +86,24 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
                 onClick={onStartTutorial}
               >
                 <Play className="w-4 h-4 mr-2" />
-                Take Tutorial
+                General Tutorial
               </Button>
             )}
-            
-            <a href="#how-it-works">
-              <Button 
-                variant="ghost" 
-                size={isMobile ? "default" : "lg"} 
-                className="w-full sm:w-auto text-base px-8 py-6 h-auto"
-              >
-                Learn More
-              </Button>
-            </a>
           </div>
           
           {/* Key Features */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
             <div className="flex items-center justify-center gap-3 p-4 bg-muted/30 rounded-lg">
               <Shield className="w-6 h-6 text-green-600" />
-              <span className="text-sm font-medium">Fixed Safe Tier</span>
+              <span className="text-sm font-medium">Waterfall Distribution</span>
             </div>
             <div className="flex items-center justify-center gap-3 p-4 bg-muted/30 rounded-lg">
               <TrendingUp className="w-6 h-6 text-primary" />
-              <span className="text-sm font-medium">Customizable Tiers</span>
+              <span className="text-sm font-medium">Bonus Yield Optimization</span>
             </div>
             <div className="flex items-center justify-center gap-3 p-4 bg-muted/30 rounded-lg">
               <Lock className="w-6 h-6 text-purple-600" />
-              <span className="text-sm font-medium">Transparent & Secure</span>
+              <span className="text-sm font-medium">Mathematical Precision</span>
             </div>
           </div>
         </div>
