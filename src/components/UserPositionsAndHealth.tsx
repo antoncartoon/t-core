@@ -11,9 +11,9 @@ import { useWallet } from '@/contexts/WalletContext';
 
 export const UserPositionsAndHealth = () => {
   const { tcoreState } = useTCore();
-  const { positions } = useWallet();
+  const { stakingPositions } = useWallet();
 
-  const activeNFTPositions = positions.filter(pos => pos.status === 'active');
+  const activeNFTPositions = stakingPositions.filter(pos => pos.status === 'active');
   const totalStakedValue = activeNFTPositions.reduce((sum, pos) => sum + pos.currentValue, 0);
   const totalEarnings = activeNFTPositions.reduce((sum, pos) => sum + pos.earnedAmount, 0);
 

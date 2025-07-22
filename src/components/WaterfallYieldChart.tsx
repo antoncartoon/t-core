@@ -125,16 +125,34 @@ export const WaterfallYieldChart: React.FC<WaterfallYieldChartProps> = ({ select
             {/* Base bars */}
             <Bar 
               dataKey="yield" 
-              fill={(entry: any) => {
-                if (entry.hasBonus) return '#8b5cf6'; // Purple for bonus zones
-                if (entry.level <= 9) return '#22c55e'; // Green for Safe
-                if (entry.level <= 29) return '#3b82f6'; // Blue for Conservative  
-                if (entry.level <= 59) return '#eab308'; // Yellow for Balanced
-                return '#ef4444'; // Red for Hero
-              }}
-              stroke={(entry: any) => entry.isSelected ? '#000' : 'transparent'}
-              strokeWidth={2}
-              opacity={(entry: any) => entry.isSelected ? 1 : 0.8}
+              fill="#22c55e"
+              name="APY"
+            />
+            
+            {/* Colored overlays to represent different tiers */}
+            <Bar 
+              dataKey="yield" 
+              fill="transparent"
+              name="Safe Tier"
+              stackId="stack"
+            />
+            <Bar 
+              dataKey="yield" 
+              fill="transparent" 
+              name="Conservative Tier"
+              stackId="stack"
+            />
+            <Bar 
+              dataKey="yield" 
+              fill="transparent"
+              name="Balanced Tier"
+              stackId="stack"
+            />
+            <Bar 
+              dataKey="yield" 
+              fill="transparent"
+              name="Hero Tier"
+              stackId="stack"
             />
             
             {/* Reference lines for tier boundaries */}

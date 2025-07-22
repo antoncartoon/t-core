@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { useTCore } from '@/contexts/TCoreContext';
-import { Shield, TrendingUp, AlertTriangle, Target, Zap } from 'lucide-react';
+import { Shield, TrendingUp, TrendingDown, AlertTriangle, Target, Zap } from 'lucide-react';
 import { WaterfallYieldChart } from './WaterfallYieldChart';
 
 const RISK_TIERS = [
@@ -282,7 +282,7 @@ export const SimplifiedStakingInterface = () => {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Active Positions</p>
-              <p className="font-semibold">{tcoreState.positions.length}</p>
+              <p className="font-semibold">{Object.keys(tcoreState.liquidityTicks).length}</p>
             </div>
           </div>
         </CardContent>

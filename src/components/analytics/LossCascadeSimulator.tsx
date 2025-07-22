@@ -17,7 +17,11 @@ interface TierLossResult {
   color: string;
 }
 
-const LossCascadeSimulator = () => {
+interface LossCascadeSimulatorProps {
+  userPositions?: any[];
+}
+
+const LossCascadeSimulator: React.FC<LossCascadeSimulatorProps> = ({ userPositions }) => {
   const [lossPercentage, setLossPercentage] = useState<number>(5);
   const [userPosition, setUserPosition] = useState<string>('BALANCED'); // SAFE, CONSERVATIVE, BALANCED, HERO
   
