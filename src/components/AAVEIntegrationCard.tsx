@@ -1,10 +1,11 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { Building2, Shield, TrendingDown, Calculator, AlertCircle } from 'lucide-react';
+import { Building2, Shield, TrendingDown, Calculator, AlertCircle, ExternalLink } from 'lucide-react';
 import { useWallet } from '@/contexts/WalletContext';
 
 const AAVEIntegrationCard = () => {
@@ -12,9 +13,8 @@ const AAVEIntegrationCard = () => {
   const [borrowAmount, setBorrowAmount] = useState('');
   
   // Calculate total NFT position value for collateral
-  const totalCollateralValue = stakingPositions
-    .filter(p => p.status === 'active')
-    .reduce((sum, position) => sum + position.amount, 0);
+  const activePositions = stakingPositions.filter(p => p.status === 'active');
+  const totalCollateralValue = activePositions.reduce((sum, position) => sum + position.currentValue, 0);
   
   // AAVE collateral ratio (typically 75% LTV for stablecoins)
   const collateralRatio = 0.75;
@@ -22,27 +22,34 @@ const AAVEIntegrationCard = () => {
   
   // Mock AAVE rates
   const borrowRates = [
-    { asset: 'USDC', rate: 4.2, available: 850000 },
-    { asset: 'USDT', rate: 4.5, available: 1200000 },
-    { asset: 'DAI', rate: 4.1, available: 650000 },
-    { asset: 'WETH', rate: 3.8, available: 45 }
+    { asset: 'USDC', rate: 4.2, available: 850000, liquidity: 'High' },
+    { asset: 'USDT', rate: 4.5, available: 1200000, liquidity: 'High' },
+    { asset: 'DAI', rate: 4.1, available: 650000, liquidity: 'Medium' },
+    { asset: 'WETH', rate: 3.8, available: 45, liquidity: 'Low' }
   ];
 
   const formatCurrency = (amount: number) => 
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
 
   const isValidBorrow = borrowAmount && parseFloat(borrowAmount) > 0 && parseFloat(borrowAmount) <= maxBorrowAmount;
+  const utilizationRatio = borrowAmount ? (parseFloat(borrowAmount) / maxBorrowAmount) * 100 : 0;
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Building2 className="w-5 h-5 text-blue-600" />
-          AAVE Integration
-          <Badge variant="secondary">NFT Collateral</Badge>
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2">
+            <Building2 className="w-5 h-5 text-blue-600" />
+            AAVE Lending Protocol
+            <Badge variant="secondary">NFT Collateral</Badge>
+          </CardTitle>
+          <Button variant="outline" size="sm" className="gap-2">
+            <ExternalLink className="w-4 h-4" />
+            AAVE V3
+          </Button>
+        </div>
         <p className="text-sm text-muted-foreground">
-          Use your T-Core NFT positions as collateral to borrow assets on AAVE
+          Use your T-Core NFT positions as collateral to borrow assets and amplify yield strategies
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -52,13 +59,50 @@ const AAVEIntegrationCard = () => {
             <Shield className="w-5 h-5 mb-2 text-blue-600" />
             <p className="text-sm text-muted-foreground">Available Collateral</p>
             <p className="text-xl font-medium text-blue-600">{formatCurrency(totalCollateralValue)}</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {activePositions.length} NFT position{activePositions.length !== 1 ? 's' : ''}
+            </p>
           </div>
           <div className="p-4 bg-green-50 dark:bg-green-950/20 rounded-lg">
             <Calculator className="w-5 h-5 mb-2 text-green-600" />
             <p className="text-sm text-muted-foreground">Max Borrow (75% LTV)</p>
             <p className="text-xl font-medium text-green-600">{formatCurrency(maxBorrowAmount)}</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Health Factor: {maxBorrowAmount > 0 ? '2.5+' : 'N/A'}
+            </p>
           </div>
         </div>
+
+        {/* Active NFT Positions */}
+        {activePositions.length > 0 && (
+          <div>
+            <h4 className="font-medium mb-3">Collateral Breakdown</h4>
+            <div className="space-y-2">
+              {activePositions.slice(0, 3).map((position) => (
+                <div key={position.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                      <span className="text-xs font-medium">#{position.id.slice(-3)}</span>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium">Risk Level {position.riskLevel}</p>
+                      <p className="text-xs text-muted-foreground">{position.riskCategory}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm font-medium">{formatCurrency(position.currentValue)}</p>
+                    <p className="text-xs text-green-600">+{position.apy}% APY</p>
+                  </div>
+                </div>
+              ))}
+              {activePositions.length > 3 && (
+                <p className="text-xs text-muted-foreground text-center">
+                  +{activePositions.length - 3} more position{activePositions.length - 3 !== 1 ? 's' : ''}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
 
         <Separator />
 
@@ -75,7 +119,7 @@ const AAVEIntegrationCard = () => {
                   <div>
                     <p className="font-medium">{asset.asset}</p>
                     <p className="text-sm text-muted-foreground">
-                      Available: {asset.asset === 'WETH' ? `${asset.available} ETH` : formatCurrency(asset.available)}
+                      {asset.liquidity} liquidity • {asset.asset === 'WETH' ? `${asset.available} ETH` : formatCurrency(asset.available)} available
                     </p>
                   </div>
                 </div>
@@ -110,15 +154,27 @@ const AAVEIntegrationCard = () => {
               </span>
             </div>
             
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <AlertCircle className="w-4 h-4" />
-              <span>
+            <div className="flex items-center gap-2 text-sm">
+              <AlertCircle className="w-4 h-4 text-muted-foreground" />
+              <span className="text-muted-foreground">
                 {borrowAmount && parseFloat(borrowAmount) > maxBorrowAmount
                   ? `Exceeds maximum borrow limit of ${formatCurrency(maxBorrowAmount)}`
-                  : `Utilization: ${borrowAmount ? ((parseFloat(borrowAmount) / maxBorrowAmount) * 100).toFixed(1) : 0}%`
+                  : `Utilization: ${utilizationRatio.toFixed(1)}% • Health Factor: ${utilizationRatio > 0 ? (200 / utilizationRatio).toFixed(1) : '∞'}`
                 }
               </span>
             </div>
+
+            {utilizationRatio > 80 && (
+              <div className="p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg">
+                <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
+                  <AlertCircle className="w-4 h-4" />
+                  <span className="text-sm font-medium">High Risk Warning</span>
+                </div>
+                <p className="text-xs text-amber-600 dark:text-amber-500 mt-1">
+                  Borrowing above 80% utilization increases liquidation risk
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -128,22 +184,23 @@ const AAVEIntegrationCard = () => {
             className="flex-1" 
             disabled={!isValidBorrow || totalCollateralValue === 0}
           >
-            {totalCollateralValue === 0 ? 'No NFT Positions' : 'Borrow on AAVE'}
+            {totalCollateralValue === 0 ? 'No NFT Collateral' : 'Borrow on AAVE'}
           </Button>
           <Button variant="outline" className="flex-1">
-            View Positions
+            {totalCollateralValue > 0 ? 'Manage Positions' : 'Learn More'}
           </Button>
         </div>
 
         {/* Info */}
         {totalCollateralValue === 0 && (
-          <div className="p-3 bg-amber-50 dark:bg-amber-950/20 rounded-lg">
-            <div className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
+          <div className="p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+            <div className="flex items-center gap-2 text-blue-700 dark:text-blue-400">
               <AlertCircle className="w-4 h-4" />
-              <span className="text-sm">
-                Create NFT staking positions first to use them as collateral for borrowing
-              </span>
+              <span className="text-sm font-medium">Getting Started</span>
             </div>
+            <p className="text-xs text-blue-600 dark:text-blue-500 mt-1">
+              Create T-Core NFT staking positions first to use them as collateral for borrowing
+            </p>
           </div>
         )}
       </CardContent>

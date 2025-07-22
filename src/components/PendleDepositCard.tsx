@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ArrowRight, Zap, Info } from 'lucide-react';
+import { ArrowRight, Zap, Info, Target, TrendingUp, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -50,10 +50,29 @@ const PendleDepositCard = () => {
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <Zap className="w-5 h-5 text-purple-600" />
-          <span>Pendle Integration</span>
+          <span>Pendle Yield Splitting</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
+        {/* Pendle Overview Metrics */}
+        <div className="grid grid-cols-3 gap-4 p-4 bg-muted/30 rounded-lg">
+          <div className="text-center">
+            <Target className="w-4 h-4 mx-auto mb-1 text-blue-600" />
+            <p className="text-lg font-medium text-blue-600">12.8%</p>
+            <p className="text-xs text-muted-foreground">Fixed APY (PT)</p>
+          </div>
+          <div className="text-center">
+            <TrendingUp className="w-4 h-4 mx-auto mb-1 text-green-600" />
+            <p className="text-lg font-medium text-green-600">18.5%</p>
+            <p className="text-xs text-muted-foreground">Max Variable (YT)</p>
+          </div>
+          <div className="text-center">
+            <Clock className="w-4 h-4 mx-auto mb-1 text-purple-600" />
+            <p className="text-lg font-medium text-purple-600">365</p>
+            <p className="text-xs text-muted-foreground">Days to Maturity</p>
+          </div>
+        </div>
+
         <div>
           <label className="text-sm font-medium text-gray-700 mb-2 block">
             sttkchUSD Amount
@@ -83,7 +102,7 @@ const PendleDepositCard = () => {
                 <div>
                   <p className="text-sm font-medium text-blue-800">Principal Tokens (PT)</p>
                   <p className="text-xs text-blue-600 mt-1">
-                    Lock in a fixed 12.8% APY. Get guaranteed returns at maturity.
+                    Lock in a fixed 12.8% APY. Guaranteed returns at maturity regardless of yield fluctuations.
                   </p>
                 </div>
               </div>
@@ -109,7 +128,7 @@ const PendleDepositCard = () => {
                 <div>
                   <p className="text-sm font-medium text-green-800">Yield Tokens (YT)</p>
                   <p className="text-xs text-green-600 mt-1">
-                    Bet on future yield. Potential for up to 18.5% APY if yield increases.
+                    Capture all future yield above the discount rate. Higher risk but unlimited upside potential.
                   </p>
                 </div>
               </div>
@@ -144,7 +163,7 @@ const PendleDepositCard = () => {
               <span>Processing...</span>
             </div>
           ) : (
-            `Deposit into ${selectedStrategy === 'pt' ? 'Principal' : 'Yield'} Tokens`
+            `Split into ${selectedStrategy === 'pt' ? 'Principal' : 'Yield'} Tokens`
           )}
         </Button>
       </CardContent>
