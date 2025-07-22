@@ -2,6 +2,9 @@
 import React from 'react';
 import Header from '@/components/Header';
 import TransparencyDashboard from '@/components/TransparencyDashboard';
+import SecurityDashboard from '@/components/SecurityDashboard';
+import BuybackBurnDashboard from '@/components/BuybackBurnDashboard';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Transparency = () => {
   return (
@@ -16,13 +19,31 @@ const Transparency = () => {
                 Protocol Transparency
               </h1>
               <p className="text-muted-foreground">
-                Real-time insights into T-Core's operations, fees, and security measures
+                Real-time insights into T-Core's operations, fees, security measures, and TDD mechanics
               </p>
             </div>
           </div>
         </div>
 
-        <TransparencyDashboard />
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="deflationary">TDD Deflationary Engine</TabsTrigger>
+            <TabsTrigger value="security">Security Dashboard</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="overview">
+            <TransparencyDashboard />
+          </TabsContent>
+
+          <TabsContent value="deflationary">
+            <BuybackBurnDashboard />
+          </TabsContent>
+
+          <TabsContent value="security">
+            <SecurityDashboard />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
