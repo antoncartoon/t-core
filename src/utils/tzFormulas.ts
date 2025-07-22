@@ -1,11 +1,11 @@
 
-// ТЗ COMPLIANT FORMULAS - Exact implementation from specification
+// PRECISION FORMULAS - Mathematical implementation from specification
 
 /**
- * ТЗ Main APY Formula: APY(r) = APY_safe + (APY_protocol - APY_safe) × r^1.5
+ * Main APY Formula: APY(r) = APY_safe + (APY_protocol - APY_safe) × r^1.5
  * where r = (bucket number) / 99
  */
-export const calculateTZCompliantAPY = (bucketNumber: number): number => {
+export const calculatePrecisionAPY = (bucketNumber: number): number => {
   const APY_SAFE = 0.0516; // T-bills × 1.2 = 5.16%
   const APY_PROTOCOL = 0.10; // Protocol average 10% APY
   
@@ -15,14 +15,14 @@ export const calculateTZCompliantAPY = (bucketNumber: number): number => {
   // Calculate r = bucket / 99
   const r = clampedBucket / 99;
   
-  // Apply ТЗ formula: APY(r) = APY_safe + (APY_protocol - APY_safe) × r^1.5
+  // Apply formula: APY(r) = APY_safe + (APY_protocol - APY_safe) × r^1.5
   const result = APY_SAFE + (APY_PROTOCOL - APY_SAFE) * Math.pow(r, 1.5);
   
   return result;
 };
 
 /**
- * ТЗ Stress Loss Formula: Loss = min(residual_loss, user_position) / user_position
+ * Stress Loss Formula: Loss = min(residual_loss, user_position) / user_position
  */
 export const calculateStressLoss = (
   userPosition: number,
@@ -75,7 +75,7 @@ export const calculateStressScenarios = (
 };
 
 /**
- * Calculate predicted yield using ТЗ formula
+ * Calculate predicted yield using precision formula
  */
 export const calculatePredictedYield = (
   amount: number,
@@ -86,7 +86,7 @@ export const calculatePredictedYield = (
   const rangeSize = bucketRange[1] - bucketRange[0] + 1;
   
   for (let bucket = bucketRange[0]; bucket <= bucketRange[1]; bucket++) {
-    totalAPY += calculateTZCompliantAPY(bucket);
+    totalAPY += calculatePrecisionAPY(bucket);
   }
   
   const avgAPY = totalAPY / rangeSize;
@@ -117,3 +117,6 @@ export const getTierForBucket = (bucket: number): {
   }
   return { name: 'Unknown', range: '?', color: 'text-gray-600' };
 };
+
+// Legacy function name for backward compatibility (deprecated)
+export const calculateTZCompliantAPY = calculatePrecisionAPY;

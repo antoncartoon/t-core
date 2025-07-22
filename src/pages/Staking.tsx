@@ -28,7 +28,7 @@ const Staking = () => {
                 </Button>
               </NavLink>
               <span className="text-muted-foreground">/</span>
-              <span className="font-medium">T-Core Staking</span>
+              <span className="font-medium">T-Core Precision Staking</span>
             </div>
             
             <div className="flex flex-wrap items-center gap-2">

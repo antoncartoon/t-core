@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Shield, Star, Crown, TrendingUp, Calculator, ArrowRight } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
-import { calculateTZCompliantAPY, getTierForBucket } from '@/utils/tzFormulas';
+import { calculatePrecisionAPY, getTierForBucket } from '@/utils/tzFormulas';
 
 const UnifiedRiskSelection = () => {
   const [activeTier, setActiveTier] = useState(0);
@@ -55,7 +56,7 @@ const UnifiedRiskSelection = () => {
     }
   ];
 
-  // Calculate APY using exact TZ formulas
+  // Calculate APY using precision formulas
   const calculateTierAPY = (bucketRange: [number, number]) => {
     const [min, max] = bucketRange;
     const samples = Math.min(10, max - min + 1); // Sample up to 10 points
@@ -63,7 +64,7 @@ const UnifiedRiskSelection = () => {
     
     for (let i = 0; i < samples; i++) {
       const bucket = min + Math.floor(i * (max - min) / (samples - 1));
-      totalAPY += calculateTZCompliantAPY(bucket);
+      totalAPY += calculatePrecisionAPY(bucket);
     }
     
     return totalAPY / samples;
@@ -79,11 +80,11 @@ const UnifiedRiskSelection = () => {
     return () => clearInterval(interval);
   }, [tiers.length]);
 
-  // Generate curve data points using TZ formulas
+  // Generate curve data points using precision formulas
   const generateCurveData = () => {
     const points = [];
     for (let bucket = 0; bucket <= 99; bucket += 2) {
-      const apy = calculateTZCompliantAPY(bucket);
+      const apy = calculatePrecisionAPY(bucket);
       points.push({
         bucket,
         apy,
@@ -117,7 +118,7 @@ const UnifiedRiskSelection = () => {
             Interactive Risk-Yield Selection
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Four risk tiers with mathematical precision. Watch how yields change across the risk curve using exact TZ-compliant formulas.
+            Four risk tiers with mathematical precision. Watch how yields change across the risk curve using advanced formulas.
           </p>
         </div>
 
@@ -186,7 +187,7 @@ const UnifiedRiskSelection = () => {
           <Card className="border-border bg-card/50">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-medium">TZ-Compliant Risk Curve</h3>
+                <h3 className="text-lg font-medium">Interactive Risk Curve</h3>
                 <Badge variant="outline" className="flex items-center gap-2">
                   <div className={`w-2 h-2 rounded-full ${activeTierData.color.replace('text-', 'bg-')}`} />
                   {activeTierData.name} Active
@@ -347,16 +348,16 @@ const UnifiedRiskSelection = () => {
           <Card className="inline-block p-8 bg-gradient-to-r from-primary/5 to-purple/5 border-primary/20">
             <CardContent className="p-0 space-y-6">
               <div>
-                <h3 className="text-xl font-medium mb-2">Ready for Precise TZ-Compliant Staking?</h3>
+                <h3 className="text-xl font-medium mb-2">Ready for Precision Staking?</h3>
                 <p className="text-muted-foreground">
                   Experience the full interface with exact calculations, bonus yield optimization, and stress testing.
                 </p>
               </div>
               
-              <NavLink to="/staking">
+              <NavLink to="/app">
                 <Button size="lg" className="bg-primary hover:bg-primary/90">
                   <Calculator className="w-4 h-4 mr-2" />
-                  Launch TZ Staking Interface
+                  Launch Staking Interface
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </NavLink>

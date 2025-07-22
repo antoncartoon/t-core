@@ -5,7 +5,7 @@ const FIXED_BASE_MULTIPLIER = 1.2;
 export const FIXED_BASE_APY = FIXED_BASE_RATE * FIXED_BASE_MULTIPLIER; // T-Bills × 1.2 (6%)
 export const OPTIMAL_K = 1.03; // k=1.03 for f(i) calculation
 
-// ТЗ COMPLIANT: Exact tier ranges from specification (0-9, 10-29, 30-59, 60-99)
+// PRECISION COMPLIANT: Exact tier ranges from specification (0-9, 10-29, 30-59, 60-99)
 export const TIER_DEFINITIONS = {
   SAFE: { 
     min: 0, 
@@ -49,7 +49,7 @@ export interface TierBalance {
   bonusYield: number;
 }
 
-// ТЗ TARGET DISTRIBUTION: 10/20/30/40%
+// TARGET DISTRIBUTION: 10/20/30/40%
 export const TIER_TARGET_WEIGHTS = {
   SAFE: 0.10, // 10% in Safe tier
   CONSERVATIVE: 0.20, // 20% in Conservative

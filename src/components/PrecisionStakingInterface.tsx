@@ -7,13 +7,13 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { Calculator, TrendingDown, DollarSign, AlertTriangle, BarChart3 } from 'lucide-react';
-import { calculateTZCompliantAPY, calculatePredictedYield, calculateStressScenarios, getTierForBucket } from '@/utils/tzFormulas';
+import { calculatePrecisionAPY, calculatePredictedYield, calculateStressScenarios, getTierForBucket } from '@/utils/tzFormulas';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import QuickStrategies from '@/components/staking/QuickStrategies';
 
-const TZCompliantStakingInterface = () => {
+const PrecisionStakingInterface = () => {
   const [amount, setAmount] = useState<string>('');
   const [bucketRange, setBucketRange] = useState<[number, number]>([0, 9]); // Default to Safe tier
   const [calculationResults, setCalculationResults] = useState<any>(null);
@@ -57,7 +57,7 @@ const TZCompliantStakingInterface = () => {
   for (let bucket = 0; bucket <= 99; bucket++) {
     apyData.push({
       bucket,
-      apy: calculateTZCompliantAPY(bucket) * 100,
+      apy: calculatePrecisionAPY(bucket) * 100,
       isSelected: bucket >= bucketRange[0] && bucket <= bucketRange[1],
       tier: getTierForBucket(bucket)
     });
@@ -73,7 +73,7 @@ const TZCompliantStakingInterface = () => {
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <Calculator className="h-5 w-5 flex-shrink-0" />
-            <span>T-Core Staking Interface</span>
+            <span>T-Core Precision Staking</span>
           </CardTitle>
           <p className="text-sm text-muted-foreground leading-relaxed">
             Enter amount, select bucket range (0-99), and see real-time APY predictions and risk analysis
@@ -294,4 +294,4 @@ const TZCompliantStakingInterface = () => {
   );
 };
 
-export default TZCompliantStakingInterface;
+export default PrecisionStakingInterface;
