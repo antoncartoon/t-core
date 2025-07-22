@@ -56,7 +56,7 @@ const DeFi = () => {
                 Pendle Yield Splitting
               </h2>
               <p className="text-muted-foreground">
-                Split your sttkchUSD into Principal and Yield Tokens for advanced yield strategies
+                Split your TDD into Principal and Yield Tokens for advanced yield strategies
               </p>
             </div>
             <Button variant="outline" size="sm" className="gap-2">

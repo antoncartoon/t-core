@@ -136,7 +136,7 @@ const PTYTBalance = () => {
           <div className="text-center py-8 text-muted-foreground">
             <Target className="w-12 h-12 mx-auto mb-4 opacity-50" />
             <p>No Pendle positions yet</p>
-            <p className="text-sm">Split your sttkchUSD above to create PT/YT positions</p>
+            <p className="text-sm">Split your TDD above to create PT/YT positions</p>
           </div>
         )}
       </CardContent>

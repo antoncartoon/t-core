@@ -30,7 +30,7 @@ const PendleDepositCard = () => {
       const strategy = selectedStrategy === 'pt' ? 'Principal Tokens' : 'Yield Tokens';
       toast({
         title: "Deposit Successful!",
-        description: `Successfully deposited ${amount} sttkchUSD for ${strategy}.`,
+        description: `Successfully deposited ${amount} TDD for ${strategy}.`,
       });
       
       setAmount('');
@@ -75,7 +75,7 @@ const PendleDepositCard = () => {
 
         <div>
           <label className="text-sm font-medium text-gray-700 mb-2 block">
-            sttkchUSD Amount
+            TDD Amount
           </label>
           <Input
             type="number"
@@ -85,7 +85,7 @@ const PendleDepositCard = () => {
             className="text-lg"
           />
           <p className="text-xs text-gray-500 mt-1">
-            Available: 8,900.25 sttkchUSD
+            Available: 8,900.25 TDD
           </p>
         </div>
 
