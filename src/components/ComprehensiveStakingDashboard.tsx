@@ -20,10 +20,10 @@ import {
 // Import all components
 import WaterfallDashboardEnhanced from './waterfall/WaterfallDashboardEnhanced';
 import AutoDistributeButton from './waterfall/AutoDistributeButton';
-import RiskAnalyticsDashboard from './RiskAnalyticsDashboard';
-import LossCascadeSimulator from './LossCascadeSimulator';
-import PositionHealthMonitor from './PositionHealthMonitor';
-import TutorialWalkthrough from './TutorialWalkthrough';
+import RiskAnalyticsDashboard from './analytics/RiskAnalyticsDashboard';
+import LossCascadeSimulator from './analytics/LossCascadeSimulator';
+import { PositionHealthMonitor } from './analytics/PositionHealthMonitor';
+import TutorialWalkthrough from './tutorial/TutorialWalkthrough';
 import TZCompliantStakingInterface from './TZCompliantStakingInterface';
 
 interface ComprehensiveDashboardProps {
