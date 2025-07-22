@@ -13,7 +13,7 @@ import { DISTRIBUTION_PARAMS } from '@/utils/tcoreCalculations';
 import { useIsMobile } from '@/hooks/use-mobile';
 import MobileRiskAnalytics from './mobile/MobileRiskAnalytics';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { InfoCircled } from "lucide-react";
+import { Info } from "lucide-react";
 
 const ComprehensiveStakingDashboard = () => {
   const [activeTab, setActiveTab] = useState('stake');
@@ -23,7 +23,7 @@ const ComprehensiveStakingDashboard = () => {
     <div className="space-y-6">
       {/* Feature Notice */}
       <Alert variant="default" className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30 border-blue-200 dark:border-blue-800">
-        <InfoCircled className="h-4 w-4 text-blue-500" />
+        <Info className="h-4 w-4 text-blue-500" />
         <AlertTitle>New Features Available</AlertTitle>
         <AlertDescription className="text-muted-foreground">
           Try our new waterfall distribution model, bonus yield mechanism, and auto-distribution feature for optimized returns.
