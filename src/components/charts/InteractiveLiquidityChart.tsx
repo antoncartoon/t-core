@@ -300,7 +300,7 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
                 <YAxis hide />
                 <Bar 
                   dataKey="liquidity" 
-                  fill={(entry: any) => entry?.tierColor || 'hsl(var(--muted-foreground))'}
+                  fill="hsl(var(--muted))"
                   opacity={0.6}
                 />
               </BarChart>
