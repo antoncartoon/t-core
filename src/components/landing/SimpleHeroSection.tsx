@@ -66,16 +66,6 @@ const SimpleHeroSection = ({ onStartTutorial, onStartStakingTutorial }: SimpleHe
               </Button>
             )}
 
-            <NavLink to="/app">
-              <Button 
-                variant="outline"
-                size={isMobile ? "default" : "lg"} 
-                className="w-full sm:w-auto text-base font-medium px-6 sm:px-8 py-4 sm:py-6 h-auto"
-              >
-                Launch Dashboard
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </NavLink>
 
             {onStartTutorial && (
               <Button 
