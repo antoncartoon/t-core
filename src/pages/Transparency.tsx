@@ -1,50 +1,62 @@
 
 import React from 'react';
-import Header from '@/components/Header';
+import { NavLink } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Home, ArrowLeft } from 'lucide-react';
 import TransparencyDashboard from '@/components/TransparencyDashboard';
-import SecurityDashboard from '@/components/SecurityDashboard';
-import BuybackBurnDashboard from '@/components/BuybackBurnDashboard';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import WaterfallDashboardEnhanced from '@/components/waterfall/WaterfallDashboardEnhanced';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
 const Transparency = () => {
   return (
     <div className="min-h-screen bg-background">
-      <Header isConnected={true} onConnect={() => {}} walletAddress="0x742d35Cc6634C0532925a3b8D4542DfC3d4e18ef" />
-      
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-        <div className="mb-8 sm:mb-12">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-light mb-2">
-                Protocol Transparency
-              </h1>
-              <p className="text-muted-foreground">
-                Real-time insights into T-Core's operations, fees, security measures, and TDD mechanics
-              </p>
-            </div>
+      {/* Breadcrumb Navigation */}
+      <div className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <NavLink to="/">
+              <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                <Home className="h-4 w-4" />
+                Home
+              </Button>
+            </NavLink>
+            <span className="text-muted-foreground">/</span>
+            <span className="font-medium">Transparency</span>
+          </div>
+          
+          <div className="flex flex-wrap items-center gap-2">
+            <NavLink to="/app">
+              <Button variant="outline" size="sm">
+                Dashboard
+              </Button>
+            </NavLink>
+            <NavLink to="/staking">
+              <Button variant="outline" size="sm">
+                Staking
+              </Button>
+            </NavLink>
           </div>
         </div>
+      </div>
 
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="deflationary">TDD Deflationary Engine</TabsTrigger>
-            <TabsTrigger value="security">Security Dashboard</TabsTrigger>
-          </TabsList>
+      <div className="max-w-7xl mx-auto px-4 py-8 space-y-8">
+        {/* Page Header */}
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Protocol Transparency</h1>
+          <p className="text-muted-foreground">
+            Complete transparency into T-Core's operations, fee allocation, and risk management
+          </p>
+        </div>
 
-          <TabsContent value="overview">
-            <TransparencyDashboard />
-          </TabsContent>
+        {/* Main Transparency Dashboard */}
+        <TransparencyDashboard />
 
-          <TabsContent value="deflationary">
-            <BuybackBurnDashboard />
-          </TabsContent>
+        <Separator className="my-8" />
 
-          <TabsContent value="security">
-            <SecurityDashboard />
-          </TabsContent>
-        </Tabs>
-      </main>
+        {/* Waterfall Distribution Model - Moved from Staking */}
+        <WaterfallDashboardEnhanced />
+      </div>
     </div>
   );
 };
