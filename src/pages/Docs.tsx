@@ -1,289 +1,159 @@
-
-import React, { useState } from 'react';
-import { Book, FileText, Shield, Zap, Users, HelpCircle } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import React from 'react';
 import Header from '@/components/Header';
-import { useWallet } from '@/contexts/WalletContext';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { BookOpen, Calculator, Shield, TrendingUp, Users, Zap } from 'lucide-react';
 
 const Docs = () => {
-  const [activeSection, setActiveSection] = useState('overview');
-  const { balances } = useWallet();
-  
-  // Mock wallet connection state - you can replace this with actual wallet logic
-  const isConnected = balances.some(balance => balance.balance > 0);
-  const walletAddress = isConnected ? "0x1234...5678" : undefined;
-
-  const handleConnect = () => {
-    // Mock connect function - replace with actual wallet connection logic
-    console.log('Connect wallet clicked');
-  };
-
-  const sections = [
-    { id: 'overview', title: 'Overview', icon: Book },
-    { id: 'getting-started', title: 'Getting Started', icon: Zap },
-    { id: 'wallet-integration', title: 'Wallet Integration', icon: Shield },
-    { id: 'api-reference', title: 'API Reference', icon: FileText },
-    { id: 'community', title: 'Community', icon: Users },
-    { id: 'support', title: 'Support', icon: HelpCircle },
-  ];
-
   return (
     <div className="min-h-screen bg-background">
-      <Header 
-        isConnected={isConnected}
-        onConnect={handleConnect}
-        walletAddress={walletAddress}
-      />
+      <Header />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
-            Documentation
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl">
-            Comprehensive guides and API reference to help you get started with T-Core platform
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <div className="mb-8 sm:mb-12">
+          <div className="flex items-center gap-3 mb-4">
+            <BookOpen className="w-6 h-6 text-primary" />
+            <h1 className="text-2xl sm:text-3xl font-light">Documentation</h1>
+          </div>
+          <p className="text-muted-foreground">
+            Comprehensive guides, API references, and technical documentation for T-Core Finance
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Table of Contents - Desktop Sidebar */}
-          <div className="hidden lg:block lg:col-span-1">
-            <div className="sticky top-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Table of Contents</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {sections.map((section) => {
-                    const IconComponent = section.icon;
-                    return (
-                      <button
-                        key={section.id}
-                        onClick={() => setActiveSection(section.id)}
-                        className={`w-full flex items-center space-x-2 p-2 rounded-lg text-left transition-colors ${
-                          activeSection === section.id
-                            ? 'bg-primary text-primary-foreground'
-                            : 'hover:bg-muted text-muted-foreground hover:text-foreground'
-                        }`}
-                      >
-                        <IconComponent className="w-4 h-4" />
-                        <span className="text-sm">{section.title}</span>
-                      </button>
-                    );
-                  })}
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-
-          {/* Main Content */}
-          <div className="lg:col-span-3">
-            {/* Mobile TOC */}
-            <div className="lg:hidden mb-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Navigation</CardTitle>
+        {/* Quick Start Guide */}
+        <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            <Zap className="w-5 h-5 text-green-500" />
+            Quick Start Guide
+          </h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[
+              {
+                step: 1,
+                title: "Connect Wallet",
+                description: "Connect your Web3 wallet or create one using social login",
+                icon: Shield,
+                status: "Essential"
+              },
+              {
+                step: 2,
+                title: "Mint TDD Tokens",
+                description: "Deposit USDC/USDT/DAI to mint TDD tokens 1:1",
+                icon: Calculator,
+                status: "Required"
+              },
+              {
+                step: 3,
+                title: "Choose Risk Tier",
+                description: "Select your preferred risk/reward tier (0-100)",
+                icon: TrendingUp,
+                status: "Strategy"
+              },
+              {
+                step: 4,
+                title: "Stake & Earn",
+                description: "Stake TDD tokens and receive NFT position",
+                icon: Users,
+                status: "Active"
+              }
+            ].map((item) => (
+              <Card key={item.step} className="relative overflow-hidden">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold">
+                        {item.step}
+                      </div>
+                      <item.icon className="w-4 h-4" />
+                    </div>
+                    <Badge variant="outline" className="text-xs">
+                      {item.status}
+                    </Badge>
+                  </div>
+                  <CardTitle className="text-base">{item.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {sections.map((section) => {
-                      const IconComponent = section.icon;
-                      return (
-                        <button
-                          key={section.id}
-                          onClick={() => setActiveSection(section.id)}
-                          className={`flex flex-col items-center space-y-1 p-3 rounded-lg transition-colors ${
-                            activeSection === section.id
-                              ? 'bg-primary text-primary-foreground'
-                              : 'hover:bg-muted text-muted-foreground hover:text-foreground'
-                          }`}
-                        >
-                          <IconComponent className="w-5 h-5" />
-                          <span className="text-xs text-center">{section.title}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {item.description}
+                  </p>
                 </CardContent>
               </Card>
-            </div>
-
-            {/* Content Sections */}
-            <div className="space-y-8">
-              {activeSection === 'overview' && (
-                <div className="space-y-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center space-x-2">
-                        <Book className="w-5 h-5" />
-                        <span>Platform Overview</span>
-                        <Badge variant="secondary">Coming Soon</Badge>
-                      </CardTitle>
-                      <CardDescription>
-                        Learn about T-Core's core features and capabilities
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <p className="text-muted-foreground">
-                        This section will contain comprehensive information about:
-                      </p>
-                      <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                        <li>Platform architecture and design principles</li>
-                        <li>Yield farming strategies and mechanisms</li>
-                        <li>Risk management and security features</li>
-                        <li>Tokenomics and governance structure</li>
-                      </ul>
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
-
-              {activeSection === 'getting-started' && (
-                <div className="space-y-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center space-x-2">
-                        <Zap className="w-5 h-5" />
-                        <span>Getting Started</span>
-                        <Badge variant="secondary">Coming Soon</Badge>
-                      </CardTitle>
-                      <CardDescription>
-                        Quick start guide for new users
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <p className="text-muted-foreground">
-                        Step-by-step guides will be available here:
-                      </p>
-                      <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                        <li>Account setup and wallet connection</li>
-                        <li>Making your first deposit</li>
-                        <li>Understanding yield calculations</li>
-                        <li>Portfolio management basics</li>
-                      </ul>
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
-
-              {activeSection === 'wallet-integration' && (
-                <div className="space-y-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center space-x-2">
-                        <Shield className="w-5 h-5" />
-                        <span>Wallet Integration</span>
-                        <Badge variant="secondary">Coming Soon</Badge>
-                      </CardTitle>
-                      <CardDescription>
-                        Detailed information about wallet integration and security
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <p className="text-muted-foreground">
-                        This section will cover:
-                      </p>
-                      <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                        <li>Dynamic.xyz embedded wallet technology</li>
-                        <li>Social login and private key encryption</li>
-                        <li>Multi-chain wallet support</li>
-                        <li>Security best practices</li>
-                      </ul>
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
-
-              {activeSection === 'api-reference' && (
-                <div className="space-y-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center space-x-2">
-                        <FileText className="w-5 h-5" />
-                        <span>API Reference</span>
-                        <Badge variant="secondary">Coming Soon</Badge>
-                      </CardTitle>
-                      <CardDescription>
-                        Complete API documentation for developers
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <p className="text-muted-foreground">
-                        API documentation will include:
-                      </p>
-                      <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                        <li>REST API endpoints and authentication</li>
-                        <li>WebSocket connections for real-time data</li>
-                        <li>Smart contract interfaces</li>
-                        <li>SDK and integration examples</li>
-                      </ul>
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
-
-              {activeSection === 'community' && (
-                <div className="space-y-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center space-x-2">
-                        <Users className="w-5 h-5" />
-                        <span>Community</span>
-                        <Badge variant="secondary">Coming Soon</Badge>
-                      </CardTitle>
-                      <CardDescription>
-                        Join our community and contribute to the platform
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <p className="text-muted-foreground">
-                        Community resources will include:
-                      </p>
-                      <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                        <li>Discord and Telegram channels</li>
-                        <li>GitHub repositories and contribution guidelines</li>
-                        <li>Community governance and voting</li>
-                        <li>Educational resources and tutorials</li>
-                      </ul>
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
-
-              {activeSection === 'support' && (
-                <div className="space-y-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center space-x-2">
-                        <HelpCircle className="w-5 h-5" />
-                        <span>Support</span>
-                        <Badge variant="secondary">Coming Soon</Badge>
-                      </CardTitle>
-                      <CardDescription>
-                        Get help and contact our support team
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <p className="text-muted-foreground">
-                        Support resources will include:
-                      </p>
-                      <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                        <li>Frequently asked questions</li>
-                        <li>Troubleshooting guides</li>
-                        <li>Contact forms and support tickets</li>
-                        <li>Live chat and email support</li>
-                      </ul>
-                    </CardContent>
-                  </Card>
-                </div>
-              )}
-            </div>
+            ))}
           </div>
         </div>
-      </div>
+
+        {/* Detailed Documentation Sections */}
+        <div className="space-y-8">
+          <Card>
+            <CardHeader>
+              <CardTitle>Wallet Connection</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                Connect your wallet using MetaMask, WalletConnect, Coinbase Wallet, or social login via Dynamic.xyz. 
+                The embedded wallet securely manages your private keys without requiring manual seed phrase handling.
+              </p>
+              <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+                <li>MetaMask and WalletConnect support</li>
+                <li>Social login creates an encrypted embedded wallet</li>
+                <li>Seamless wallet switching and connection persistence</li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Minting TDD Tokens</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                Deposit supported stablecoins (USDC, USDT, DAI) to mint TDD tokens at a 1:1 ratio. 
+                These tokens represent your stake in the protocol and can be redeemed or staked.
+              </p>
+              <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+                <li>Instant minting upon deposit</li>
+                <li>Supports multiple stablecoins for flexibility</li>
+                <li>Transparent conversion rates and fees</li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Risk Tiers and Staking</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                Choose your preferred risk tier (0-100) to stake TDD tokens and earn yield. 
+                Each tier offers different risk/reward profiles, with advanced features like waterfall distribution and bonus yield heatmaps.
+              </p>
+              <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+                <li>Risk tiers from Safe (1-3) to T-Core HERO (81-100)</li>
+                <li>Stake tokens to receive NFT positions representing your stake</li>
+                <li>Real-time APY predictions and stress testing</li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>API and Integration</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                Access our API for real-time data on staking positions, yield distributions, and protocol metrics. 
+                Integrate T-Core Finance features into your own applications.
+              </p>
+              <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
+                <li>REST and WebSocket endpoints</li>
+                <li>Authentication via wallet signature</li>
+                <li>Comprehensive API documentation and examples</li>
+              </ul>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
     </div>
   );
 };

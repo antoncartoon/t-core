@@ -1,195 +1,80 @@
 import React from 'react';
 import Header from '@/components/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { FileText, Users, Shield, Gavel } from 'lucide-react';
+import { FileText } from 'lucide-react';
 
 const Terms = () => {
   return (
     <div className="min-h-screen bg-background">
-      <Header isConnected={false} onConnect={() => {}} />
+      <Header />
       
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="mb-8">
-          <h1 className="text-3xl font-light mb-4">Terms of Service</h1>
+          <div className="flex items-center gap-3 mb-4">
+            <FileText className="w-6 h-6 text-primary" />
+            <h1 className="text-2xl sm:text-3xl font-light">Terms of Service</h1>
+          </div>
           <p className="text-muted-foreground">
-            Terms and conditions for using T-Core Finance protocol
+            Terms and conditions for using T-Core Finance
           </p>
         </div>
 
         <div className="space-y-6">
-          <Alert>
-            <FileText className="h-4 w-4" />
-            <AlertDescription>
-              By using T-Core Finance, you agree to these terms and conditions. Please read them carefully.
-            </AlertDescription>
-          </Alert>
-
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Protocol Usage
-              </CardTitle>
+              <CardTitle>Acceptance of Terms</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h3 className="font-medium mb-2">Permitted Use</h3>
-                <p className="text-sm text-muted-foreground">
-                  T-Core is a DeFi protocol for risk-tranched yields on TDD stablecoin. You may use the 
-                  protocol for legitimate DeFi activities including staking, yield farming, and portfolio 
-                  management within the defined risk tiers.
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="font-medium mb-2">Risk Tiers</h3>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• <strong>Tier 1 (1-25):</strong> Fixed 6% APY guaranteed by T-Bills * 1.2</li>
-                  <li>• <strong>Tier 2 (26-50):</strong> ~9.2% APY with low bonus via f(i) formula</li>
-                  <li>• <strong>Tier 3 (51-75):</strong> ~12.8% APY with medium bonus via f(i) formula</li>
-                  <li>• <strong>Tier 4 (76-100):</strong> Up to 35% APY with high bonus and surplus distribution</li>
-                </ul>
-              </div>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                By accessing and using T-Core Finance ("the Protocol"), you accept and agree to be bound by the terms 
+                and provision of this agreement. These terms apply to all users of the Protocol.
+              </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5" />
-                Protocol Governance
-              </CardTitle>
+              <CardTitle>Description of Service</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h3 className="font-medium mb-2">Current Management</h3>
-                <p className="text-sm text-muted-foreground">
-                  T-Core operates under centralized management with multisig wallets (3/5 signatures) 
-                  for security and efficiency. This includes position management, staking, withdrawals, 
-                  rebalances, and fee distribution.
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="font-medium mb-2">Multisig Addresses</h3>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• <strong>Treasury Management:</strong> 0x1234567890123456789012345678901234567890</li>
-                  <li>• <strong>Protocol Operations:</strong> 0xabcdefabcdefabcdefabcdefabcdefabcdefabcd</li>
-                </ul>
-              </div>
-              
-              <div>
-                <h3 className="font-medium mb-2">Decentralization Roadmap</h3>
-                <p className="text-sm text-muted-foreground">
-                  Full decentralization and governance transition planned for Q1 2027. A governance token 
-                  will enable community voting on bonus distribution, surplus allocation, and protocol upgrades.
-                </p>
-              </div>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                T-Core Finance provides a decentralized finance (DeFi) platform that allows users to participate in yield-generating activities. 
+                The Protocol utilizes smart contracts on the blockchain to facilitate these activities.
+              </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Performance Fee Structure</CardTitle>
+              <CardTitle>User Obligations</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h3 className="font-medium mb-2">Fee Calculation</h3>
-                <p className="text-sm text-muted-foreground">
-                  T-Core charges a 20% performance fee on all yields generated by the protocol. 
-                  This fee is calculated as: performance_fee = 0.2 * total_yield
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="font-medium mb-2">Fee Distribution</h3>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• <strong>25% Bonus Yield:</strong> Enhances higher tier returns</li>
-                  <li>• <strong>25% TDD Buyback:</strong> Supply regulation and peg stability (+0.5% value increase)</li>
-                  <li>• <strong>25% Protocol Revenue:</strong> Operations and team compensation</li>
-                  <li>• <strong>25% Insurance Buffer:</strong> Replenishes high-risk tiers for loss protection</li>
-                </ul>
-              </div>
-              
-              <div>
-                <h3 className="font-medium mb-2">Transparency</h3>
-                <p className="text-sm text-muted-foreground">
-                  All fee allocation is transparent and verifiable on-chain via Etherscan links. 
-                  Real-time dashboards display fee breakdown and allocation metrics.
-                </p>
-              </div>
+            <CardContent>
+              <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
+                <li>You must be at least 18 years old to use the Protocol.</li>
+                <li>You are responsible for maintaining the security of your wallet and private keys.</li>
+                <li>You agree to comply with all applicable laws and regulations.</li>
+                <li>You will not use the Protocol for any illegal or unauthorized purpose.</li>
+              </ul>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Mathematical Formulas</CardTitle>
+              <CardTitle>Risk Disclosure</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h3 className="font-medium mb-2">Core Formula</h3>
-                <p className="text-sm text-muted-foreground font-mono">
-                  f(i) = 1 * 1.03^(i-25) for i &gt; 25
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Where f(i) determines bonus yield distribution for higher tiers
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="font-medium mb-2">Surplus Distribution</h3>
-                <p className="text-sm text-muted-foreground font-mono">
-                  Dist_i = surplus * (f(i)/∑f(j&gt;1)) * stake
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  Approximately 74% of surplus goes to tier 4 participants
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="font-medium mb-2">Performance Metrics</h3>
-                <ul className="text-sm text-muted-foreground space-y-1">
-                  <li>• <strong>Average APY:</strong> 8.73% (simulation target)</li>
-                  <li>• <strong>Spread:</strong> 8.91% (yield distribution variance)</li>
-                  <li>• <strong>Variance:</strong> 2.9e-07 (uniform liquidity target)</li>
-                  <li>• <strong>Stress Test:</strong> Tier 1 $0 loss, Tier 4 $80 loss per $10k</li>
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Gavel className="h-5 w-5" />
-                User Responsibilities
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h3 className="font-medium mb-2">Account Security</h3>
-                <p className="text-sm text-muted-foreground">
-                  You are responsible for securing your wallet and private keys. T-Core does not 
-                  store private keys or have access to your funds beyond the smart contract interactions.
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="font-medium mb-2">Risk Management</h3>
-                <p className="text-sm text-muted-foreground">
-                  You acknowledge that higher risk tiers (76-100) absorb losses first via subordination. 
-                  Only invest amounts you can afford to lose.
-                </p>
-              </div>
-              
-              <div>
-                <h3 className="font-medium mb-2">Compliance</h3>
-                <p className="text-sm text-muted-foreground">
-                  You must comply with all applicable laws and regulations in your jurisdiction. 
-                  You are responsible for tax reporting and payment.
-                </p>
-              </div>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                Participating in DeFi activities involves significant risks, including but not limited to:
+              </p>
+              <ul className="list-disc list-inside text-sm text-muted-foreground space-y-2">
+                <li>Smart contract risks and potential bugs</li>
+                <li>Market volatility and impermanent loss</li>
+                <li>Liquidity risks in underlying protocols</li>
+                <li>Regulatory changes affecting DeFi protocols</li>
+              </ul>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                You should carefully consider whether participating in T-Core Finance is suitable for you in light of your financial condition.
+              </p>
             </CardContent>
           </Card>
 
@@ -198,21 +83,35 @@ const Terms = () => {
               <CardTitle>Limitation of Liability</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">
-                T-Core Finance is provided "as is" without warranties. The protocol team is not liable 
-                for any losses, damages, or technical issues. Users participate at their own risk and 
-                responsibility.
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                T-Core Finance and its developers are not liable for any direct, indirect, incidental, special, or consequential damages 
+                arising out of or in any way connected with your use of the Protocol.
               </p>
             </CardContent>
           </Card>
 
-          <Alert>
-            <FileText className="h-4 w-4" />
-            <AlertDescription>
-              <strong>Updates:</strong> These terms may be updated as the protocol evolves. 
-              Continued use constitutes acceptance of updated terms.
-            </AlertDescription>
-          </Alert>
+          <Card>
+            <CardHeader>
+              <CardTitle>Governing Law</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                These terms shall be governed by and construed in accordance with the laws of [Jurisdiction], without regard to its conflict of law provisions.
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Changes to Terms</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                T-Core Finance reserves the right to modify or revise these terms at any time. Your continued use of the Protocol 
+                following the posting of any changes constitutes acceptance of those changes.
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>

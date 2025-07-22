@@ -30,7 +30,7 @@ const LandingHeader = ({ onStartTutorial, onStartStakingTutorial }: LandingHeade
             How it Works
           </a>
           <NavLink 
-            to="/staking" 
+            to="/app" 
             className="text-sm text-primary hover:text-primary/80 transition-colors font-medium flex items-center gap-1"
           >
             <Calculator className="w-4 h-4" />
@@ -96,7 +96,7 @@ const LandingHeader = ({ onStartTutorial, onStartStakingTutorial }: LandingHeade
               <Play className="w-4 h-4" />
             </Button>
           )}
-          <NavLink to="/staking" className="md:hidden">
+          <NavLink to="/app" className="md:hidden">
             <Button variant="outline" size="sm">
               <Calculator className="w-3 h-3" />
             </Button>

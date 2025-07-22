@@ -30,10 +30,10 @@ const CTASection = () => {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <NavLink to="/staking">
+            <NavLink to="/app">
               <Button size={isMobile ? "default" : "lg"} className="w-full sm:w-auto bg-primary hover:bg-primary/90">
                 <Calculator className="w-4 h-4 mr-2" />
-                Try Advanced Staking
+                Launch App & Connect Wallet
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </NavLink>
