@@ -1,6 +1,15 @@
 import { DISTRIBUTION_PARAMS } from '@/types/riskTiers';
 import { NFTPosition, ProtocolParams, YieldDistribution } from '@/types/tcore';
 
+// Define LossDistribution interface
+export interface LossDistribution {
+  level: number;
+  userStake: number;
+  totalLiquidity: number;
+  lossShare: number;
+  remainingStake: number;
+}
+
 // Constants
 export const MIN_RISK_LEVEL = 1;
 export const MAX_RISK_LEVEL = 100;
