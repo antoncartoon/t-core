@@ -54,17 +54,6 @@ const SimpleHeroSection = ({ onStartTutorial, onStartStakingTutorial }: SimpleHe
               </Button>
             </NavLink>
             
-            {onStartStakingTutorial && (
-              <Button 
-                variant="outline"
-                size={isMobile ? "default" : "lg"} 
-                className="w-full sm:w-auto text-base font-medium px-6 sm:px-8 py-4 sm:py-6 h-auto border-green-500 text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-950/20"
-                onClick={onStartStakingTutorial}
-              >
-                <BookOpen className="w-4 h-4 mr-2" />
-                Learn Staking System
-              </Button>
-            )}
 
 
             {onStartTutorial && (
