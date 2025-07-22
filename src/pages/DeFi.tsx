@@ -47,8 +47,29 @@ const DeFi = () => {
           </Card>
         </div>
 
-        {/* Pendle Integration Section */}
+        {/* AAVE Integration Section */}
         <div className="mb-12">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl font-light mb-2 flex items-center gap-2">
+                <Building2 className="w-5 h-5 text-blue-600" />
+                AAVE Lending Protocol
+              </h2>
+              <p className="text-muted-foreground">
+                Use your T-Core NFT positions as collateral to borrow assets and amplify your strategies
+              </p>
+            </div>
+            <Button variant="outline" size="sm" className="gap-2">
+              <ExternalLink className="w-4 h-4" />
+              AAVE Docs
+            </Button>
+          </div>
+          
+          <AAVEIntegrationCard />
+        </div>
+
+        {/* Pendle Integration Section */}
+        <div>
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-2xl font-light mb-2 flex items-center gap-2">
@@ -73,27 +94,6 @@ const DeFi = () => {
           <div className="mt-8">
             <PTYTBalance />
           </div>
-        </div>
-
-        {/* AAVE Integration Section */}
-        <div>
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-light mb-2 flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-blue-600" />
-                AAVE Lending Protocol
-              </h2>
-              <p className="text-muted-foreground">
-                Use your T-Core NFT positions as collateral to borrow assets and amplify your strategies
-              </p>
-            </div>
-            <Button variant="outline" size="sm" className="gap-2">
-              <ExternalLink className="w-4 h-4" />
-              AAVE Docs
-            </Button>
-          </div>
-          
-          <AAVEIntegrationCard />
         </div>
       </main>
     </div>
