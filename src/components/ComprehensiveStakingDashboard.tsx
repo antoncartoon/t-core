@@ -29,22 +29,22 @@ const ComprehensiveStakingDashboard: React.FC<ComprehensiveDashboardProps> = ({
   return (
     <div className="space-y-6">
       {/* Feature Announcement Banner */}
-      <div className="bg-gradient-to-r from-orange-500/20 to-yellow-500/20 border-b border-orange-200 dark:border-orange-800 p-3 sm:p-4 rounded-lg">
+      <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-b border-blue-200 dark:border-blue-800 p-3 sm:p-4 rounded-lg">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
           <div className="flex items-start sm:items-center gap-2 sm:gap-3 min-w-0 flex-1">
             <div className="relative flex-shrink-0">
-              <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-orange-500" />
-              <div className="absolute -top-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-orange-500 rounded-full animate-pulse"></div>
+              <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500" />
+              <div className="absolute -top-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-blue-500 rounded-full animate-pulse"></div>
             </div>
             <div className="min-w-0 flex-1">
-              <h2 className="font-bold text-base sm:text-lg xl:text-xl leading-tight">T-Core Staking Live!</h2>
+              <h2 className="font-bold text-base sm:text-lg xl:text-xl leading-tight">AMM-Style Staking Interface</h2>
               <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1 leading-relaxed">
-                4 simple risk tiers, waterfall distribution, and transparent yield calculations
+                Interactive yield curves, real-time stress testing, and precision risk management
               </p>
             </div>
           </div>
-          <Badge variant="secondary" className="bg-orange-100 text-orange-800 flex-shrink-0 text-xs">
-            SIMPLIFIED
+          <Badge variant="secondary" className="bg-blue-100 text-blue-800 flex-shrink-0 text-xs">
+            ENHANCED
           </Badge>
         </div>
       </div>
@@ -59,7 +59,7 @@ const ComprehensiveStakingDashboard: React.FC<ComprehensiveDashboardProps> = ({
                 className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-xs sm:text-sm whitespace-nowrap"
               >
                 <Calculator className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
-                <span>Staking</span>
+                <span>Interactive Staking</span>
               </TabsTrigger>
               <TabsTrigger 
                 value="positions" 
@@ -86,12 +86,12 @@ const ComprehensiveStakingDashboard: React.FC<ComprehensiveDashboardProps> = ({
           </div>
         </div>
 
-        {/* STAKING INTERFACE - SIMPLIFIED */}
+        {/* ENHANCED STAKING INTERFACE */}
         <TabsContent value="staking" className="space-y-4 sm:space-y-6">
           <SimplifiedStakingInterface />
         </TabsContent>
 
-        {/* USER POSITIONS & HEALTH - COMBINED */}
+        {/* USER POSITIONS & HEALTH */}
         <TabsContent value="positions" className="space-y-4 sm:space-y-6">
           <UserPositionsAndHealth />
         </TabsContent>
