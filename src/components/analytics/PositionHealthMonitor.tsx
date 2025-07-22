@@ -37,7 +37,7 @@ export const PositionHealthMonitor = () => {
         <div key={index} className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">{metric.name}</span>
-            <Badge variant={metric.status === 'success' ? 'default' : 'warning'}>
+            <Badge variant={metric.status === 'success' ? 'default' : 'destructive'}>
               {metric.value}%
             </Badge>
           </div>
