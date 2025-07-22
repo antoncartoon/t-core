@@ -1,5 +1,4 @@
-import { DISTRIBUTION_PARAMS } from '@/types/riskTiers';
-import { OPTIMAL_K } from '@/utils/tcoreCalculations';
+import { DISTRIBUTION_PARAMS, OPTIMAL_K } from '@/utils/tcoreCalculations';
 
 export interface LossDistributionResult {
   tierLosses: Map<number, number>;

@@ -1,5 +1,9 @@
 
-import { FIXED_BASE_APY, OPTIMAL_K } from '@/utils/tcoreCalculations';
+// Define the base values directly to avoid circular imports
+const FIXED_BASE_RATE = 0.05;
+const FIXED_BASE_MULTIPLIER = 1.2;
+export const FIXED_BASE_APY = FIXED_BASE_RATE * FIXED_BASE_MULTIPLIER; // T-Bills × 1.2 (6%)
+export const OPTIMAL_K = 1.03; // k=1.03 for f(i) calculation
 
 export const TIER_DEFINITIONS = {
   SAFE: { 
@@ -56,19 +60,6 @@ export interface TierMetrics {
   insuranceCoverage: number;
 }
 
-// Distribution parameters from T-Core spec
-export const DISTRIBUTION_PARAMS = {
-  FIXED_BASE_MULTIPLIER: 1.2, // T-Bills × 1.2
-  OPTIMAL_K: 1.03, // k=1.03 for f(i) calculation
-  VARIANCE_TARGET: 2.9e-7, // Target variance for liquidity uniformity
-  TIER1_WIDTH: 25, // Width of tier1 (levels 1-25)
-  INSURANCE_POOL_TARGET: 0.05, // 5% of TVL target for insurance pool
-  PERFORMANCE_FEE: 0.20, // 20% performance fee
-  FEE_ALLOCATION: {
-    BONUS: 0.25, // 25% to bonus yield
-    BUYBACK: 0.25, // 25% to buyback
-    PROTOCOL: 0.25, // 25% as protocol revenue
-    INSURANCE: 0.25 // 25% to insurance buffer
-  }
-};
+// Import distribution parameters from tcoreCalculations to avoid circular imports
+import { DISTRIBUTION_PARAMS } from '@/utils/tcoreCalculations';
 

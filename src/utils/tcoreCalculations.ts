@@ -1,5 +1,20 @@
-import { DISTRIBUTION_PARAMS } from '@/types/riskTiers';
 import { NFTPosition, ProtocolParams, YieldDistribution } from '@/types/tcore';
+
+// Define constants that were imported from riskTiers
+export const DISTRIBUTION_PARAMS = {
+  FIXED_BASE_MULTIPLIER: 1.2, // T-Bills × 1.2
+  OPTIMAL_K: 1.03, // k=1.03 for f(i) calculation
+  VARIANCE_TARGET: 2.9e-7, // Target variance for liquidity uniformity
+  TIER1_WIDTH: 25, // Width of tier1 (levels 1-25)
+  INSURANCE_POOL_TARGET: 0.05, // 5% of TVL target for insurance pool
+  PERFORMANCE_FEE: 0.20, // 20% performance fee
+  FEE_ALLOCATION: {
+    BONUS: 0.25, // 25% to bonus yield
+    BUYBACK: 0.25, // 25% to buyback
+    PROTOCOL: 0.25, // 25% as protocol revenue
+    INSURANCE: 0.25 // 25% to insurance buffer
+  }
+};
 
 // Define LossDistribution interface
 export interface LossDistribution {
