@@ -1,15 +1,22 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import ComprehensiveStakingDashboard from '@/components/ComprehensiveStakingDashboard';
 import { TCoreProvider } from '@/contexts/TCoreContext';
 
 const Staking = () => {
+  const { isConnected } = useAuth();
+
+  // This component is now wrapped in ProtectedRoute, so isConnected should always be true
   return (
     <TCoreProvider>
       <div className="min-h-screen bg-background">
+        <Header />
+        
         {/* Breadcrumb Navigation */}
         <div className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
           <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

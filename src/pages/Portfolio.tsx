@@ -1,14 +1,18 @@
 
 import React from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import Header from '@/components/Header';
 import ActivePositions from '@/components/ActivePositions';
 import LiquidityIncentives from '@/components/LiquidityIncentives';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Portfolio = () => {
+  const { isConnected } = useAuth();
+
+  // This component is now wrapped in ProtectedRoute, so isConnected should always be true
   return (
     <div className="min-h-screen bg-background">
-      <Header isConnected={true} onConnect={() => {}} walletAddress="0x742d35Cc6634C0532925a3b8D4542DfC3d4e18ef" />
+      <Header />
       
       <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
         <div className="mb-8 sm:mb-12">

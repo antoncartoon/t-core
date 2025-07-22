@@ -1,6 +1,8 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import Header from '@/components/Header';
 import StatsOverview from '@/components/StatsOverview';
 import DepositCard from '@/components/DepositCard';
 import { RedeemCard } from '@/components/RedeemCard';
@@ -8,8 +10,13 @@ import { Button } from '@/components/ui/button';
 import { TrendingUp, PlusCircle, ArrowRightLeft } from 'lucide-react';
 
 const App = () => {
+  const { isConnected } = useAuth();
+
+  // This component is now wrapped in ProtectedRoute, so isConnected should always be true
   return (
     <div className="min-h-screen bg-background">
+      <Header />
+      
       <div className="max-w-7xl mx-auto p-4 space-y-8">
         {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

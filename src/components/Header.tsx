@@ -4,21 +4,16 @@ import { Wallet, Menu, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { NavLink } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useAuth } from '@/contexts/AuthContext';
 import WalletDropdown from './WalletDropdown';
 import MobileMenu from './MobileMenu';
 import GlobalSearch from './GlobalSearch';
 
-interface HeaderProps {
-  isConnected: boolean;
-  onConnect: () => void;
-  walletAddress?: string;
-}
-
-const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
+const Header = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const isMobile = useIsMobile();
-  
+  const { isConnected, walletAddress, connect } = useAuth();
 
   return (
     <>
@@ -100,8 +95,6 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
           </nav>
 
           <div className="flex items-center space-x-2">
-            
-            
             {isConnected && (
               <Button
                 variant="ghost"
@@ -116,7 +109,7 @@ const Header = ({ isConnected, onConnect, walletAddress }: HeaderProps) => {
             {isConnected && walletAddress ? (
               <WalletDropdown walletAddress={walletAddress} />
             ) : (
-              <Button onClick={onConnect} size={isMobile ? "sm" : "sm"} className="hidden sm:flex text-xs sm:text-sm h-8 sm:h-9">
+              <Button onClick={() => connect()} size={isMobile ? "sm" : "sm"} className="hidden sm:flex text-xs sm:text-sm h-8 sm:h-9">
                 <Wallet className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 Connect
               </Button>
