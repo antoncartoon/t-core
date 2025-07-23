@@ -72,9 +72,9 @@ export const calculatePiecewiseAPY = (segment: number): number => {
     return TARGET_APYS.BALANCED_START + (TARGET_APYS.BALANCED_END - TARGET_APYS.BALANCED_START) * Math.pow(progress, 2);
   }
   
-  // Hero Tier (60-99): Exponential from 9.5% using 1.03^(i-25)
-  // f(i) = 9.5 * 1.03^(i - 25) for i ∈ [60, 99]
-  return TARGET_APYS.HERO_START * Math.pow(1.03, i - TARGET_APYS.HERO_EXPONENTIAL_BASE);
+  // Hero Tier (60-99): Exponential from 9.5% using 1.03^(i-60)
+  // f(i) = 9.5 * 1.03^(i - 60) for i ∈ [60, 99]
+  return TARGET_APYS.HERO_START * Math.pow(1.03, i - 60);
 };
 
 /**
