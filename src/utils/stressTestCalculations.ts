@@ -35,29 +35,36 @@ const getTierFromSegment = (segment: number): 'safe' | 'conservative' | 'balance
  */
 const calculateTierRiskAbsorption = (
   tier: 'safe' | 'conservative' | 'balanced' | 'hero',
-  avgSegment: number
+  avgSegment: number,
+  scenarioSeverity: number = 0.10 // Default to 10% loss scenario
 ): number => {
   switch (tier) {
     case 'safe':
       return 0.02; // 2% maximum absorption (protected tier)
     
     case 'conservative':
-      // Linear progression from 10-29
+      // Realistic conservative absorption based on scenario severity
       const conservativeProgress = (avgSegment - TIER_BREAKPOINTS.CONSERVATIVE_START) / 
                                  (TIER_BREAKPOINTS.CONSERVATIVE_END - TIER_BREAKPOINTS.CONSERVATIVE_START);
-      return 0.05 + (conservativeProgress * 0.15); // 5% to 20% absorption
+      const baseAbsorption = 0.15 + (conservativeProgress * 0.25); // 15% to 40% base absorption
+      
+      // Scale with scenario severity for realistic stress testing
+      const severityMultiplier = Math.min(2.0, 1.0 + (scenarioSeverity * 8)); // Up to 2x for severe scenarios
+      return Math.min(0.75, baseAbsorption * severityMultiplier); // Cap at 75% absorption
     
     case 'balanced':
       // Quadratic progression using tzFormulas function
       const quadraticRisk = calculateQuadraticRisk(avgSegment);
-      return 0.20 + (quadraticRisk * 0.40); // 20% to 60% absorption
+      const balancedBase = 0.30 + (quadraticRisk * 0.45); // 30% to 75% absorption
+      const balancedMultiplier = Math.min(1.5, 1.0 + (scenarioSeverity * 4));
+      return Math.min(0.90, balancedBase * balancedMultiplier);
     
     case 'hero':
       // Exponential progression using piecewise APY as scaling factor
       const heroProgress = (avgSegment - TIER_BREAKPOINTS.HERO_START) / 
                           (TIER_BREAKPOINTS.HERO_END - TIER_BREAKPOINTS.HERO_START);
       const exponentialScaling = Math.pow(1.2, heroProgress * 4);
-      return Math.min(0.95, 0.60 + (exponentialScaling * 0.20)); // 60% to 95% absorption
+      return Math.min(0.98, 0.70 + (exponentialScaling * 0.20)); // 70% to 98% absorption
   }
 };
 
@@ -72,6 +79,9 @@ const calculateMathematicalWaterfallLosses = (
   console.log('Total Loss:', totalLoss);
   console.log('Total TVL:', totalTVL);
   
+  const scenarioSeverity = totalLoss / totalTVL; // Calculate scenario severity for realistic absorption
+  console.log('Scenario Severity:', scenarioSeverity);
+  
   const tierTVL = {
     safe: totalTVL * TIER_TVL_DISTRIBUTION.safe,
     conservative: totalTVL * TIER_TVL_DISTRIBUTION.conservative,
@@ -81,12 +91,12 @@ const calculateMathematicalWaterfallLosses = (
   
   console.log('Tier TVL Distribution:', tierTVL);
 
-  // Calculate mathematical risk absorption capacities
+  // Calculate mathematical risk absorption capacities with scenario severity
   const riskAbsorption = {
-    safe: calculateTierRiskAbsorption('safe', 4.5), // Mid-point of 0-9
-    conservative: calculateTierRiskAbsorption('conservative', 19.5), // Mid-point of 10-29
-    balanced: calculateTierRiskAbsorption('balanced', 44.5), // Mid-point of 30-59
-    hero: calculateTierRiskAbsorption('hero', 79.5) // Mid-point of 60-99
+    safe: calculateTierRiskAbsorption('safe', 4.5, scenarioSeverity), // Mid-point of 0-9
+    conservative: calculateTierRiskAbsorption('conservative', 19.5, scenarioSeverity), // Mid-point of 10-29
+    balanced: calculateTierRiskAbsorption('balanced', 44.5, scenarioSeverity), // Mid-point of 30-59
+    hero: calculateTierRiskAbsorption('hero', 79.5, scenarioSeverity) // Mid-point of 60-99
   };
 
   console.log('Risk Absorption Capacities:', riskAbsorption);
