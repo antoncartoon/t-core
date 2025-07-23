@@ -24,28 +24,28 @@ const AnimatedYieldDistribution = () => {
     {
       name: 'Равномерное распределение',
       data: [
-        { tier: 'Safe', range: '1-25', baseYield: 6.0, bonusYield: 0.5, totalYield: 6.5, liquidity: 25, color: 'bg-green-500' },
-        { tier: 'Conservative', range: '26-50', baseYield: 6.0, bonusYield: 2.8, totalYield: 8.8, liquidity: 25, color: 'bg-blue-500' },
-        { tier: 'Balanced', range: '51-75', baseYield: 6.0, bonusYield: 7.2, totalYield: 13.2, liquidity: 25, color: 'bg-yellow-500' },
-        { tier: 'Hero', range: '76-100', baseYield: 6.0, bonusYield: 19.5, totalYield: 25.5, liquidity: 25, color: 'bg-purple-500' }
+        { tier: 'Safe', range: '0-9', baseYield: 5.16, bonusYield: 0.0, totalYield: 5.16, liquidity: 25, color: 'bg-green-500' },
+        { tier: 'Conservative', range: '10-29', baseYield: 5.16, bonusYield: 1.84, totalYield: 7.0, liquidity: 25, color: 'bg-blue-500' },
+        { tier: 'Balanced', range: '30-59', baseYield: 7.0, bonusYield: 2.5, totalYield: 9.5, liquidity: 25, color: 'bg-yellow-500' },
+        { tier: 'Hero', range: '60-99', baseYield: 9.5, bonusYield: 10.5, totalYield: 20.0, liquidity: 25, color: 'bg-purple-500' }
       ]
     },
     {
       name: 'Больше в Safe',
       data: [
-        { tier: 'Safe', range: '1-25', baseYield: 6.0, bonusYield: 0.2, totalYield: 6.2, liquidity: 50, color: 'bg-green-500' },
-        { tier: 'Conservative', range: '26-50', baseYield: 6.0, bonusYield: 1.5, totalYield: 7.5, liquidity: 20, color: 'bg-blue-500' },
-        { tier: 'Balanced', range: '51-75', baseYield: 6.0, bonusYield: 4.8, totalYield: 10.8, liquidity: 20, color: 'bg-yellow-500' },
-        { tier: 'Hero', range: '76-100', baseYield: 6.0, bonusYield: 28.2, totalYield: 34.2, liquidity: 10, color: 'bg-purple-500' }
+        { tier: 'Safe', range: '0-9', baseYield: 5.16, bonusYield: 0.0, totalYield: 5.16, liquidity: 50, color: 'bg-green-500' },
+        { tier: 'Conservative', range: '10-29', baseYield: 5.16, bonusYield: 1.34, totalYield: 6.5, liquidity: 20, color: 'bg-blue-500' },
+        { tier: 'Balanced', range: '30-59', baseYield: 7.0, bonusYield: 1.8, totalYield: 8.8, liquidity: 20, color: 'bg-yellow-500' },
+        { tier: 'Hero', range: '60-99', baseYield: 9.5, bonusYield: 18.7, totalYield: 28.2, liquidity: 10, color: 'bg-purple-500' }
       ]
     },
     {
       name: 'Больше в Hero',
       data: [
-        { tier: 'Safe', range: '1-25', baseYield: 6.0, bonusYield: 0.8, totalYield: 6.8, liquidity: 10, color: 'bg-green-500' },
-        { tier: 'Conservative', range: '26-50', baseYield: 6.0, bonusYield: 3.2, totalYield: 9.2, liquidity: 20, color: 'bg-blue-500' },
-        { tier: 'Balanced', range: '51-75', baseYield: 6.0, bonusYield: 8.5, totalYield: 14.5, liquidity: 20, color: 'bg-yellow-500' },
-        { tier: 'Hero', range: '76-100', baseYield: 6.0, bonusYield: 12.8, totalYield: 18.8, liquidity: 50, color: 'bg-purple-500' }
+        { tier: 'Safe', range: '0-9', baseYield: 5.16, bonusYield: 0.0, totalYield: 5.16, liquidity: 10, color: 'bg-green-500' },
+        { tier: 'Conservative', range: '10-29', baseYield: 5.16, bonusYield: 1.94, totalYield: 7.1, liquidity: 20, color: 'bg-blue-500' },
+        { tier: 'Balanced', range: '30-59', baseYield: 7.0, bonusYield: 3.5, totalYield: 10.5, liquidity: 20, color: 'bg-yellow-500' },
+        { tier: 'Hero', range: '60-99', baseYield: 9.5, bonusYield: 6.3, totalYield: 15.8, liquidity: 50, color: 'bg-purple-500' }
       ]
     }
   ];

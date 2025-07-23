@@ -77,7 +77,7 @@ export const ProModeSelector: React.FC<ProModeSelectorProps> = ({
 
       {/* Range Slider */}
       <div className="space-y-4">
-        <Label>Risk Level Range (1-100)</Label>
+        <Label>Risk Segment Range (0-99)</Label>
         
         <div className="px-3">
           <Slider
