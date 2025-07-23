@@ -5,12 +5,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, Shield, AlertTriangle, BarChart3, Info } from 'lucide-react';
 import { calculateRiskLevelAPR, calculateRealisticRangeAPY, FIXED_BASE_APY, calculateTCoreAPY, RISK_SCALE_MIN, RISK_SCALE_MAX } from '@/utils/riskRangeCalculations';
+import { calculateQuadraticRisk, getTierForSegment } from '@/utils/piecewiseAPY';
 
 interface RangeSelectorProps {
   value: [number, number];
   onChange: (range: [number, number]) => void;
   liquidityData?: Array<{ risk: number; liquidity: number }>;
-  amount?: number; // Amount for realistic APY calculation
+  amount?: number;
   className?: string;
 }
 
@@ -29,15 +30,35 @@ const RangeSelector = ({ value, onChange, liquidityData = [], amount = 0, classN
 
   const getRangeCategory = (min: number, max: number) => {
     const avg = (min + max) / 2;
-    if (avg <= 25) return { name: 'Conservative', color: 'bg-green-100 text-green-700', icon: Shield };
-    if (avg <= 60) return { name: 'Moderate', color: 'bg-yellow-100 text-yellow-700', icon: TrendingUp };
-    return { name: 'Aggressive', color: 'bg-red-100 text-red-700', icon: AlertTriangle };
+    const tier = getTierForSegment(avg);
+    const icons = {
+      'Safe': Shield,
+      'Conservative': Shield,
+      'Balanced': TrendingUp,
+      'Hero': AlertTriangle
+    };
+    const colors = {
+      'Safe': 'bg-green-100 text-green-700',
+      'Conservative': 'bg-blue-100 text-blue-700',
+      'Balanced': 'bg-yellow-100 text-yellow-700',
+      'Hero': 'bg-purple-100 text-purple-700'
+    };
+    return { 
+      name: tier.name, 
+      color: colors[tier.name] || 'bg-gray-100 text-gray-700',
+      icon: icons[tier.name] || TrendingUp,
+      formula: tier.formula
+    };
   };
 
   const category = getRangeCategory(localValue[0], localValue[1]);
   const CategoryIcon = category.icon;
   const rangeSize = localValue[1] - localValue[0];
-  const efficiency = Math.round(100 / Math.max(1, rangeSize / 10)); // Capital efficiency score
+  const efficiency = Math.round(100 / Math.max(1, rangeSize / 10));
+
+  // Calculate quadratic risk for the range
+  const avgRisk = (localValue[0] + localValue[1]) / 2;
+  const quadraticRisk = calculateQuadraticRisk(avgRisk);
 
   // Calculate expected APR using realistic calculation with amount
   const realisticAPY = amount > 0 ? calculateRealisticRangeAPY(amount, {
@@ -45,7 +66,6 @@ const RangeSelector = ({ value, onChange, liquidityData = [], amount = 0, classN
     max: localValue[1]
   }) : 0;
   
-  // Also show theoretical range
   const minTheoreticalAPR = calculateRiskLevelAPR(localValue[0]);
   const maxTheoreticalAPR = calculateRiskLevelAPR(localValue[1]);
 
@@ -68,7 +88,10 @@ const RangeSelector = ({ value, onChange, liquidityData = [], amount = 0, classN
               {localValue[0]} - {localValue[1]}
             </div>
             <p className="text-sm text-muted-foreground">
-              Risk Level Range ({RISK_SCALE_MIN} = T-Bill +20%, {RISK_SCALE_MAX} = Maximum Risk)
+              Risk Segments (0 = Safe, 99 = Maximum Risk)
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Quadratic Risk Level: {(quadraticRisk * 100).toFixed(1)}%
             </p>
           </div>
 
@@ -86,11 +109,11 @@ const RangeSelector = ({ value, onChange, liquidityData = [], amount = 0, classN
             
             {/* Scale Labels */}
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>1 (T-Bill +20%)</span>
+              <span>0 (Safe)</span>
               <span>25</span>
               <span>50</span>
               <span>75</span>
-              <span>100 (Max Risk)</span>
+              <span>99 (Max Risk)</span>
             </div>
           </div>
 
@@ -118,7 +141,7 @@ const RangeSelector = ({ value, onChange, liquidityData = [], amount = 0, classN
                   {(minTheoreticalAPR * 100).toFixed(1)}% - {(maxTheoreticalAPR * 100).toFixed(1)}%
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  T-Core formula: tier1 = {(FIXED_BASE_APY * 100).toFixed(1)}% (fixed), higher = fixed + bonus × k^(i-25), k=1.03
+                  {category.formula}
                 </p>
               </div>
             )}
@@ -141,7 +164,7 @@ const RangeSelector = ({ value, onChange, liquidityData = [], amount = 0, classN
                         isInRange ? 'bg-blue-500/80 hover:bg-blue-500' : 'bg-blue-500/40 hover:bg-blue-500/60'
                       }`}
                       style={{
-                        left: `${((item.risk - 1) / 99) * 100}%`,
+                        left: `${(item.risk / 99) * 100}%`,
                         width: '1%',
                         height: `${Math.min(100, (item.liquidity / Math.max(...liquidityData.map(d => d.liquidity))) * 100)}%`,
                         bottom: 0
@@ -153,7 +176,7 @@ const RangeSelector = ({ value, onChange, liquidityData = [], amount = 0, classN
                 <div
                   className="absolute bg-primary/20 border-2 border-primary rounded"
                   style={{
-                    left: `${((localValue[0] - 1) / 99) * 100}%`,
+                    left: `${(localValue[0] / 99) * 100}%`,
                     width: `${((localValue[1] - localValue[0]) / 99) * 100}%`,
                     height: '100%'
                   }}
@@ -166,7 +189,7 @@ const RangeSelector = ({ value, onChange, liquidityData = [], amount = 0, classN
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div className="space-y-1">
               <p className="text-muted-foreground">Range Size</p>
-              <p className="font-semibold">{rangeSize + 1} levels</p>
+              <p className="font-semibold">{rangeSize + 1} segments</p>
             </div>
             <div className="space-y-1">
               <p className="text-muted-foreground">Capital Efficiency</p>
@@ -176,11 +199,11 @@ const RangeSelector = ({ value, onChange, liquidityData = [], amount = 0, classN
 
           {/* Risk Explanation */}
           <div className="text-xs text-muted-foreground bg-muted/30 p-3 rounded-lg">
-            <p className="font-medium mb-1">Waterfall Distribution Model:</p>
-            <p>• Yield flows bottom-up: level 1 gets paid first (guaranteed T-Bill +20%)</p>
-            <p>• Losses flow top-down: level 100 takes losses first</p>
-            <p>• Coverage level K depends on 28-day historical protocol APY</p>
-            <p>• Narrower ranges = higher capital efficiency but more concentrated risk</p>
+            <p className="font-medium mb-1">Quadratic Risk & Piecewise Yield Model:</p>
+            <p>• Risk increases quadratically: Risk(i) = (i/99)²</p>
+            <p>• Safe (0-9): Fixed 5.16% | Conservative (10-29): Linear 5.16%→7%</p>
+            <p>• Balanced (30-59): Quadratic 7%→9.5% | Hero (60-99): Exponential 9.5%×1.03^(i-25)</p>
+            <p>• Yield flows bottom-up, losses flow top-down</p>
           </div>
         </div>
       </CardContent>

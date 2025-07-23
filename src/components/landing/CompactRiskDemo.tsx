@@ -8,6 +8,7 @@ import { Calculator, Shield, Star, Crown, ArrowRight, TrendingUp } from 'lucide-
 import { 
   calculatePiecewiseAPY, 
   getTierForSegment,
+  calculateQuadraticRisk,
   TARGET_APYS
 } from '@/utils/piecewiseAPY';
 
@@ -46,12 +47,13 @@ const CompactRiskDemo = () => {
       segment: 80, 
       icon: Crown, 
       color: 'bg-purple-100 text-purple-800 border-purple-200',
-      description: 'Exponential growth'
+      description: 'Exponential 9.5% × 1.03^(i-25)'
     }
   ];
 
   const selectedStrategyData = strategies.find(s => s.id === selectedStrategy) || strategies[2];
   const currentAPY = calculatePiecewiseAPY(selectedStrategyData.segment);
+  const currentRisk = calculateQuadraticRisk(selectedStrategyData.segment);
   const annualYield = demoAmount * currentAPY;
   const tierInfo = getTierForSegment(selectedStrategyData.segment);
 
@@ -60,13 +62,13 @@ const CompactRiskDemo = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
           <Badge variant="secondary" className="mb-4">
-            UPDATED PIECEWISE MODEL
+            QUADRATIC RISK & PIECEWISE YIELD MODEL
           </Badge>
           <h2 className="text-3xl sm:text-4xl font-light mb-4">
             Choose Your Strategy
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Experience T-Core's progressive yield model with proper tier formulas
+            Experience T-Core's quadratic risk model with progressive piecewise formulas
           </p>
         </div>
 
@@ -82,6 +84,7 @@ const CompactRiskDemo = () => {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               {strategies.map((strategy) => {
                 const apy = calculatePiecewiseAPY(strategy.segment);
+                const risk = calculateQuadraticRisk(strategy.segment);
                 const isActive = selectedStrategy === strategy.id;
                 
                 return (
@@ -102,6 +105,9 @@ const CompactRiskDemo = () => {
                         {(apy * 100).toFixed(2)}%
                       </div>
                       <div className="text-[10px] opacity-60">
+                        Risk: {(risk * 100).toFixed(1)}%
+                      </div>
+                      <div className="text-[10px] opacity-60">
                         Segment {strategy.segment}
                       </div>
                     </div>
@@ -112,7 +118,7 @@ const CompactRiskDemo = () => {
 
             {/* Results Display */}
             <div className="p-6 bg-gradient-to-r from-green-50 to-purple-50 dark:from-green-950/20 dark:to-purple-950/20 rounded-lg border border-green-200 dark:border-green-800">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
                 <div>
                   <div className="text-sm text-muted-foreground mb-1">Investment</div>
                   <div className="text-2xl font-bold">${demoAmount.toLocaleString()}</div>
@@ -123,6 +129,13 @@ const CompactRiskDemo = () => {
                     {(currentAPY * 100).toFixed(2)}%
                   </div>
                   <div className="text-xs text-muted-foreground mt-1">{tierInfo.formula}</div>
+                </div>
+                <div>
+                  <div className="text-sm text-muted-foreground mb-1">Risk Level</div>
+                  <div className="text-2xl font-bold text-red-600">
+                    {(currentRisk * 100).toFixed(1)}%
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">Quadratic: (i/99)²</div>
                 </div>
                 <div>
                   <div className="text-sm text-muted-foreground mb-1">Annual Yield</div>
@@ -137,13 +150,14 @@ const CompactRiskDemo = () => {
             <div className="p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center gap-2 mb-3">
                 <TrendingUp className="w-4 h-4 text-primary" />
-                <span className="font-medium text-sm">Progressive Piecewise Model</span>
+                <span className="font-medium text-sm">Quadratic Risk & Piecewise Yield Model</span>
               </div>
               <div className="text-xs text-muted-foreground space-y-1">
+                <div>• <strong>Risk Function:</strong> Risk(i) = (i/99)² - quadratic increase</div>
                 <div>• <strong>Safe (0-9):</strong> Fixed 5.16% (T-Bills × 1.2)</div>
                 <div>• <strong>Conservative (10-29):</strong> Linear 5.16% → 7%</div>
                 <div>• <strong>Balanced (30-59):</strong> Quadratic 7% → 9.5%</div>
-                <div>• <strong>Hero (60-99):</strong> Exponential 9.5% × 1.03^(i-60)</div>
+                <div>• <strong>Hero (60-99):</strong> Exponential 9.5% × 1.03^(i-25)</div>
               </div>
             </div>
 
@@ -157,7 +171,7 @@ const CompactRiskDemo = () => {
                 </Button>
               </NavLink>
               <div className="text-xs text-muted-foreground mt-2">
-                Progressive formulas • Fair distribution • Predictable yields
+                Quadratic risk • Progressive yields • Mathematical precision
               </div>
             </div>
           </CardContent>

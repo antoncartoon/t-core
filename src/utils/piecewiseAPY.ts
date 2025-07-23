@@ -1,3 +1,4 @@
+
 /**
  * T-Core Protocol: Updated Piecewise Yield Distribution Function
  * 
@@ -5,7 +6,7 @@
  * - Safe (0-9): Fixed 5.16% APY (T-Bills × 1.2)
  * - Conservative (10-29): Linear from 5.16% to 7%
  * - Balanced (30-59): Quadratic from 7% to 9.5%
- * - Hero (60-99): Exponential from 9.5% using 1.03^(i-60)
+ * - Hero (60-99): Exponential from 9.5% using 1.03^(i-25)
  */
 
 // Constants from the specification
@@ -32,7 +33,7 @@ export const TARGET_APYS = {
   BALANCED_START: 0.07, // 7% (starting point)
   BALANCED_END: 0.095, // 9.5% (ending point)
   HERO_START: 0.095, // 9.5% (starting point)
-  HERO_EXPONENTIAL_BASE: 60 // Base for exponential calculation: 1.03^(i-60)
+  HERO_EXPONENTIAL_BASE: 25 // Base for exponential calculation: 1.03^(i-25)
 };
 
 /**
@@ -71,8 +72,8 @@ export const calculatePiecewiseAPY = (segment: number): number => {
     return TARGET_APYS.BALANCED_START + (TARGET_APYS.BALANCED_END - TARGET_APYS.BALANCED_START) * Math.pow(progress, 2);
   }
   
-  // Hero Tier (60-99): Exponential from 9.5% using 1.03^(i-60)
-  // f(i) = 9.5 * 1.03^(i - 60) for i ∈ [60, 99]
+  // Hero Tier (60-99): Exponential from 9.5% using 1.03^(i-25)
+  // f(i) = 9.5 * 1.03^(i - 25) for i ∈ [60, 99]
   return TARGET_APYS.HERO_START * Math.pow(1.03, i - TARGET_APYS.HERO_EXPONENTIAL_BASE);
 };
 

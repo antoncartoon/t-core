@@ -10,6 +10,7 @@ import {
   calculatePiecewiseAPY, 
   generatePiecewiseCurveData, 
   getTierForSegment,
+  calculateQuadraticRisk,
   TARGET_APYS
 } from '@/utils/piecewiseAPY';
 
@@ -36,16 +37,21 @@ const InteractiveRiskYieldChart = () => {
   const data = generatePiecewiseCurveData();
   const currentSegment = riskLevel[0];
   const currentAPY = calculatePiecewiseAPY(currentSegment);
+  const currentRisk = calculateQuadraticRisk(currentSegment);
   const currentTier = getTierForSegment(currentSegment);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
+      const risk = calculateQuadraticRisk(label);
       return (
         <div className="bg-background border border-border rounded-lg p-3 shadow-lg">
           <p className="text-sm font-medium text-foreground">{`Segment: ${label}`}</p>
           <p className="text-sm text-primary">
             {`APY: ${data.apy.toFixed(2)}%`}
+          </p>
+          <p className="text-sm text-red-600">
+            {`Risk: ${(risk * 100).toFixed(1)}%`}
           </p>
           <p className="text-xs text-muted-foreground">
             {`Tier: ${data.tier}`}
@@ -65,15 +71,15 @@ const InteractiveRiskYieldChart = () => {
         <div className="flex items-center justify-center mb-4">
           <div className="h-px bg-border flex-1" />
           <span className="px-6 text-sm text-muted-foreground bg-background">
-            or choose your custom tier
+            or choose your custom segment
           </span>
           <div className="h-px bg-border flex-1" />
         </div>
         <h3 className="text-2xl font-light text-foreground mb-2">
-          Interactive Piecewise Yield Curve
+          Interactive Quadratic Risk & Piecewise Yield Model
         </h3>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Updated model with quadratic risk function and simplified piecewise APY: Safe (5.16%), Conservative (7%), Balanced (9%), Hero (exponential)
+          Quadratic risk function Risk(i) = (i/99)² with progressive piecewise APY formulas across 4 tiers
         </p>
       </div>
 
@@ -87,6 +93,12 @@ const InteractiveRiskYieldChart = () => {
                   {(currentAPY * 100).toFixed(2)}%
                 </div>
                 <div className="text-xs text-muted-foreground">Current APY</div>
+              </div>
+              <div className="text-center">
+                <div className="text-lg font-bold text-red-600">
+                  {(currentRisk * 100).toFixed(1)}%
+                </div>
+                <div className="text-xs text-muted-foreground">Quadratic Risk</div>
               </div>
               <div className="text-center">
                 <Badge variant="outline" className={currentTier.color}>
@@ -119,7 +131,7 @@ const InteractiveRiskYieldChart = () => {
                   tickLine={false}
                   tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                   label={{ 
-                    value: 'Risk Segment', 
+                    value: 'Risk Segment (0-99)', 
                     position: 'insideBottom', 
                     offset: -5, 
                     style: { fontSize: 10, fill: 'hsl(var(--muted-foreground))' } 
@@ -135,7 +147,7 @@ const InteractiveRiskYieldChart = () => {
                     position: 'insideLeft', 
                     style: { fontSize: 10, fill: 'hsl(var(--muted-foreground))' } 
                   }}
-                  domain={[5, 16]}
+                  domain={[5, 'dataMax']}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 
@@ -234,13 +246,14 @@ const InteractiveRiskYieldChart = () => {
           <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20 rounded-lg border border-purple-200 dark:border-purple-800">
             <div className="flex items-center gap-2 text-purple-600 text-sm mb-2">
               <Zap className="w-4 h-4" />
-              <span className="font-medium">Piecewise Function Model</span>
+              <span className="font-medium">Quadratic Risk & Piecewise Yield Model</span>
             </div>
             <div className="text-xs text-purple-700 dark:text-purple-300 space-y-1">
+              <div>• <strong>Risk Function:</strong> Risk(i) = (i/99)² - quadratic increase</div>
               <div>• <strong>Safe (0-9):</strong> Fixed 5.16% = T-Bills × 1.2</div>
-              <div>• <strong>Conservative (10-29):</strong> Flat 7% APY</div>
-              <div>• <strong>Balanced (30-59):</strong> Flat 9% APY</div>
-              <div>• <strong>Hero (60-99):</strong> Exponential 1.03^(i-25)%</div>
+              <div>• <strong>Conservative (10-29):</strong> Linear 5.16% → 7%</div>
+              <div>• <strong>Balanced (30-59):</strong> Quadratic 7% → 9.5%</div>
+              <div>• <strong>Hero (60-99):</strong> Exponential 9.5% × 1.03^(i-25)</div>
             </div>
           </div>
 
@@ -248,7 +261,7 @@ const InteractiveRiskYieldChart = () => {
           <Alert className="mt-4 border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20">
             <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             <AlertDescription className="text-amber-700 dark:text-amber-300 text-sm">
-              <strong>Updated Model:</strong> This new piecewise function provides fairer, more predictable yields with distinct tier characteristics. Each tier has its own growth logic for better transparency and user experience.
+              <strong>Mathematical Model:</strong> This quadratic risk function Risk(i) = (i/99)² combined with progressive piecewise APY formulas provides precise risk-yield modeling for optimal position management.
             </AlertDescription>
           </Alert>
         </CardContent>
