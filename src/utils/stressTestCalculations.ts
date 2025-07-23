@@ -1,13 +1,12 @@
-
 import { calculateQuadraticRisk, TIER_BREAKPOINTS, calculatePiecewiseAPY } from '@/utils/tzFormulas';
-import { PROTOCOL_TVL, TARGET_TIER_WEIGHTS } from '@/utils/riskRangeCalculations';
+import { PROTOCOL_TVL, CATEGORY_DISTRIBUTION } from '@/utils/riskRangeCalculations';
 
-// Correct TVL distribution based on actual protocol data
+// Correct TVL distribution based on actual protocol data from riskRangeCalculations
 const TIER_TVL_DISTRIBUTION = {
-  safe: TARGET_TIER_WEIGHTS.safe,         // 10% of TVL in Safe tier (0-9)
-  conservative: TARGET_TIER_WEIGHTS.conservative, // 20% of TVL in Conservative tier (10-29)
-  balanced: TARGET_TIER_WEIGHTS.balanced,    // 30% of TVL in Balanced tier (30-59)
-  hero: TARGET_TIER_WEIGHTS.hero            // 40% of TVL in Hero tier (60-99)
+  safe: 0.10,      // 10% of TVL in Safe tier (0-9) 
+  conservative: 0.20, // 20% of TVL in Conservative tier (10-29)
+  balanced: 0.30,     // 30% of TVL in Balanced tier (30-59)
+  hero: 0.40          // 40% of TVL in Hero tier (60-99)
 };
 
 interface StressScenarioResult {
