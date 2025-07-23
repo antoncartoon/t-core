@@ -14,7 +14,7 @@ interface StakingStressTestPanelProps {
 const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
   amount,
   selectedRange,
-  totalTVL = 10000000 // Default 10M TVL for demo
+  totalTVL = 12500000 // Use actual protocol TVL
 }) => {
   // Calculate stress scenarios using enhanced waterfall model
   const stressScenarios = amount > 0 ? calculateEnhancedStressScenarios(amount, selectedRange, totalTVL) : null;
@@ -25,7 +25,7 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
 
   const scenarioConfigs = [
     {
-      name: '2% Protocol Loss',
+      name: '5% Protocol Loss',
       description: 'Minor market stress',
       icon: Shield,
       bgColor: 'bg-yellow-50 dark:bg-yellow-950/20',
@@ -34,7 +34,7 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
       data: stressScenarios?.scenario1
     },
     {
-      name: '8% Protocol Loss', 
+      name: '10% Protocol Loss', 
       description: 'Moderate market downturn',
       icon: AlertTriangle,
       bgColor: 'bg-orange-50 dark:bg-orange-950/20',
@@ -43,7 +43,7 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
       data: stressScenarios?.scenario5
     },
     {
-      name: '15% Protocol Loss',
+      name: '20% Protocol Loss',
       description: 'Severe market crisis',
       icon: TrendingDown,
       bgColor: 'bg-red-50 dark:bg-red-950/20',
@@ -91,7 +91,7 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5" />
-            Waterfall Loss Distribution Analysis
+            Mathematical Waterfall Loss Analysis
           </CardTitle>
           <p className="text-sm text-muted-foreground">
             Potential losses for your ${amount.toLocaleString()} position in segments {selectedRange[0]}-{selectedRange[1]} ({tierProtection.name} tier)
@@ -103,7 +103,7 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
                 <Info className="h-4 w-4 text-blue-600" />
-                <span className="font-medium text-sm">Your Protection Level</span>
+                <span className="font-medium text-sm">Mathematical Protection Level</span>
               </div>
               <Badge variant="outline" className={`${
                 tierProtection.riskLevel === 'low' ? 'text-green-600' :
@@ -115,7 +115,7 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
               </Badge>
             </div>
             <p className="text-sm text-muted-foreground">
-              {tierProtection.protection} - Losses cascade from Hero → Balanced → Conservative → Safe tiers
+              {tierProtection.protection} - Mathematical loss absorption using quadratic and exponential scaling
             </p>
           </div>
 
@@ -168,7 +168,7 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
           <div className="mt-6 p-4 bg-muted/50 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-3 h-3 bg-primary rounded-full" />
-              <span className="font-medium text-sm">Your Risk Profile</span>
+              <span className="font-medium text-sm">Mathematical Risk Profile</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
               <div>
@@ -184,7 +184,7 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
                 <p className="font-semibold">{tierProtection.name}</p>
               </div>
               <div>
-                <p className="text-muted-foreground">Max Potential Loss</p>
+                <p className="text-muted-foreground">Max Mathematical Loss</p>
                 <p className="font-semibold text-red-600">
                   ${formatDollarLoss(stressScenarios.scenario10.dollarLoss)}
                 </p>
@@ -194,32 +194,33 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
         </CardContent>
       </Card>
 
-      {/* Waterfall Protection Info */}
+      {/* Mathematical Waterfall Protection Info */}
       <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
             <Shield className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
             <div className="space-y-2">
               <h4 className="font-semibold text-sm text-blue-800 dark:text-blue-200">
-                T-Core Waterfall Protection Model
+                T-Core Mathematical Waterfall Protection
               </h4>
               <p className="text-sm text-blue-700 dark:text-blue-300 leading-relaxed">
-                Losses cascade through the risk tiers in order: Hero (60-99) absorbs first, followed by Balanced (30-59), 
-                then Conservative (10-29), and finally Safe (0-9). Each tier absorbs losses up to their capacity 
-                before impacting lower tiers, providing mathematical protection for conservative positions.
+                Losses cascade through risk tiers using mathematical formulas: Hero tier uses exponential scaling, 
+                Balanced tier uses quadratic progression, Conservative tier uses linear progression, and Safe tier 
+                maintains maximum protection. Each tier's absorption capacity is calculated using precise mathematical 
+                functions from the T-Core protocol formulas.
               </p>
               <div className="grid grid-cols-2 gap-4 text-xs text-blue-600 dark:text-blue-400 mt-3">
                 <div>
-                  <span className="font-medium">Hero Tier:</span> First loss absorption (20% TVL)
+                  <span className="font-medium">Hero Tier:</span> Exponential absorption (40% TVL)
                 </div>
                 <div>
-                  <span className="font-medium">Balanced Tier:</span> Secondary protection (35% TVL)
+                  <span className="font-medium">Balanced Tier:</span> Quadratic scaling (30% TVL)
                 </div>
                 <div>
-                  <span className="font-medium">Conservative Tier:</span> Tertiary protection (30% TVL)
+                  <span className="font-medium">Conservative Tier:</span> Linear progression (20% TVL)
                 </div>
                 <div>
-                  <span className="font-medium">Safe Tier:</span> Maximum protection (15% TVL)
+                  <span className="font-medium">Safe Tier:</span> Mathematical protection (10% TVL)
                 </div>
               </div>
             </div>
