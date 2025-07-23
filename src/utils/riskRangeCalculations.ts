@@ -1,3 +1,4 @@
+
 import { RiskRange, RiskTick, LiquidityPosition, RangeCalculationResult } from '@/types/riskRange';
 import { calculatePiecewiseAPY, calculateRangeWeightedAPY, getTierForSegment, TARGET_APYS } from '@/utils/piecewiseAPY';
 
@@ -19,8 +20,8 @@ export const OPTIMAL_K = 75; // Optimal risk level for balanced positioning
 // T-Core 4-tier preset structure with updated piecewise ranges
 export const TIER_PRESETS = {
   SAFE: { range: [0, 9], name: 'Safe', fixedAPY: TARGET_APYS.SAFE },
-  CONSERVATIVE: { range: [10, 29], name: 'Conservative', fixedAPY: TARGET_APYS.CONSERVATIVE },
-  BALANCED: { range: [30, 59], name: 'Balanced', fixedAPY: TARGET_APYS.BALANCED },
+  CONSERVATIVE: { range: [10, 29], name: 'Conservative', fixedAPY: TARGET_APYS.CONSERVATIVE_END },
+  BALANCED: { range: [30, 59], name: 'Balanced', fixedAPY: TARGET_APYS.BALANCED_END },
   HERO: { range: [60, 99], name: 'Hero', fixedAPY: 0.15 } // Approximate max for Hero tier
 };
 
