@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { NavLink, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -35,15 +34,6 @@ const App = () => {
               <p className="text-sm sm:text-base text-muted-foreground mt-1">
                 Manage your TDD tokens and staking positions
               </p>
-            </div>
-            
-            <div className="flex flex-wrap items-center gap-2">
-              <NavLink to="/portfolio">
-                <Button variant="outline" className="flex items-center gap-2">
-                  <PlusCircle className="h-4 w-4" />
-                  Portfolio
-                </Button>
-              </NavLink>
             </div>
           </div>
 
