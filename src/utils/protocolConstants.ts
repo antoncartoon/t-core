@@ -89,11 +89,12 @@ export const BONUS_YIELD_ALLOCATION = {
 export const T_BILLS_RATE = 0.05; // 5% risk-free rate
 export const MIN_RISK_LEVEL = 0;
 export const MAX_RISK_LEVEL = 99;
-export const FIXED_BASE_APY = 0.08; // 8% base APY for calculations
+export const FIXED_BASE_APY = 0.06; // 6% base APY (T-Bills × 1.2)
+export const SELF_INSURANCE_POOL = 5000; // $5K self-insurance pool
 
 // Target APYs by tier
 export const TARGET_APYS = {
-  safe: 0.08,        // 8% target APY
+  safe: 0.06,        // 6% target APY (T-Bills × 1.2)
   conservative: 0.12, // 12% target APY
   balanced: 0.18,     // 18% target APY  
   hero: 0.28          // 28% target APY

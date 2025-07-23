@@ -3,10 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Shield, TrendingUp, Info } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { SELF_INSURANCE_POOL } from '@/utils/protocolConstants';
 
 const SelfInsuranceWidget = () => {
   const insuranceData = {
-    poolSize: 1200000,
+    poolSize: SELF_INSURANCE_POOL,
     totalProtected: 12500000,
     protectionRatio: 9.6,
     weeklyInflow: 8500,
