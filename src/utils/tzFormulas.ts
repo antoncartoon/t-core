@@ -81,9 +81,13 @@ export const TARGET_TIER_WEIGHTS = {
  * 
  * This is the core T-Core APY calculation that implements the mathematical model:
  * - Tier 1 (0-9): Fixed 5.16% (T-Bills × 1.2)
- * - Tier 2 (10-29): Linear progression 5.16% → 7%
- * - Tier 3 (30-59): Quadratic progression 7% → 9.5%
+ * - Tier 2 (10-29): Linear progression 5.16% → 7% over 19 steps
+ * - Tier 3 (30-59): Quadratic progression 7% → 9.5% over 29 steps
  * - Tier 4 (60-99): Exponential progression 9.5% × 1.03^(segment-60)
+ * 
+ * Mathematical verification:
+ * - Conservative: (segment - 10) / 19 ensures continuity at boundaries
+ * - Balanced: (segment - 30) / 29 ensures continuity at boundaries
  * 
  * @param segment - Risk segment (0-99)
  * @returns APY as decimal (e.g., 0.0516 = 5.16%)
@@ -97,16 +101,18 @@ export const calculatePiecewiseAPY = (segment: number): number => {
     return TARGET_APYS.SAFE;
   }
   
-  // Tier 2: Conservative (10-29) - Linear Progression
+  // Tier 2: Conservative (10-29) - Linear Progression over 19 steps
   if (i <= TIER_BREAKPOINTS.CONSERVATIVE_END) {
+    // Progress calculation: (segment - 10) / (29 - 10) = (segment - 10) / 19
     const progress = (i - TIER_BREAKPOINTS.CONSERVATIVE_START) / 
                     (TIER_BREAKPOINTS.CONSERVATIVE_END - TIER_BREAKPOINTS.CONSERVATIVE_START);
     return TARGET_APYS.CONSERVATIVE_START + 
            (TARGET_APYS.CONSERVATIVE_END - TARGET_APYS.CONSERVATIVE_START) * progress;
   }
   
-  // Tier 3: Balanced (30-59) - Quadratic Progression
+  // Tier 3: Balanced (30-59) - Quadratic Progression over 29 steps
   if (i <= TIER_BREAKPOINTS.BALANCED_END) {
+    // Progress calculation: (segment - 30) / (59 - 30) = (segment - 30) / 29
     const progress = (i - TIER_BREAKPOINTS.BALANCED_START) / 
                     (TIER_BREAKPOINTS.BALANCED_END - TIER_BREAKPOINTS.BALANCED_START);
     return TARGET_APYS.BALANCED_START + 
