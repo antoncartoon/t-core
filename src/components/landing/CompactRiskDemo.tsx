@@ -124,9 +124,6 @@ const CompactRiskDemo = () => {
                       <div className="text-[10px] opacity-60">
                         {getRiskLabel(risk * 100)}
                       </div>
-                      <div className="text-[10px] opacity-60">
-                        Segment {strategy.segment}
-                      </div>
                     </div>
                   </div>
                 );
