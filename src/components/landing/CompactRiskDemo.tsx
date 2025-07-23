@@ -124,7 +124,7 @@ const CompactRiskDemo = () => {
                 <div>
                   <div className="text-sm text-muted-foreground mb-1">Annual Yield</div>
                   <div className="text-2xl font-bold text-green-600">
-                    ${annualYield.toLocaleString()}
+                    ${Math.round(annualYield).toLocaleString()}
                   </div>
                 </div>
               </div>
