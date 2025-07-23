@@ -9,7 +9,7 @@ import { ResponsiveContainer, PieChart as RechartsPieChart, Pie, Cell, Legend, T
 import MobileGestureHandler from '../MobileGestureHandler';
 import AnimatedCounter from '../AnimatedCounter';
 import { DISTRIBUTION_PARAMS } from '@/utils/tcoreCalculations';
-import { TOTAL_TVL } from '@/utils/protocolConstants';
+import { PROTOCOL_USD_TVL } from '@/utils/protocolConstants';
 
 const MobileRiskAnalytics = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -33,7 +33,7 @@ const MobileRiskAnalytics = () => {
   };
   
   const riskMetrics = {
-    tvl: TOTAL_TVL, // Use unified constant (1M TVL)
+    tvl: PROTOCOL_USD_TVL, // Use unified constant
     overcollateralization: 105.2,
     protocolRisk: 18.4,
     userPositionRisk: 12.3,

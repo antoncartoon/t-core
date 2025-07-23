@@ -1,8 +1,9 @@
 import { RiskRange, RiskTick, LiquidityPosition, RangeCalculationResult } from '@/types/riskRange';
 import { calculatePiecewiseAPY, calculateRangeWeightedAPY, getTierForSegment, TARGET_APYS } from '@/utils/tzFormulas';
 import { 
-  TOTAL_TVL, 
-  STAKED_TVL, 
+  TOTAL_TDD_SUPPLY,
+  STAKED_TDD_AMOUNT,
+  PROTOCOL_USD_TVL,
   PROTOCOL_APY_28D, 
   TIER_BREAKPOINTS,
   TARGET_DISTRIBUTION,
@@ -31,9 +32,9 @@ export const OPTIMAL_K = 75; // Optimal risk level for balanced positioning
 export { FIXED_BASE_APY } from '@/utils/protocolConstants';
 
 // Protocol data using global constants
-export const PROTOCOL_TVL = TOTAL_TVL;
-export const TOTAL_TDD_ISSUED = STAKED_TVL;
-export const TDD_IN_STAKING = STAKED_TVL * 0.7; // 70%
+export const PROTOCOL_TVL = PROTOCOL_USD_TVL; // USD value in protocol
+export const TOTAL_TDD_ISSUED = TOTAL_TDD_SUPPLY; // Total TDD tokens issued
+export const TDD_IN_STAKING = STAKED_TDD_AMOUNT; // TDD tokens staked
 export const PROTOCOL_APY_28_DAYS = PROTOCOL_APY_28D;
 export const AVERAGE_APY_TARGET = 0.0873; // 8.73% from simulation
 export const BONUS_SPREAD = 0.0891; // 8.91% spread from simulation
@@ -48,10 +49,10 @@ export const generateTCoreRiskTicks = (): RiskTick[] => {
   const ticks: RiskTick[] = [];
   
     // Calculate TDD per tick for each T-Core tier using allocation percentages
-    const safeTDDPerTick = (STAKED_TVL * CATEGORY_DISTRIBUTION.SAFE.tddAllocation) / 10; // 10 ticks (0-9)
-    const conservativeTDDPerTick = (STAKED_TVL * CATEGORY_DISTRIBUTION.CONSERVATIVE.tddAllocation) / 20; // 20 ticks (10-29)
-    const balancedTDDPerTick = (STAKED_TVL * CATEGORY_DISTRIBUTION.BALANCED.tddAllocation) / 30; // 30 ticks (30-59)
-    const heroTDDPerTick = (STAKED_TVL * CATEGORY_DISTRIBUTION.HERO.tddAllocation) / 40; // 40 ticks (60-99)
+    const safeTDDPerTick = (STAKED_TDD_AMOUNT * CATEGORY_DISTRIBUTION.SAFE.tddAllocation) / 10; // 10 ticks (0-9)
+    const conservativeTDDPerTick = (STAKED_TDD_AMOUNT * CATEGORY_DISTRIBUTION.CONSERVATIVE.tddAllocation) / 20; // 20 ticks (10-29)
+    const balancedTDDPerTick = (STAKED_TDD_AMOUNT * CATEGORY_DISTRIBUTION.BALANCED.tddAllocation) / 30; // 30 ticks (30-59)
+    const heroTDDPerTick = (STAKED_TDD_AMOUNT * CATEGORY_DISTRIBUTION.HERO.tddAllocation) / 40; // 40 ticks (60-99)
   
   for (let i = RISK_SCALE_MIN; i <= RISK_SCALE_MAX; i++) {
     let totalLiquidity = 0;
@@ -343,7 +344,7 @@ export const simulateAnnualValueIncrease = (
  */
 export const calculateSurplusPool = (
   totalYield: number,
-  tier1Stake: number = STAKED_TVL * CATEGORY_DISTRIBUTION.SAFE.tddAllocation
+  tier1Stake: number = STAKED_TDD_AMOUNT * CATEGORY_DISTRIBUTION.SAFE.tddAllocation
 ): number => {
   const minYieldsRequired = tier1Stake * FIXED_BASE_APY;
   return Math.max(0, totalYield - minYieldsRequired);

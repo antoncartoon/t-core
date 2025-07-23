@@ -13,7 +13,7 @@ import { AlertTriangle, TrendingDown, RefreshCcw, Shield } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { calculateTCoreSubordinationLoss } from '@/utils/riskRangeCalculations';
 import { generateTCoreRiskTicks } from '@/utils/riskRangeCalculations';
-import { TOTAL_TVL } from '@/utils/protocolConstants';
+import { PROTOCOL_USD_TVL } from '@/utils/protocolConstants';
 
 // Custom node for the Sankey diagram
 const CustomNode = ({ x, y, width, height, index, payload, containerWidth }: any) => {
@@ -125,7 +125,7 @@ const LossCascadeVisualizer = () => {
   
   const resetSimulation = () => {
     setLossAmount(1000000);
-    setProtocolTVL(TOTAL_TVL);
+    setProtocolTVL(PROTOCOL_USD_TVL);
     setInsuranceReserve(625000);
   };
   

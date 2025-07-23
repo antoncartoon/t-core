@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { AlertTriangle, Shield, TrendingDown, Info, ChevronDown, ChevronUp } from 'lucide-react';
 import { calculateEnhancedStressScenarios, getTierProtectionLevel } from '@/utils/stressTestCalculations';
-import { TOTAL_TVL } from '@/utils/protocolConstants';
+import { PROTOCOL_USD_TVL } from '@/utils/protocolConstants';
 
 interface StakingStressTestPanelProps {
   amount: number;
@@ -17,7 +17,7 @@ interface StakingStressTestPanelProps {
 const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
   amount,
   selectedRange,
-  totalTVL = TOTAL_TVL // Use unified protocol constant (1M TVL)
+  totalTVL = PROTOCOL_USD_TVL // Use unified protocol constant
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   

@@ -7,8 +7,13 @@
 // CORE PROTOCOL PARAMETERS (Demonstration Values)
 // =============================================================================
 
-export const TOTAL_TVL = 1_000_000; // $1M total value locked
-export const STAKED_TVL = 900_000;  // $900K actively staked
+// TDD Token Supply and Staking
+export const TOTAL_TDD_SUPPLY = 1_000_000; // 1M TDD tokens issued
+export const STAKED_TDD_AMOUNT = 900_000;  // 900K TDD tokens staked (90% staking rate)
+
+// Protocol USD Values (demonstration)
+export const PROTOCOL_USD_TVL = 850_000; // $850K actual USD value in protocol
+
 export const PROTOCOL_APY_28D = 0.10; // 10% base protocol APY
 export const PERFORMANCE_FEE = 0.20;  // 20% performance fee
 
@@ -16,9 +21,12 @@ export const PERFORMANCE_FEE = 0.20;  // 20% performance fee
 // DERIVED CALCULATIONS
 // =============================================================================
 
-export const GROSS_YIELD_USD = STAKED_TVL * PROTOCOL_APY_28D; // $90K gross yield
-export const SUCCESS_FEE_POOL = GROSS_YIELD_USD * PERFORMANCE_FEE; // $18K performance fee
-export const NET_YIELD_USD = GROSS_YIELD_USD - SUCCESS_FEE_POOL; // $72K net yield to users
+export const GROSS_YIELD_USD = PROTOCOL_USD_TVL * PROTOCOL_APY_28D; // $85K gross yield
+export const SUCCESS_FEE_POOL = GROSS_YIELD_USD * PERFORMANCE_FEE; // $17K performance fee
+export const NET_YIELD_USD = GROSS_YIELD_USD - SUCCESS_FEE_POOL; // $68K net yield to users
+
+// Staking participation rate
+export const STAKING_PARTICIPATION_RATE = STAKED_TDD_AMOUNT / TOTAL_TDD_SUPPLY; // 90%
 
 // =============================================================================
 // TIER DEFINITIONS (Risk Segment Ranges)
@@ -63,8 +71,8 @@ export const CURRENT_LIQUIDITY_DISTRIBUTION = {
   hero: 0.25          // 25% currently staked
 };
 
-// TVL distribution by tier (for stress testing)
-export const TIER_TVL_DISTRIBUTION = {
+// TDD distribution by tier (for stress testing)
+export const TIER_TDD_DISTRIBUTION = {
   safe: 0.15,
   conservative: 0.25,
   balanced: 0.35,
@@ -165,8 +173,12 @@ export const getTierForSegment = (segment: number): 'safe' | 'conservative' | 'b
   return 'safe'; // fallback
 };
 
-export const getTierTVL = (tier: 'safe' | 'conservative' | 'balanced' | 'hero'): number => {
-  return TOTAL_TVL * TIER_TVL_DISTRIBUTION[tier];
+export const getTierTDDAmount = (tier: 'safe' | 'conservative' | 'balanced' | 'hero'): number => {
+  return STAKED_TDD_AMOUNT * TIER_TDD_DISTRIBUTION[tier];
+};
+
+export const getTierUSDValue = (tier: 'safe' | 'conservative' | 'balanced' | 'hero'): number => {
+  return PROTOCOL_USD_TVL * TIER_TDD_DISTRIBUTION[tier];
 };
 
 export const getCurrentTierAllocation = (tier: 'safe' | 'conservative' | 'balanced' | 'hero'): number => {

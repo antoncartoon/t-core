@@ -10,7 +10,7 @@ import {
   RISK_SCALE_MAX
 } from '@/utils/riskRangeCalculations';
 import { 
-  TOTAL_TVL, 
+  PROTOCOL_USD_TVL,
   PROTOCOL_APY_28D, 
   FIXED_BASE_APY 
 } from '@/utils/protocolConstants';
@@ -51,7 +51,7 @@ export const RiskRangeProvider = ({ children }: { children: ReactNode }) => {
   );
   
   const [protocolState, setProtocolState] = useState<ProtocolState>({
-    totalTVL: TOTAL_TVL,
+    totalTVL: PROTOCOL_USD_TVL,
     totalYieldGenerated: calculateProtocolYield28Days(), // Real protocol yield for 28 days
     guaranteedAPY: FIXED_BASE_APY, // T-Bills * 1.2 = 6%
     riskTicks: generateRealProtocolRiskTicks(), // Real distribution

@@ -67,7 +67,7 @@ export const TCoreProvider = ({ children }: { children: ReactNode }) => {
   // Initial protocol state with realistic demo data
   const [tcoreState, setTCoreState] = useState<TCoreState>({
     liquidityTicks: generateInitialLiquidityTicks(),
-    totalTVL: 850000, // Realistic demo TVL
+    totalTVL: 850000, // Realistic demo USD TVL
     protocolParams: {
       rMin: 0.05016, // 5.016% guaranteed rate (T-Bills + spread)
       k: 1.5, // Initial curve parameter

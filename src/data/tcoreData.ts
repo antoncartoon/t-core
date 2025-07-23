@@ -1,20 +1,25 @@
 // Unified T-Core data source for consistent statistics across landing and app
 import { 
-  TOTAL_TVL, 
-  STAKED_TVL, 
-  PROTOCOL_APY_28D, 
-  PERFORMANCE_FEE, 
+  TOTAL_TDD_SUPPLY,
+  STAKED_TDD_AMOUNT,
+  PROTOCOL_USD_TVL,
+  PROTOCOL_APY_28D,
+  PERFORMANCE_FEE,
   BONUS_YIELD_ALLOCATION,
-  SELF_INSURANCE_POOL
+  SELF_INSURANCE_POOL,
+  STAKING_PARTICIPATION_RATE
 } from '@/utils/protocolConstants';
 
 export const TCORE_STATS = {
-  // Protocol Statistics
-  totalValueLocked: TOTAL_TVL,
+  // Protocol Statistics (USD Values)
+  totalValueLocked: PROTOCOL_USD_TVL, // USD value in protocol
   protocolAPY28Days: PROTOCOL_APY_28D,
   averageAPYTarget: PROTOCOL_APY_28D * 0.83, // 8.3% average from distribution
-  totalTDDIssued: STAKED_TVL,
-  tddInStaking: STAKED_TVL,
+  
+  // TDD Token Supply and Staking
+  totalTDDIssued: TOTAL_TDD_SUPPLY, // 1M TDD tokens issued
+  tddInStaking: STAKED_TDD_AMOUNT, // 900K TDD tokens staked
+  stakingParticipationRate: STAKING_PARTICIPATION_RATE, // 90%
   
   // Participation Statistics
   activeStakers: 88,

@@ -1,13 +1,13 @@
 import { calculateQuadraticRisk } from '@/utils/tzFormulas';
 import { 
-  TOTAL_TVL, 
+  PROTOCOL_USD_TVL,
   TIER_BREAKPOINTS_LEGACY, 
-  TIER_TVL_DISTRIBUTION, 
+  TIER_TDD_DISTRIBUTION, 
   getTierForSegment 
 } from '@/utils/protocolConstants';
 
-// Use global tier TVL distribution
-const PROTOCOL_TVL = TOTAL_TVL;
+// Use global protocol USD TVL
+const PROTOCOL_TVL = PROTOCOL_USD_TVL;
 
 interface StressScenarioResult {
   lossPercent: number;
@@ -83,10 +83,10 @@ const calculateMathematicalWaterfallLosses = (
   console.log('Scenario Severity:', scenarioSeverity);
   
   const tierTVL = {
-    safe: totalTVL * TIER_TVL_DISTRIBUTION.safe,
-    conservative: totalTVL * TIER_TVL_DISTRIBUTION.conservative,
-    balanced: totalTVL * TIER_TVL_DISTRIBUTION.balanced,
-    hero: totalTVL * TIER_TVL_DISTRIBUTION.hero
+    safe: totalTVL * TIER_TDD_DISTRIBUTION.safe,
+    conservative: totalTVL * TIER_TDD_DISTRIBUTION.conservative,
+    balanced: totalTVL * TIER_TDD_DISTRIBUTION.balanced,
+    hero: totalTVL * TIER_TDD_DISTRIBUTION.hero
   };
   
   console.log('Tier TVL Distribution:', tierTVL);
@@ -218,10 +218,10 @@ export const calculateEnhancedStressScenarios = (
   // Calculate tier TVL amounts using actual protocol distribution if available
   // Fallback to estimated distribution if protocol data is not available
   const tierTVL = {
-    safe: totalTVL * TIER_TVL_DISTRIBUTION.safe,
-    conservative: totalTVL * TIER_TVL_DISTRIBUTION.conservative,
-    balanced: totalTVL * TIER_TVL_DISTRIBUTION.balanced,
-    hero: totalTVL * TIER_TVL_DISTRIBUTION.hero
+    safe: totalTVL * TIER_TDD_DISTRIBUTION.safe,
+    conservative: totalTVL * TIER_TDD_DISTRIBUTION.conservative,
+    balanced: totalTVL * TIER_TDD_DISTRIBUTION.balanced,
+    hero: totalTVL * TIER_TDD_DISTRIBUTION.hero
   };
   
   console.log('Tier TVL Distribution:', tierTVL);
