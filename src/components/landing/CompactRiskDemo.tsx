@@ -40,7 +40,7 @@ const CompactRiskDemo = () => {
       segment: 5, 
       icon: Shield, 
       color: 'bg-green-100 text-green-800 border-green-200',
-      description: 'Fixed 5.16% guarantee'
+      description: 'Steady returns, fully protected'
     },
     { 
       id: 'conservative', 
@@ -48,7 +48,7 @@ const CompactRiskDemo = () => {
       segment: 20, 
       icon: Shield, 
       color: 'bg-blue-100 text-blue-800 border-blue-200',
-      description: 'Linear 5.16% → 7%'
+      description: 'Stable growth with safety'
     },
     { 
       id: 'balanced', 
@@ -56,7 +56,7 @@ const CompactRiskDemo = () => {
       segment: 45, 
       icon: Star, 
       color: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      description: 'Quadratic 7% → 9.5%'
+      description: 'Enhanced returns, moderate risk'
     },
     { 
       id: 'hero', 
@@ -64,7 +64,7 @@ const CompactRiskDemo = () => {
       segment: 80, 
       icon: Crown, 
       color: 'bg-purple-100 text-purple-800 border-purple-200',
-      description: 'Exponential 9.5% × 1.03^(i-25)'
+      description: 'Maximum growth potential'
     }
   ];
 
