@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, ReferenceLine, Tooltip } from 'recharts';
 import { Slider } from '@/components/ui/slider';
@@ -12,7 +11,7 @@ import {
   getTierForSegment,
   calculateQuadraticRisk,
   TARGET_APYS
-} from '@/utils/piecewiseAPY';
+} from '@/utils/tzFormulas';
 
 const InteractiveRiskYieldChart = () => {
   const [riskLevel, setRiskLevel] = useState([45]);

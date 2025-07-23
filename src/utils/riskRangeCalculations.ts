@@ -1,6 +1,5 @@
-
 import { RiskRange, RiskTick, LiquidityPosition, RangeCalculationResult } from '@/types/riskRange';
-import { calculatePiecewiseAPY, calculateRangeWeightedAPY, getTierForSegment, TARGET_APYS } from '@/utils/piecewiseAPY';
+import { calculatePiecewiseAPY, calculateRangeWeightedAPY, getTierForSegment, TARGET_APYS } from '@/utils/tzFormulas';
 
 // Export the new piecewise calculation as the main APY calculator
 export const calculateTCoreAPY = calculatePiecewiseAPY;

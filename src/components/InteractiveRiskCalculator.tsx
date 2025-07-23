@@ -14,11 +14,10 @@ import {
   Zap
 } from 'lucide-react';
 import { 
-  calculateTCoreAPY, 
+  calculatePiecewiseAPY as calculateTCoreAPY, 
   TIER_PRESETS, 
-  FIXED_BASE_APY,
-  AVERAGE_APY_TARGET 
-} from '@/utils/riskRangeCalculations';
+  SAFE_APY as FIXED_BASE_APY,
+} from '@/utils/tzFormulas';
 import SkeletonInteractiveRiskCalculator from '@/components/SkeletonInteractiveRiskCalculator';
 
 interface InteractiveRiskCalculatorProps {
@@ -284,7 +283,7 @@ const InteractiveRiskCalculator: React.FC<InteractiveRiskCalculatorProps> = ({ c
                 <div className="text-xs text-muted-foreground">
                   Risk levels 1-25 get fixed {(FIXED_BASE_APY * 100).toFixed(1)}% APY. 
                   Higher levels add bonus yield from T-Core HERO protection. 
-                  Average target APY: {(AVERAGE_APY_TARGET * 100).toFixed(1)}%.
+                  Average target APY: {((0.0516) * 100).toFixed(1)}%.
                 </div>
               </div>
             </div>
