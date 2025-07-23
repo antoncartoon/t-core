@@ -3,10 +3,10 @@ import { calculateQuadraticRisk, TIER_BREAKPOINTS } from '@/utils/tzFormulas';
 
 // More realistic tier TVL distribution based on actual risk appetite
 const TIER_TVL_DISTRIBUTION = {
-  safe: 0.15,       // 15% of TVL in Safe tier (0-9) - higher than before
-  conservative: 0.25, // 25% of TVL in Conservative tier (10-29)
+  safe: 0.15,       // 15% of TVL in Safe tier (0-9)
+  conservative: 0.30, // 30% of TVL in Conservative tier (10-29) - increased
   balanced: 0.35,    // 35% of TVL in Balanced tier (30-59)
-  hero: 0.25        // 25% of TVL in Hero tier (60-99) - reduced from 40%
+  hero: 0.20        // 20% of TVL in Hero tier (60-99) - reduced
 };
 
 interface StressScenarioResult {
@@ -31,18 +31,24 @@ const getTierFromSegment = (segment: number): 'safe' | 'conservative' | 'balance
 };
 
 /**
- * Enhanced waterfall loss calculation with more realistic loss distribution
+ * Simplified waterfall loss calculation with realistic distribution
  */
 const calculateWaterfallLosses = (
   totalLoss: number,
   totalTVL: number
 ): Record<'safe' | 'conservative' | 'balanced' | 'hero', number> => {
+  console.log('=== WATERFALL CALCULATION DEBUG ===');
+  console.log('Total Loss:', totalLoss);
+  console.log('Total TVL:', totalTVL);
+  
   const tierTVL = {
     safe: totalTVL * TIER_TVL_DISTRIBUTION.safe,
     conservative: totalTVL * TIER_TVL_DISTRIBUTION.conservative,
     balanced: totalTVL * TIER_TVL_DISTRIBUTION.balanced,
     hero: totalTVL * TIER_TVL_DISTRIBUTION.hero
   };
+  
+  console.log('Tier TVL Distribution:', tierTVL);
 
   const tierLosses = {
     safe: 0,
@@ -52,38 +58,44 @@ const calculateWaterfallLosses = (
   };
 
   let remainingLoss = totalLoss;
+  console.log('Starting remaining loss:', remainingLoss);
 
-  // Enhanced waterfall with more realistic distribution
-  // Hero tier absorbs first, but with enhanced loss multipliers
-  if (remainingLoss > 0) {
-    const heroAbsorptionCapacity = tierTVL.hero * 0.8; // Hero can absorb up to 80% of their TVL
-    const heroLoss = Math.min(remainingLoss * 1.5, heroAbsorptionCapacity); // 1.5x multiplier for hero losses
-    tierLosses.hero = Math.min(heroLoss, tierTVL.hero);
-    remainingLoss -= heroLoss;
+  // SIMPLIFIED WATERFALL: Hero absorbs first, then cascades down
+  
+  // Hero tier absorbs losses first (up to 90% of their TVL)
+  if (remainingLoss > 0 && tierTVL.hero > 0) {
+    const heroAbsorption = Math.min(remainingLoss, tierTVL.hero * 0.9);
+    tierLosses.hero = heroAbsorption;
+    remainingLoss -= heroAbsorption;
+    console.log('Hero absorbed:', heroAbsorption, 'Remaining:', remainingLoss);
   }
 
-  // Balanced tier absorbs with moderate multiplier
-  if (remainingLoss > 0) {
-    const balancedAbsorptionCapacity = tierTVL.balanced * 0.6; // Balanced can absorb up to 60% of their TVL
-    const balancedLoss = Math.min(remainingLoss * 1.2, balancedAbsorptionCapacity); // 1.2x multiplier
-    tierLosses.balanced = Math.min(balancedLoss, tierTVL.balanced);
-    remainingLoss -= balancedLoss;
+  // Balanced tier absorbs next (up to 70% of their TVL)
+  if (remainingLoss > 0 && tierTVL.balanced > 0) {
+    const balancedAbsorption = Math.min(remainingLoss, tierTVL.balanced * 0.7);
+    tierLosses.balanced = balancedAbsorption;
+    remainingLoss -= balancedAbsorption;
+    console.log('Balanced absorbed:', balancedAbsorption, 'Remaining:', remainingLoss);
   }
 
-  // Conservative tier gets meaningful losses in severe scenarios
-  if (remainingLoss > 0) {
-    const conservativeAbsorptionCapacity = tierTVL.conservative * 0.4; // Conservative can absorb up to 40% of their TVL
-    const conservativeLoss = Math.min(remainingLoss * 0.8, conservativeAbsorptionCapacity); // 0.8x multiplier
-    tierLosses.conservative = Math.min(conservativeLoss, tierTVL.conservative);
-    remainingLoss -= conservativeLoss;
+  // Conservative tier absorbs next (up to 50% of their TVL)
+  if (remainingLoss > 0 && tierTVL.conservative > 0) {
+    const conservativeAbsorption = Math.min(remainingLoss, tierTVL.conservative * 0.5);
+    tierLosses.conservative = conservativeAbsorption;
+    remainingLoss -= conservativeAbsorption;
+    console.log('Conservative absorbed:', conservativeAbsorption, 'Remaining:', remainingLoss);
   }
 
-  // Safe tier only in extreme scenarios
-  if (remainingLoss > 0) {
-    const safeAbsorptionCapacity = tierTVL.safe * 0.2; // Safe can absorb up to 20% of their TVL
-    const safeLoss = Math.min(remainingLoss * 0.3, safeAbsorptionCapacity); // 0.3x multiplier
-    tierLosses.safe = Math.min(safeLoss, tierTVL.safe);
+  // Safe tier absorbs last (up to 30% of their TVL in extreme cases)
+  if (remainingLoss > 0 && tierTVL.safe > 0) {
+    const safeAbsorption = Math.min(remainingLoss, tierTVL.safe * 0.3);
+    tierLosses.safe = safeAbsorption;
+    remainingLoss -= safeAbsorption;
+    console.log('Safe absorbed:', safeAbsorption, 'Remaining:', remainingLoss);
   }
+
+  console.log('Final tier losses:', tierLosses);
+  console.log('=== END WATERFALL DEBUG ===');
 
   return tierLosses;
 };
@@ -99,10 +111,17 @@ const calculateUserLoss = (
 ): number => {
   if (tierTVL === 0 || userPosition === 0) return 0;
   
+  console.log(`User Loss Calculation for ${userTier}:`, {
+    userPosition,
+    tierTotalLoss,
+    tierTVL,
+    lossPercentage: tierTotalLoss / tierTVL
+  });
+  
   // Calculate loss percentage based on tier's total loss
   const tierLossPercentage = tierTotalLoss / tierTVL;
   
-  // User's loss is based on their position and tier loss percentage
+  // User's loss is their position times the tier's loss percentage
   const userLoss = userPosition * tierLossPercentage;
   
   // Ensure loss doesn't exceed position value
@@ -110,7 +129,7 @@ const calculateUserLoss = (
 };
 
 /**
- * Enhanced stress test calculation with more realistic scenarios
+ * Enhanced stress test calculation with realistic scenarios
  */
 export const calculateEnhancedStressScenarios = (
   userPosition: number,
@@ -129,6 +148,14 @@ export const calculateEnhancedStressScenarios = (
   const avgSegment = (bucketRange[0] + bucketRange[1]) / 2;
   const userTier = getTierFromSegment(avgSegment);
   
+  console.log('User Position Analysis:', {
+    userPosition,
+    bucketRange,
+    avgSegment,
+    userTier,
+    totalTVL
+  });
+  
   // Calculate tier TVL amounts
   const tierTVL = {
     safe: totalTVL * TIER_TVL_DISTRIBUTION.safe,
@@ -137,7 +164,7 @@ export const calculateEnhancedStressScenarios = (
     hero: totalTVL * TIER_TVL_DISTRIBUTION.hero
   };
 
-  // Enhanced stress scenarios with more realistic losses
+  // More realistic stress scenarios
   const scenarios = [
     { name: 'scenario1', tvlLossPercent: 0.02 },  // 2% TVL loss
     { name: 'scenario5', tvlLossPercent: 0.08 },  // 8% TVL loss  
@@ -147,6 +174,8 @@ export const calculateEnhancedStressScenarios = (
   const results: any = {};
 
   scenarios.forEach(({ name, tvlLossPercent }) => {
+    console.log(`\n=== SCENARIO ${name.toUpperCase()} (${tvlLossPercent * 100}% TVL LOSS) ===`);
+    
     const totalLoss = totalTVL * tvlLossPercent;
     
     // Calculate waterfall loss distribution
@@ -161,6 +190,11 @@ export const calculateEnhancedStressScenarios = (
     );
 
     const lossPercent = userPosition > 0 ? (userLoss / userPosition) * 100 : 0;
+
+    console.log(`User final loss for ${name}:`, {
+      userLoss,
+      lossPercent: lossPercent.toFixed(4)
+    });
 
     results[name] = {
       lossPercent: Math.max(0, Math.round(lossPercent * 100) / 100), // Round to 2 decimal places

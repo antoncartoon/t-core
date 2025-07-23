@@ -25,7 +25,7 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
 
   const scenarioConfigs = [
     {
-      name: '1% Protocol Loss',
+      name: '2% Protocol Loss',
       description: 'Minor market stress',
       icon: Shield,
       bgColor: 'bg-yellow-50 dark:bg-yellow-950/20',
@@ -34,7 +34,7 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
       data: stressScenarios?.scenario1
     },
     {
-      name: '5% Protocol Loss', 
+      name: '8% Protocol Loss', 
       description: 'Moderate market downturn',
       icon: AlertTriangle,
       bgColor: 'bg-orange-50 dark:bg-orange-950/20',
@@ -43,7 +43,7 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
       data: stressScenarios?.scenario5
     },
     {
-      name: '10% Protocol Loss',
+      name: '15% Protocol Loss',
       description: 'Severe market crisis',
       icon: TrendingDown,
       bgColor: 'bg-red-50 dark:bg-red-950/20',
@@ -52,6 +52,16 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
       data: stressScenarios?.scenario10
     }
   ];
+
+  const formatLossPercent = (value: number | undefined): string => {
+    if (!value || value === 0) return '0.00';
+    return value.toFixed(2);
+  };
+
+  const formatDollarLoss = (value: number | undefined): string => {
+    if (!value || value === 0) return '0.00';
+    return value.toFixed(2);
+  };
 
   if (!stressScenarios) {
     return (
@@ -133,13 +143,13 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
                     <div className="flex justify-between items-center">
                       <span className="text-xs text-muted-foreground">Loss %:</span>
                       <span className={`font-bold text-sm ${scenario.textColor}`}>
-                        {data?.lossPercent === 0 ? '0.00' : data?.lossPercent.toFixed(2)}%
+                        {formatLossPercent(data?.lossPercent)}%
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-xs text-muted-foreground">Dollar Loss:</span>
                       <span className={`font-bold text-sm ${scenario.textColor}`}>
-                        ${data?.dollarLoss === 0 ? '0.00' : data?.dollarLoss.toFixed(2)}
+                        ${formatDollarLoss(data?.dollarLoss)}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
@@ -176,7 +186,7 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
               <div>
                 <p className="text-muted-foreground">Max Potential Loss</p>
                 <p className="font-semibold text-red-600">
-                  ${stressScenarios.scenario10.dollarLoss === 0 ? '0.00' : stressScenarios.scenario10.dollarLoss.toFixed(2)}
+                  ${formatDollarLoss(stressScenarios.scenario10.dollarLoss)}
                 </p>
               </div>
             </div>
@@ -195,21 +205,21 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
               </h4>
               <p className="text-sm text-blue-700 dark:text-blue-300 leading-relaxed">
                 Losses cascade through the risk tiers in order: Hero (60-99) absorbs first, followed by Balanced (30-59), 
-                then Conservative (10-29), and finally Safe (0-9). Each tier absorbs losses up to their total TVL capacity 
+                then Conservative (10-29), and finally Safe (0-9). Each tier absorbs losses up to their capacity 
                 before impacting lower tiers, providing mathematical protection for conservative positions.
               </p>
               <div className="grid grid-cols-2 gap-4 text-xs text-blue-600 dark:text-blue-400 mt-3">
                 <div>
-                  <span className="font-medium">Hero Tier:</span> First loss absorption (40% TVL)
+                  <span className="font-medium">Hero Tier:</span> First loss absorption (20% TVL)
                 </div>
                 <div>
-                  <span className="font-medium">Balanced Tier:</span> Secondary protection (30% TVL)
+                  <span className="font-medium">Balanced Tier:</span> Secondary protection (35% TVL)
                 </div>
                 <div>
-                  <span className="font-medium">Conservative Tier:</span> Tertiary protection (20% TVL)
+                  <span className="font-medium">Conservative Tier:</span> Tertiary protection (30% TVL)
                 </div>
                 <div>
-                  <span className="font-medium">Safe Tier:</span> Maximum protection (10% TVL)
+                  <span className="font-medium">Safe Tier:</span> Maximum protection (15% TVL)
                 </div>
               </div>
             </div>
