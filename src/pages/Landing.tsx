@@ -12,47 +12,35 @@ import TransparencyPreview from '@/components/landing/TransparencyPreview';
 import SecurityEmphasis from '@/components/landing/SecurityEmphasis';
 import CTASection from '@/components/landing/CTASection';
 import LandingFooter from '@/components/landing/LandingFooter';
-import InteractiveTutorial from '@/components/InteractiveTutorial';
-import StakingOnboardingTutorial from '@/components/tutorial/StakingOnboardingTutorial';
+import UnifiedTutorial from '@/components/UnifiedTutorial';
 import FloatingStakingButton from '@/components/FloatingStakingButton';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
-import { useTutorial } from '@/hooks/useTutorial';
+import { useUnifiedTutorial } from '@/hooks/useUnifiedTutorial';
 
 const Landing = () => {
   const isMobile = useIsMobile();
-  const { isVisible, startTutorial, completeTutorial, skipTutorial } = useTutorial();
-  const [showStakingTutorial, setShowStakingTutorial] = React.useState(false);
+  const { isVisible, startTutorial, completeTutorial, skipTutorial } = useUnifiedTutorial();
 
-  const handleStartStakingTutorial = () => {
-    setShowStakingTutorial(true);
-  };
-
-  const handleCompleteStakingTutorial = () => {
-    setShowStakingTutorial(false);
-  };
-
-  const handleSkipStakingTutorial = () => {
-    setShowStakingTutorial(false);
+  const handleStartTutorial = () => {
+    startTutorial();
   };
 
   return (
     <div className="min-h-screen bg-background">
       <LandingHeader 
-        onStartTutorial={startTutorial} 
-        onStartStakingTutorial={handleStartStakingTutorial}
+        onStartTutorial={handleStartTutorial}
       />
       <main>
         <SimpleHeroSection 
-          onStartTutorial={startTutorial}
-          onStartStakingTutorial={handleStartStakingTutorial}
+          onStartTutorial={handleStartTutorial}
         />
         <TDDExplainer />
         <SimpleWhyTCore />
         
-        {/* NEW: Unified Risk Selection (replaces SimpleRiskTiers) */}
+        {/* Unified Risk Selection */}
         <UnifiedRiskSelection />
         
-        {/* NEW: Live Staking Preview */}
+        {/* Live Staking Preview */}
         <LiveStakingPreview />
         
         <StatsSection />
@@ -63,20 +51,13 @@ const Landing = () => {
       <LandingFooter />
       
       {/* Enhanced UX Elements */}
-      <InteractiveTutorial 
+      <UnifiedTutorial 
         isVisible={isVisible}
         onComplete={completeTutorial}
         onSkip={skipTutorial}
       />
       
-      {/* NEW: Staking-specific tutorial */}
-      <StakingOnboardingTutorial
-        isVisible={showStakingTutorial}
-        onComplete={handleCompleteStakingTutorial}
-        onSkip={handleSkipStakingTutorial}
-      />
-      
-      {/* NEW: Floating staking button */}
+      {/* Floating staking button */}
       <FloatingStakingButton />
       
       <PWAInstallPrompt />

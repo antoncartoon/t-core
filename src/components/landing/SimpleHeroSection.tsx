@@ -2,16 +2,15 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { NavLink } from 'react-router-dom';
-import { ArrowRight, Play, Shield, TrendingUp, Lock, Calculator, BookOpen } from 'lucide-react';
+import { ArrowRight, Play, Shield, TrendingUp, Lock, Calculator } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { T_BILL_RATE, FIXED_BASE_MULTIPLIER, FIXED_BASE_APY } from '@/utils/riskRangeCalculations';
 
 interface SimpleHeroSectionProps {
   onStartTutorial?: () => void;
-  onStartStakingTutorial?: () => void;
 }
 
-const SimpleHeroSection = ({ onStartTutorial, onStartStakingTutorial }: SimpleHeroSectionProps) => {
+const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
   const isMobile = useIsMobile();
   
   return (
@@ -53,8 +52,6 @@ const SimpleHeroSection = ({ onStartTutorial, onStartStakingTutorial }: SimpleHe
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </NavLink>
-            
-
 
             {onStartTutorial && (
               <Button 
@@ -64,7 +61,7 @@ const SimpleHeroSection = ({ onStartTutorial, onStartStakingTutorial }: SimpleHe
                 onClick={onStartTutorial}
               >
                 <Play className="w-4 h-4 mr-2" />
-                General Tutorial
+                Interactive Tutorial
               </Button>
             )}
           </div>

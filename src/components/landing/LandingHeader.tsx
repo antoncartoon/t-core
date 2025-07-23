@@ -2,15 +2,14 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Play, Calculator, BookOpen } from 'lucide-react';
+import { ArrowRight, Play, Calculator } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LandingHeaderProps {
   onStartTutorial?: () => void;
-  onStartStakingTutorial?: () => void;
 }
 
-const LandingHeader = ({ onStartTutorial, onStartStakingTutorial }: LandingHeaderProps) => {
+const LandingHeader = ({ onStartTutorial }: LandingHeaderProps) => {
   const isMobile = useIsMobile();
 
   return (
@@ -59,33 +58,12 @@ const LandingHeader = ({ onStartTutorial, onStartStakingTutorial }: LandingHeade
               className="text-sm"
             >
               <Play className="w-4 h-4 mr-2" />
-              Tutorial
-            </Button>
-          )}
-          {onStartStakingTutorial && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={onStartStakingTutorial}
-              className="text-sm text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
-            >
-              <BookOpen className="w-4 h-4 mr-2" />
-              Staking Guide
+              Interactive Tutorial
             </Button>
           )}
         </nav>
 
         <div className="flex items-center gap-2">
-          {onStartStakingTutorial && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              onClick={onStartStakingTutorial}
-              className="md:hidden text-green-600 dark:text-green-400"
-            >
-              <BookOpen className="w-4 h-4" />
-            </Button>
-          )}
           {onStartTutorial && (
             <Button 
               variant="ghost" 
