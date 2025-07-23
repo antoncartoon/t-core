@@ -134,14 +134,13 @@ const CompactRiskDemo = () => {
             <div className="p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center gap-2 mb-3">
                 <TrendingUp className="w-4 h-4 text-primary" />
-                <span className="font-medium text-sm">Quadratic Risk & Piecewise Yield Model</span>
+                <span className="font-medium text-sm">Risk Tiers Explained</span>
               </div>
               <div className="text-xs text-muted-foreground space-y-1">
-                <div>• <strong>Risk Function:</strong> Risk(i) = (i/99)² - quadratic increase</div>
-                <div>• <strong>Safe (0-9):</strong> Fixed 5.16% (T-Bills × 1.2)</div>
-                <div>• <strong>Conservative (10-29):</strong> Linear 5.16% → 7%</div>
-                <div>• <strong>Balanced (30-59):</strong> Quadratic 7% → 9.5%</div>
-                <div>• <strong>Hero (60-99):</strong> Exponential 9.5% × 1.03^(i-25)</div>
+                <div>• <strong>Safe:</strong> Treasury-backed returns with full principal protection</div>
+                <div>• <strong>Conservative:</strong> Stable DeFi yields with high security guarantees</div>
+                <div>• <strong>Balanced:</strong> Optimized risk-reward ratio for steady growth</div>
+                <div>• <strong>Hero:</strong> Maximum yield potential for experienced investors</div>
               </div>
             </div>
 
