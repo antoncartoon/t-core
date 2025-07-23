@@ -37,7 +37,7 @@ const ComprehensiveStakingDashboard: React.FC<ComprehensiveDashboardProps> = ({
               <div className="absolute -top-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-blue-500 rounded-full animate-pulse"></div>
             </div>
             <div className="min-w-0 flex-1">
-              <h2 className="font-bold text-base sm:text-lg xl:text-xl leading-tight">AMM-Style Staking Interface</h2>
+              <h2 className="font-bold text-base sm:text-lg xl:text-xl leading-tight">Quadratic Risk & Piecewise APY Staking</h2>
               <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1 leading-relaxed">
                 Interactive yield curves, real-time stress testing, and precision risk management
               </p>
