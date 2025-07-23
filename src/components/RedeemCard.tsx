@@ -256,7 +256,7 @@ export const RedeemCard = () => {
 
         <Button 
           onClick={handleRedeem} 
-          disabled={!amount || isLoading || redeemAmount > tddBalance || redeemAmount <= 0}
+          disabled={!amount || isLoading || redeemAmount > tddBalance || redeemAmount <= 0 || (selectedMethod === 'instant' && !canRedeemInstant)}
           className="w-full"
         >
           {isLoading ? (
