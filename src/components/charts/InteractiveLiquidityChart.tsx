@@ -288,28 +288,6 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
             ))}
           </div>
 
-          {/* Liquidity Histogram */}
-          <div className="h-20">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart
-                data={yieldCurveData}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-              >
-                <XAxis 
-                  dataKey="bucket" 
-                  axisLine={false}
-                  tickLine={false}
-                  tick={false}
-                />
-                <YAxis hide />
-                <Bar 
-                  dataKey="liquidity" 
-                  fill="hsl(var(--muted))"
-                  opacity={0.6}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
 
           {/* Range Info */}
           <div className="mt-4 p-3 bg-muted/50 rounded-lg">
