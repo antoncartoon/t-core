@@ -42,7 +42,7 @@ const App = () => {
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="overview" className="flex items-center gap-2">
                 <BarChart3 className="h-4 w-4" />
-                Overview
+                TDD Mint/Redeem
               </TabsTrigger>
               <TabsTrigger value="staking" className="flex items-center gap-2">
                 <TrendingUp className="h-4 w-4" />
