@@ -13,7 +13,7 @@ const IncentiveTimer = ({ className, compact = false }: IncentiveTimerProps) => 
     minutes: 0,
   });
   
-  const dailyTDD = 50; // Sample daily TDD amount distributed
+  const dailyTDD = 1700; // Sample daily TDD amount distributed
   
   // Update timer every minute
   useEffect(() => {
