@@ -28,9 +28,9 @@ const CompactRiskDemo = () => {
   const getRiskColor = (riskPercent: number) => {
     if (riskPercent <= 1) return 'text-green-600';
     if (riskPercent <= 4) return 'text-blue-600';
-    if (riskPercent <= 20) return 'text-yellow-600';
-    if (riskPercent <= 60) return 'text-orange-600';
-    return 'text-red-600';
+    if (riskPercent <= 20) return 'text-purple-600';
+    if (riskPercent <= 60) return 'text-indigo-600';
+    return 'text-slate-600';
   };
 
   const strategies = [
