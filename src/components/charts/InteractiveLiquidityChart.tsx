@@ -2,6 +2,8 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, ReferenceLine, ReferenceArea, Tooltip, BarChart, Bar } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Info } from 'lucide-react';
 import { calculatePiecewiseAPY, getTierForSegment, calculatePredictedYield, calculateBonusYield, calculateComprehensiveAPY } from '@/utils/tzFormulas';
 import { PROTOCOL_APY_28D, PERFORMANCE_FEE } from '@/utils/protocolConstants';
 
@@ -28,6 +30,7 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<number | null>(null);
+  const [isInsuranceDialogOpen, setIsInsuranceDialogOpen] = useState(false);
 
   // Generate yield curve data using the correct piecewise APY formula
   const yieldCurveData = useMemo(() => {
@@ -284,6 +287,42 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
                 />
                 <span className="font-medium">{preset.name}</span>
                 <span className="text-muted-foreground">({preset.range[0]}-{preset.range[1]})</span>
+                {preset.name === 'Hero' && (
+                  <Dialog open={isInsuranceDialogOpen} onOpenChange={setIsInsuranceDialogOpen}>
+                    <DialogTrigger asChild>
+                      <button className="ml-1 p-0.5 hover:bg-muted rounded-full">
+                        <Info 
+                          size={12} 
+                          className="text-red-500 animate-pulse cursor-pointer hover:text-red-600" 
+                        />
+                      </button>
+                    </DialogTrigger>
+                    <DialogContent className="max-w-md">
+                      <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                          <div className="w-2 h-2 bg-red-500 rounded-full" />
+                          Hero Tier Insurance Mechanism
+                        </DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-3">
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          Part of the protocol's 20% performance fee is continuously redirected to Hero tier (buckets 60-99) 
+                          to provide insurance coverage for all participants.
+                        </p>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          Hero tier absorbs losses first but earns the highest yields, creating a waterfall protection 
+                          system for lower-risk tiers.
+                        </p>
+                        <div className="bg-muted/50 p-3 rounded-lg">
+                          <p className="text-xs font-medium text-muted-foreground">
+                            💡 This mechanism ensures that conservative investors are protected while rewarding 
+                            risk-taking participants with premium yields.
+                          </p>
+                        </div>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                )}
               </div>
             ))}
           </div>
@@ -318,23 +357,6 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
                   {(PROTOCOL_APY_28D * 100).toFixed(1)}% (28d avg)
                 </p>
               </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Insurance Mechanism Explanation */}
-      <Card className="bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-950/20 dark:to-red-950/20">
-        <CardContent className="pt-6">
-          <div className="flex items-start gap-3">
-            <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0" />
-            <div className="space-y-2">
-              <h4 className="font-semibold text-sm">Hero Tier Insurance Mechanism</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Part of the protocol's 20% performance fee is continuously redirected to Hero tier (buckets 60-99) 
-                to provide insurance coverage for all participants. Hero tier absorbs losses first but earns the highest yields, 
-                creating a waterfall protection system for lower-risk tiers.
-              </p>
             </div>
           </div>
         </CardContent>
