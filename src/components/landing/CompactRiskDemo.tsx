@@ -30,7 +30,7 @@ const CompactRiskDemo = () => {
       segment: 20, 
       icon: Shield, 
       color: 'bg-blue-100 text-blue-800 border-blue-200',
-      description: 'Flat 7% APY'
+      description: 'Linear 5.16% → 7%'
     },
     { 
       id: 'balanced', 
@@ -38,7 +38,7 @@ const CompactRiskDemo = () => {
       segment: 45, 
       icon: Star, 
       color: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      description: 'Flat 9% APY'
+      description: 'Quadratic 7% → 9.5%'
     },
     { 
       id: 'hero', 
@@ -60,13 +60,13 @@ const CompactRiskDemo = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
           <Badge variant="secondary" className="mb-4">
-            NEW PIECEWISE MODEL
+            UPDATED PIECEWISE MODEL
           </Badge>
           <h2 className="text-3xl sm:text-4xl font-light mb-4">
             Choose Your Strategy
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Experience T-Core's new fair and predictable piecewise yield model with 4 distinct tiers
+            Experience T-Core's progressive yield model with proper tier formulas
           </p>
         </div>
 
@@ -74,7 +74,7 @@ const CompactRiskDemo = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calculator className="h-5 w-5 text-primary" />
-              Piecewise Strategy Calculator
+              Progressive Strategy Calculator
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -137,13 +137,13 @@ const CompactRiskDemo = () => {
             <div className="p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center gap-2 mb-3">
                 <TrendingUp className="w-4 h-4 text-primary" />
-                <span className="font-medium text-sm">New Piecewise Model</span>
+                <span className="font-medium text-sm">Progressive Piecewise Model</span>
               </div>
               <div className="text-xs text-muted-foreground space-y-1">
-                <div>• <strong>Safe:</strong> Fixed {(TARGET_APYS.SAFE * 100).toFixed(2)}% (T-Bills × 1.2) - fully guaranteed</div>
-                <div>• <strong>Conservative:</strong> Flat {(TARGET_APYS.CONSERVATIVE * 100).toFixed(1)}% APY</div>
-                <div>• <strong>Balanced:</strong> Flat {(TARGET_APYS.BALANCED * 100).toFixed(1)}% APY</div>
-                <div>• <strong>Hero:</strong> Exponential growth 1.03^(i-25)%</div>
+                <div>• <strong>Safe (0-9):</strong> Fixed 5.16% (T-Bills × 1.2)</div>
+                <div>• <strong>Conservative (10-29):</strong> Linear 5.16% → 7%</div>
+                <div>• <strong>Balanced (30-59):</strong> Quadratic 7% → 9.5%</div>
+                <div>• <strong>Hero (60-99):</strong> Exponential 9.5% × 1.03^(i-60)</div>
               </div>
             </div>
 
@@ -157,7 +157,7 @@ const CompactRiskDemo = () => {
                 </Button>
               </NavLink>
               <div className="text-xs text-muted-foreground mt-2">
-                Piecewise formula • Fair distribution • Predictable yields
+                Progressive formulas • Fair distribution • Predictable yields
               </div>
             </div>
           </CardContent>

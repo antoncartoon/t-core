@@ -1,12 +1,11 @@
-
 /**
  * T-Core Protocol: Updated Piecewise Yield Distribution Function
  * 
- * This implements the updated yield curve with 4 distinct tiers and simplified flat rates:
+ * This implements the updated yield curve with 4 distinct tiers and correct progressive formulas:
  * - Safe (0-9): Fixed 5.16% APY (T-Bills × 1.2)
- * - Conservative (10-29): Flat 7% APY
- * - Balanced (30-59): Flat 9% APY
- * - Hero (60-99): Exponential growth using 1.03^(i-25)%
+ * - Conservative (10-29): Linear from 5.16% to 7%
+ * - Balanced (30-59): Quadratic from 7% to 9.5%
+ * - Hero (60-99): Exponential from 9.5% using 1.03^(i-60)
  */
 
 // Constants from the specification
@@ -25,12 +24,15 @@ export const TIER_BREAKPOINTS = {
   HERO_END: 99
 };
 
-// Target APYs for each tier (simplified model)
+// Target APYs for each tier (updated with correct values)
 export const TARGET_APYS = {
   SAFE: 0.0516, // 5.16% (T-Bills × 1.2)
-  CONSERVATIVE: 0.07, // 7% (flat)
-  BALANCED: 0.09, // 9% (flat)
-  HERO_EXPONENTIAL_BASE: 25 // Base for exponential calculation: 1.03^(i-25)
+  CONSERVATIVE_START: 0.0516, // 5.16% (starting point)
+  CONSERVATIVE_END: 0.07, // 7% (ending point)
+  BALANCED_START: 0.07, // 7% (starting point)
+  BALANCED_END: 0.095, // 9.5% (ending point)
+  HERO_START: 0.095, // 9.5% (starting point)
+  HERO_EXPONENTIAL_BASE: 60 // Base for exponential calculation: 1.03^(i-60)
 };
 
 /**
@@ -43,7 +45,7 @@ export const calculateQuadraticRisk = (segment: number): number => {
 };
 
 /**
- * Calculate APY for any segment using the updated piecewise function
+ * Calculate APY for any segment using the correct piecewise function
  */
 export const calculatePiecewiseAPY = (segment: number): number => {
   // Clamp segment to valid range
@@ -51,22 +53,27 @@ export const calculatePiecewiseAPY = (segment: number): number => {
   
   if (i <= TIER_BREAKPOINTS.SAFE_END) {
     // Safe Tier (0-9): Fixed 5.16%
+    // f(i) = 5.16 for i ∈ [0, 9]
     return TARGET_APYS.SAFE;
   }
   
   if (i <= TIER_BREAKPOINTS.CONSERVATIVE_END) {
-    // Conservative Tier (10-29): Flat 7%
-    return TARGET_APYS.CONSERVATIVE;
+    // Conservative Tier (10-29): Linear from 5.16% to 7%
+    // f(i) = 5.16 + (7 - 5.16) * (i - 10) / 19 for i ∈ [10, 29]
+    const progress = (i - TIER_BREAKPOINTS.CONSERVATIVE_START) / (TIER_BREAKPOINTS.CONSERVATIVE_END - TIER_BREAKPOINTS.CONSERVATIVE_START);
+    return TARGET_APYS.CONSERVATIVE_START + (TARGET_APYS.CONSERVATIVE_END - TARGET_APYS.CONSERVATIVE_START) * progress;
   }
   
   if (i <= TIER_BREAKPOINTS.BALANCED_END) {
-    // Balanced Tier (30-59): Flat 9%
-    return TARGET_APYS.BALANCED;
+    // Balanced Tier (30-59): Quadratic from 7% to 9.5%
+    // f(i) = 7 + (9.5 - 7) * ((i - 30)/29)^2 for i ∈ [30, 59]
+    const progress = (i - TIER_BREAKPOINTS.BALANCED_START) / (TIER_BREAKPOINTS.BALANCED_END - TIER_BREAKPOINTS.BALANCED_START);
+    return TARGET_APYS.BALANCED_START + (TARGET_APYS.BALANCED_END - TARGET_APYS.BALANCED_START) * Math.pow(progress, 2);
   }
   
-  // Hero Tier (60-99): Exponential growth 1.03^(i-25)
-  const exponentialResult = Math.pow(1.03, i - TARGET_APYS.HERO_EXPONENTIAL_BASE) / 100;
-  return exponentialResult;
+  // Hero Tier (60-99): Exponential from 9.5% using 1.03^(i-60)
+  // f(i) = 9.5 * 1.03^(i - 60) for i ∈ [60, 99]
+  return TARGET_APYS.HERO_START * Math.pow(1.03, i - TARGET_APYS.HERO_EXPONENTIAL_BASE);
 };
 
 /**
@@ -88,7 +95,7 @@ export const calculateRangeWeightedAPY = (startSegment: number, endSegment: numb
 };
 
 /**
- * Get tier information for a given segment (updated model)
+ * Get tier information for a given segment (updated formulas)
  */
 export const getTierForSegment = (segment: number): {
   name: string;
@@ -113,7 +120,7 @@ export const getTierForSegment = (segment: number): {
     return {
       name: 'Conservative',
       range: [10, 29],
-      formula: 'Flat 7%',
+      formula: 'Linear: 5.16% → 7%',
       color: 'text-blue-600',
       targetWeight: 0.20
     };
@@ -123,7 +130,7 @@ export const getTierForSegment = (segment: number): {
     return {
       name: 'Balanced',
       range: [30, 59],
-      formula: 'Flat 9%',
+      formula: 'Quadratic: 7% → 9.5%',
       color: 'text-yellow-600',
       targetWeight: 0.30
     };
@@ -132,7 +139,7 @@ export const getTierForSegment = (segment: number): {
   return {
     name: 'Hero',
     range: [60, 99],
-    formula: 'Exponential: 1.03^(i-25)%',
+    formula: 'Exponential: 9.5% × 1.03^(i-60)',
     color: 'text-purple-600',
     targetWeight: 0.40
   };
