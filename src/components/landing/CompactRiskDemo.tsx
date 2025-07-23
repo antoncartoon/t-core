@@ -160,20 +160,6 @@ const CompactRiskDemo = () => {
               </div>
             </div>
 
-            {/* How it Works */}
-            <div className="p-4 bg-muted/50 rounded-lg">
-              <div className="flex items-center gap-2 mb-3">
-                <TrendingUp className="w-4 h-4 text-primary" />
-                <span className="font-medium text-sm">Quadratic Risk & Piecewise Yield Model</span>
-              </div>
-              <div className="text-xs text-muted-foreground space-y-1">
-                <div>• <strong>Risk Function:</strong> Risk(i) = (i/99)² - quadratic increase</div>
-                <div>• <strong>Safe (0-9):</strong> Fixed 5.16% (T-Bills × 1.2)</div>
-                <div>• <strong>Conservative (10-29):</strong> Linear 5.16% → 7%</div>
-                <div>• <strong>Balanced (30-59):</strong> Quadratic 7% → 9.5%</div>
-                <div>• <strong>Hero (60-99):</strong> Exponential 9.5% × 1.03^(i-25)</div>
-              </div>
-            </div>
 
             {/* CTA */}
             <div className="text-center pt-4">
