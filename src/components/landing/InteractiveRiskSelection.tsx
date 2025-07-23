@@ -133,9 +133,9 @@ const InteractiveRiskSelection = () => {
                     <div className="text-xs text-green-700">Base APY</div>
                   </div>
                   <div>
-                    <div className="text-lg font-semibold text-purple-600">
-                      +{(apyBreakdown.bonusAPY * 100).toFixed(1}}%
-                    </div>
+                     <div className="text-lg font-semibold text-purple-600">
+                       +{(apyBreakdown.bonusAPY * 100).toFixed(1)}%
+                     </div>
                     <div className="text-xs text-purple-700">Risk Bonus</div>
                   </div>
                 </div>
