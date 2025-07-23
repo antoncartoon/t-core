@@ -91,7 +91,7 @@ export const SimplifiedStakingInterface = () => {
   return (
     <div className="space-y-6">
       {/* Amount Input Section */}
-      <Card>
+      <Card className="max-w-2xl mx-auto">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Calculator className="h-5 w-5" />
@@ -132,7 +132,27 @@ export const SimplifiedStakingInterface = () => {
               </p>
             </div>
           </div>
+        </CardContent>
+      </Card>
 
+      {/* Interactive Liquidity Chart */}
+      <InteractiveLiquidityChart
+        selectedRange={selectedRange}
+        onRangeSelect={setSelectedRange}
+        amount={numericAmount}
+        liquidityData={liquidityData}
+      />
+
+      {/* Stress Test Panel */}
+      <StakingStressTestPanel
+        amount={numericAmount}
+        selectedRange={selectedRange}
+        totalTVL={tcoreState.totalTVL}
+      />
+
+      {/* Yield Prediction and Stake Action */}
+      <Card className="max-w-2xl mx-auto">
+        <CardContent className="space-y-6 pt-6">
           {/* Updated Predicted Yield Display */}
           {yieldPrediction && (
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 p-4 rounded-lg">
@@ -166,24 +186,26 @@ export const SimplifiedStakingInterface = () => {
           )}
 
           {/* Stake Button */}
-          <Button
-            onClick={handleStake}
-            disabled={isStaking || numericAmount <= 0 || numericAmount > tddBalance}
-            className="w-full h-12"
-            size="lg"
-          >
-            {isStaking ? (
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                Creating Position...
-              </div>
-            ) : (
-              <>
-                <TrendingUp className="w-4 h-4 mr-2" />
-                Stake {numericAmount.toFixed(2)} TDD
-              </>
-            )}
-          </Button>
+          <div className="flex justify-center">
+            <Button
+              onClick={handleStake}
+              disabled={isStaking || numericAmount <= 0 || numericAmount > tddBalance}
+              className="max-w-sm h-12"
+              size="lg"
+            >
+              {isStaking ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  Creating Position...
+                </div>
+              ) : (
+                <>
+                  <TrendingUp className="w-4 h-4 mr-2" />
+                  Stake {numericAmount.toFixed(2)} TDD
+                </>
+              )}
+            </Button>
+          </div>
 
           {/* Protocol Stats */}
           <div className="grid grid-cols-2 gap-4 pt-4 border-t text-center">
@@ -198,21 +220,6 @@ export const SimplifiedStakingInterface = () => {
           </div>
         </CardContent>
       </Card>
-
-      {/* Interactive Liquidity Chart */}
-      <InteractiveLiquidityChart
-        selectedRange={selectedRange}
-        onRangeSelect={setSelectedRange}
-        amount={numericAmount}
-        liquidityData={liquidityData}
-      />
-
-      {/* Stress Test Panel */}
-      <StakingStressTestPanel
-        amount={numericAmount}
-        selectedRange={selectedRange}
-        totalTVL={tcoreState.totalTVL}
-      />
     </div>
   );
 };
