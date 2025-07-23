@@ -39,7 +39,7 @@ const App = () => {
 
           {/* Main Dashboard Tabs */}
           <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="overview" className="flex items-center gap-2">
                 <BarChart3 className="h-4 w-4" />
                 Overview
@@ -47,10 +47,6 @@ const App = () => {
               <TabsTrigger value="staking" className="flex items-center gap-2">
                 <TrendingUp className="h-4 w-4" />
                 Staking
-              </TabsTrigger>
-              <TabsTrigger value="portfolio" className="flex items-center gap-2">
-                <Wallet className="h-4 w-4" />
-                My Positions
               </TabsTrigger>
             </TabsList>
 
@@ -113,21 +109,6 @@ const App = () => {
             {/* Staking Tab */}
             <TabsContent value="staking" className="space-y-6">
               <ComprehensiveStakingDashboard />
-            </TabsContent>
-
-            {/* Portfolio Tab */}
-            <TabsContent value="portfolio" className="space-y-6">
-              <div className="text-center py-8">
-                <h3 className="text-lg font-semibold mb-2">Portfolio Management</h3>
-                <p className="text-muted-foreground mb-4">
-                  View and manage your staking positions here. This section will be integrated from the Portfolio page.
-                </p>
-                <NavLink to="/portfolio">
-                  <Button>
-                    Go to Full Portfolio
-                  </Button>
-                </NavLink>
-              </div>
             </TabsContent>
           </Tabs>
         </div>
