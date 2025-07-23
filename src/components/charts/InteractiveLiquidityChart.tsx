@@ -2,7 +2,8 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, ReferenceLine, ReferenceArea, Tooltip, BarChart, Bar } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { calculatePiecewiseAPY, getTierForSegment } from '@/utils/tzFormulas';
+import { calculatePiecewiseAPY, getTierForSegment, calculatePredictedYield, calculateBonusYield } from '@/utils/tzFormulas';
+import { PROTOCOL_APY_28D, PERFORMANCE_FEE } from '@/utils/protocolConstants';
 
 interface InteractiveLiquidityChartProps {
   selectedRange: [number, number];
@@ -322,15 +323,41 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
                 <p className="font-semibold">{selectedRange[1] - selectedRange[0] + 1} segments</p>
               </div>
               <div>
-                <p className="text-muted-foreground">Min APY</p>
+                <p className="text-muted-foreground">Est. Avg APY</p>
                 <p className="font-semibold text-green-600">
-                  {(calculatePiecewiseAPY(selectedRange[0]) * 100).toFixed(2)}%
+                  {(() => {
+                    // Calculate comprehensive estimated APY
+                    const currentLiquidity = liquidityData
+                      .slice(selectedRange[0], selectedRange[1] + 1)
+                      .reduce((sum, item) => sum + item.liquidity, 0);
+                    
+                    const totalLiquidityAfterDeposit = currentLiquidity + amount;
+                    
+                    // Base APY from 28-day protocol average
+                    const protocolBaseAPY = PROTOCOL_APY_28D * 100; // 10%
+                    
+                    // Calculate weighted APY for the range
+                    const predictionResult = calculatePredictedYield(amount || 1000, selectedRange);
+                    
+                    // Factor in liquidity density impact (less crowded ranges get slight bonus)
+                    const liquidityDensity = totalLiquidityAfterDeposit / (selectedRange[1] - selectedRange[0] + 1);
+                    const liquidityBonus = liquidityDensity < 50000 ? 1.05 : 1.0; // 5% bonus for less crowded ranges
+                    
+                    // Factor in bonus yield from performance fees (simplified calculation)
+                    const tierDistribution = { safe: 0.3, conservative: 0.4, balanced: 0.2, hero: 0.1 };
+                    const bonusAllocation = calculateBonusYield(tierDistribution, PERFORMANCE_FEE * protocolBaseAPY / 100);
+                    const bonusValues = Object.values(bonusAllocation) as number[];
+                    const avgTierBonus = bonusValues.reduce((sum, val) => sum + val, 0) / bonusValues.length;
+                    
+                    const estimatedAPY = predictionResult.percentAPY * liquidityBonus + (avgTierBonus * 100);
+                    return estimatedAPY.toFixed(2);
+                  })()}%
                 </p>
               </div>
               <div>
-                <p className="text-muted-foreground">Max APY</p>
+                <p className="text-muted-foreground">Protocol Base</p>
                 <p className="font-semibold text-blue-600">
-                  {(calculatePiecewiseAPY(selectedRange[1]) * 100).toFixed(2)}%
+                  {(PROTOCOL_APY_28D * 100).toFixed(1)}% (28d avg)
                 </p>
               </div>
             </div>
