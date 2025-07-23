@@ -48,7 +48,7 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
                 className="w-full sm:w-auto text-base font-medium px-6 sm:px-8 py-4 sm:py-6 h-auto bg-primary hover:bg-primary/90 animate-pulse"
               >
                 <Calculator className="w-4 h-4 mr-2" />
-                Start Staking
+                Go to App
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </NavLink>
