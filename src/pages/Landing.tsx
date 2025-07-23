@@ -1,6 +1,5 @@
 
 import React from 'react';
-import APYTestComponent from '@/components/debug/APYTestComponent';
 import { useIsMobile } from '@/hooks/use-mobile';
 import LandingHeader from '@/components/landing/LandingHeader';
 import SimpleHeroSection from '@/components/landing/SimpleHeroSection';
@@ -36,13 +35,6 @@ const Landing = () => {
         />
         <TDDExplainer />
         <SimpleWhyTCore />
-        
-        {/* Debug APY Values */}
-        <div className="py-8 bg-red-50 border-y-2 border-red-200">
-          <div className="max-w-4xl mx-auto px-4">
-            <APYTestComponent />
-          </div>
-        </div>
         
         {/* Simplified Risk Demo */}
         <CompactRiskDemo />
