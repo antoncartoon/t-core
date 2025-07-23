@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useTCore } from '@/contexts/TCoreContext';
+import { useWallet } from '@/contexts/WalletContext';
 import { useToast } from '@/hooks/use-toast';
 import { LITE_TEMPLATES, StakingMode, RiskRange } from '@/types/tcore';
 import { simulateScenarios } from '@/utils/tcoreCalculations';
@@ -16,12 +17,12 @@ import { YieldSimulator } from './YieldSimulator';
 
 export const TCoreStakingCard = () => {
   const { 
-    getAvailableBalance, 
     createNFTPosition, 
     stakingMode, 
     setStakingMode,
     tcoreState 
   } = useTCore();
+  const { getAvailableBalance } = useWallet();
   const { toast } = useToast();
 
   const [amount, setAmount] = useState<string>('');
