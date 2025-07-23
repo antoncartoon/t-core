@@ -83,7 +83,8 @@ export const DualAxisRiskYieldChart: React.FC<DualAxisRiskYieldChartProps> = ({
                 yAxisId="left"
                 label={{ value: 'APY (%)', angle: -90, position: 'insideLeft' }}
                 tick={{ fontSize: 12 }}
-                domain={[0, 'dataMax']}
+                domain={[0, 30]}
+                tickFormatter={(value) => `${value.toFixed(0)}%`}
               />
               <YAxis 
                 yAxisId="right" 
