@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Shield, Star, Crown, TrendingUp, Calculator, ArrowRight } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
-import { calculatePrecisionAPY, getTierForBucket } from '@/utils/tzFormulas';
+import { calculatePiecewiseAPY, getTierForBucket } from '@/utils/tzFormulas';
 
 const UnifiedRiskSelection = () => {
   const [activeTier, setActiveTier] = useState(0);
@@ -64,7 +63,7 @@ const UnifiedRiskSelection = () => {
     
     for (let i = 0; i < samples; i++) {
       const bucket = min + Math.floor(i * (max - min) / (samples - 1));
-      totalAPY += calculatePrecisionAPY(bucket);
+      totalAPY += calculatePiecewiseAPY(bucket);
     }
     
     return totalAPY / samples;
@@ -84,7 +83,7 @@ const UnifiedRiskSelection = () => {
   const generateCurveData = () => {
     const points = [];
     for (let bucket = 0; bucket <= 99; bucket += 2) {
-      const apy = calculatePrecisionAPY(bucket);
+      const apy = calculatePiecewiseAPY(bucket);
       points.push({
         bucket,
         apy,
