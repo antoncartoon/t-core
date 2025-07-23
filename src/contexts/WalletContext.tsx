@@ -35,8 +35,8 @@ const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 export const WalletProvider = ({ children }: { children: ReactNode }) => {
   const [balances, setBalances] = useState<Asset[]>([
-    { symbol: 'USDC', balance: 0, usdValue: 0, change: '+0.00%' },
-    { symbol: 'TDD', balance: 0, usdValue: 0, change: '+0.00%' },
+    { symbol: 'USDC', balance: 5000, usdValue: 5000, change: '+0.01%' },
+    { symbol: 'TDD', balance: 2500, usdValue: 2500, change: '+2.34%' },
   ]);
 
   // Initialize with demo positions

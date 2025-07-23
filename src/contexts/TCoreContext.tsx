@@ -64,18 +64,18 @@ export const TCoreProvider = ({ children }: { children: ReactNode }) => {
   const [nftPositions, setNftPositions] = useState<NFTPosition[]>([]);
   const [stakingMode, setStakingMode] = useState<StakingMode>('lite');
   
-  // Initial protocol state
+  // Initial protocol state with realistic demo data
   const [tcoreState, setTCoreState] = useState<TCoreState>({
     liquidityTicks: generateInitialLiquidityTicks(),
-    totalTVL: 0,
+    totalTVL: 850000, // Realistic demo TVL
     protocolParams: {
       rMin: 0.05016, // 5.016% guaranteed rate (T-Bills + spread)
       k: 1.5, // Initial curve parameter
-      totalYield: 0,
+      totalYield: 74205, // Demo yield based on protocol APY
       reserveAmount: 1000000, // Initial insurance reserve
-      protocolFees: 0
+      protocolFees: 8734 // Demo accumulated fees
     },
-    highRiskLiquidity: 0,
+    highRiskLiquidity: 340000, // 40% of TVL in higher risk tiers
     lastUpdateTimestamp: new Date(),
     oracleData: {
       chainlinkTBillRate: 0.0418, // 4.18% current T-Bill rate
