@@ -21,10 +21,7 @@ const ComprehensiveStakingDashboard: React.FC<ComprehensiveDashboardProps> = ({
       <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-b border-blue-200 dark:border-blue-800 p-3 sm:p-4 rounded-lg">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
           <div className="flex items-start sm:items-center gap-2 sm:gap-3 min-w-0 flex-1">
-            <div className="relative flex-shrink-0">
-              <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-blue-500" />
-              <div className="absolute -top-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-blue-500 rounded-full animate-pulse"></div>
-            </div>
+            
             <div className="min-w-0 flex-1">
               <h2 className="font-bold text-base sm:text-lg xl:text-xl leading-tight"></h2>
               <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1 leading-relaxed">
