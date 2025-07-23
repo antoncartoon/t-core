@@ -12,6 +12,10 @@ export const T_BILL_RATE = 0.05; // 5% T-Bills rate
 export const FIXED_BASE_MULTIPLIER = 1.2; // T-Bills * 1.2 for Safe tier
 export const FIXED_BASE_APY = T_BILL_RATE * FIXED_BASE_MULTIPLIER; // 5.16% guaranteed for Safe tier
 
+// Legacy constants for backward compatibility
+export const TIER1_WIDTH = 9; // Safe tier end (0-9)
+export const OPTIMAL_K = 75; // Optimal risk level for balanced positioning
+
 // T-Core 4-tier preset structure with new piecewise ranges
 export const TIER_PRESETS = {
   SAFE: { range: [0, 9], name: 'Safe', fixedAPY: TARGET_APYS.SAFE },
