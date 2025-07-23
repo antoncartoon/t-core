@@ -1,39 +1,45 @@
 import { RiskRange, RiskTick, LiquidityPosition, RangeCalculationResult } from '@/types/riskRange';
 import { calculatePiecewiseAPY, calculateRangeWeightedAPY, getTierForSegment, TARGET_APYS } from '@/utils/tzFormulas';
+import { 
+  TOTAL_TVL, 
+  STAKED_TVL, 
+  PROTOCOL_APY_28D, 
+  TIER_BREAKPOINTS,
+  TARGET_DISTRIBUTION,
+  CATEGORY_DISTRIBUTION,
+  T_BILLS_RATE,
+  FIXED_BASE_APY,
+  MIN_RISK_LEVEL,
+  MAX_RISK_LEVEL
+} from '@/utils/protocolConstants';
 
 // Export the new piecewise calculation as the main APY calculator
 export const calculateTCoreAPY = calculatePiecewiseAPY;
 export const calculateRiskLevelAPR = calculatePiecewiseAPY;
 
 // Update constants to match new model
-export const RISK_SCALE_MIN = 0;
-export const RISK_SCALE_MAX = 99;
-export const T_BILL_RATE = 0.05; // 5% T-Bills rate
+export const RISK_SCALE_MIN = MIN_RISK_LEVEL;
+export const RISK_SCALE_MAX = MAX_RISK_LEVEL;
+export const T_BILL_RATE = T_BILLS_RATE;
 export const FIXED_BASE_MULTIPLIER = 1.2; // T-Bills * 1.2 for Safe tier
-export const FIXED_BASE_APY = T_BILL_RATE * FIXED_BASE_MULTIPLIER; // 5.16% guaranteed for Safe tier
 
 // Legacy constants for backward compatibility
 export const TIER1_WIDTH = 9; // Safe tier end (0-9)
 export const OPTIMAL_K = 75; // Optimal risk level for balanced positioning
 
-// Import TIER_PRESETS from unified formula library
-// Note: TIER_PRESETS is now imported from tzFormulas.ts for consistency
+// Export FIXED_BASE_APY for component usage
+export { FIXED_BASE_APY } from '@/utils/protocolConstants';
 
-// Protocol data with T-Core structure
-export const PROTOCOL_TVL = 12_500_000; // USD
-export const TOTAL_TDD_ISSUED = 12_500_000;
-export const TDD_IN_STAKING = 8_750_000; // 70%
-export const PROTOCOL_APY_28_DAYS = 0.105; // 10.5%
+// Protocol data using global constants
+export const PROTOCOL_TVL = TOTAL_TVL;
+export const TOTAL_TDD_ISSUED = STAKED_TVL;
+export const TDD_IN_STAKING = STAKED_TVL * 0.7; // 70%
+export const PROTOCOL_APY_28_DAYS = PROTOCOL_APY_28D;
 export const AVERAGE_APY_TARGET = 0.0873; // 8.73% from simulation
 export const BONUS_SPREAD = 0.0891; // 8.91% spread from simulation
 
-// Updated distribution matching T-Core tiers with new ranges
-export const CATEGORY_DISTRIBUTION = {
-  SAFE: { range: [0, 9], totalTDD: 875_000, isFixed: true }, // 10% (reduced from original)
-  CONSERVATIVE: { range: [10, 29], totalTDD: 1_750_000, isFixed: false }, // 20%
-  BALANCED: { range: [30, 59], totalTDD: 2_625_000, isFixed: false }, // 30%
-  HERO: { range: [60, 99], totalTDD: 3_500_000, isFixed: false } // 40%
-};
+// Use global category distribution
+export { CATEGORY_DISTRIBUTION } from '@/utils/protocolConstants';
 
 /**
  * Generate T-Core risk ticks with 4-tier structure using new piecewise model
@@ -41,11 +47,11 @@ export const CATEGORY_DISTRIBUTION = {
 export const generateTCoreRiskTicks = (): RiskTick[] => {
   const ticks: RiskTick[] = [];
   
-  // Calculate TDD per tick for each T-Core tier
-  const safeTDDPerTick = CATEGORY_DISTRIBUTION.SAFE.totalTDD / 10; // 10 ticks (0-9)
-  const conservativeTDDPerTick = CATEGORY_DISTRIBUTION.CONSERVATIVE.totalTDD / 20; // 20 ticks (10-29)
-  const balancedTDDPerTick = CATEGORY_DISTRIBUTION.BALANCED.totalTDD / 30; // 30 ticks (30-59)
-  const heroTDDPerTick = CATEGORY_DISTRIBUTION.HERO.totalTDD / 40; // 40 ticks (60-99)
+    // Calculate TDD per tick for each T-Core tier using allocation percentages
+    const safeTDDPerTick = (STAKED_TVL * CATEGORY_DISTRIBUTION.SAFE.tddAllocation) / 10; // 10 ticks (0-9)
+    const conservativeTDDPerTick = (STAKED_TVL * CATEGORY_DISTRIBUTION.CONSERVATIVE.tddAllocation) / 20; // 20 ticks (10-29)
+    const balancedTDDPerTick = (STAKED_TVL * CATEGORY_DISTRIBUTION.BALANCED.tddAllocation) / 30; // 30 ticks (30-59)
+    const heroTDDPerTick = (STAKED_TVL * CATEGORY_DISTRIBUTION.HERO.tddAllocation) / 40; // 40 ticks (60-99)
   
   for (let i = RISK_SCALE_MIN; i <= RISK_SCALE_MAX; i++) {
     let totalLiquidity = 0;
@@ -337,7 +343,7 @@ export const simulateAnnualValueIncrease = (
  */
 export const calculateSurplusPool = (
   totalYield: number,
-  tier1Stake: number = CATEGORY_DISTRIBUTION.SAFE.totalTDD
+  tier1Stake: number = STAKED_TVL * CATEGORY_DISTRIBUTION.SAFE.tddAllocation
 ): number => {
   const minYieldsRequired = tier1Stake * FIXED_BASE_APY;
   return Math.max(0, totalYield - minYieldsRequired);

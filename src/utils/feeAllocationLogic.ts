@@ -8,16 +8,13 @@
  * - 25% to replenish high-risk tiers for insurance buffer
  */
 
-// Performance fee constants
-export const PERFORMANCE_FEE = 0.2; // 20% of total yield
+import { PERFORMANCE_FEE, BONUS_YIELD_ALLOCATION } from '@/utils/protocolConstants';
 
-// Fee allocation breakdown (each 25% of performance fee)
-export const FEE_ALLOCATION = {
-  bonusYield: 0.25,      // 25% to bonus yield enhancement
-  buybackTDD: 0.25,      // 25% to buyback TDD for peg stability
-  protocolRevenue: 0.25, // 25% as protocol revenue
-  insuranceBuffer: 0.25, // 25% to replenish high-risk tiers
-};
+// Re-export for backward compatibility  
+export { PERFORMANCE_FEE } from '@/utils/protocolConstants';
+
+// Fee allocation breakdown (use global constants)
+export const FEE_ALLOCATION = BONUS_YIELD_ALLOCATION;
 
 /**
  * Calculate performance fee from total yield
@@ -35,10 +32,10 @@ export const calculateFeeAllocation = (totalYield: number) => {
   return {
     totalYield,
     performanceFee,
-    bonusYield: performanceFee * FEE_ALLOCATION.bonusYield,
-    buybackTDD: performanceFee * FEE_ALLOCATION.buybackTDD,
-    protocolRevenue: performanceFee * FEE_ALLOCATION.protocolRevenue,
-    insuranceBuffer: performanceFee * FEE_ALLOCATION.insuranceBuffer,
+    bonusYield: performanceFee * FEE_ALLOCATION.bonus_pool,
+    buybackTDD: performanceFee * FEE_ALLOCATION.buyback_pool,
+    protocolRevenue: performanceFee * FEE_ALLOCATION.protocol_revenue,
+    insuranceBuffer: performanceFee * FEE_ALLOCATION.insurance_reserve,
     netYieldToUsers: totalYield - performanceFee,
   };
 };
@@ -84,25 +81,25 @@ export const getFeeAllocationSummary = () => {
   return [
     {
       name: 'Bonus Yield',
-      percentage: FEE_ALLOCATION.bonusYield * 100,
+      percentage: FEE_ALLOCATION.bonus_pool * 100,
       description: 'Enhances higher tier yields',
       color: 'success',
     },
     {
       name: 'TDD Buyback',
-      percentage: FEE_ALLOCATION.buybackTDD * 100,
+      percentage: FEE_ALLOCATION.buyback_pool * 100,
       description: 'Supply regulation & peg stability',
       color: 'info',
     },
     {
       name: 'Protocol Revenue',
-      percentage: FEE_ALLOCATION.protocolRevenue * 100,
+      percentage: FEE_ALLOCATION.protocol_revenue * 100,
       description: 'Operations & team funding',
       color: 'primary',
     },
     {
       name: 'Hero Buffer',
-      percentage: FEE_ALLOCATION.insuranceBuffer * 100,
+      percentage: FEE_ALLOCATION.insurance_reserve * 100,
       description: 'High-risk tier protection',
       color: 'warning',
     },

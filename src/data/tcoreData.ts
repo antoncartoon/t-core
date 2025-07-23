@@ -1,14 +1,19 @@
 // Unified T-Core data source for consistent statistics across landing and app
-import { PROTOCOL_TVL, PROTOCOL_APY_28_DAYS, TOTAL_TDD_ISSUED, TDD_IN_STAKING, AVERAGE_APY_TARGET } from '@/utils/riskRangeCalculations';
-import { PERFORMANCE_FEE, FEE_ALLOCATION } from '@/utils/feeAllocationLogic';
+import { 
+  TOTAL_TVL, 
+  STAKED_TVL, 
+  PROTOCOL_APY_28D, 
+  PERFORMANCE_FEE, 
+  BONUS_YIELD_ALLOCATION
+} from '@/utils/protocolConstants';
 
 export const TCORE_STATS = {
   // Protocol Statistics
-  totalValueLocked: PROTOCOL_TVL,
-  protocolAPY28Days: PROTOCOL_APY_28_DAYS,
-  averageAPYTarget: AVERAGE_APY_TARGET,
-  totalTDDIssued: TOTAL_TDD_ISSUED,
-  tddInStaking: TDD_IN_STAKING,
+  totalValueLocked: TOTAL_TVL,
+  protocolAPY28Days: PROTOCOL_APY_28D,
+  averageAPYTarget: PROTOCOL_APY_28D * 0.83, // 8.3% average from distribution
+  totalTDDIssued: STAKED_TVL,
+  tddInStaking: STAKED_TVL,
   
   // Participation Statistics
   activeStakers: 2847,
@@ -17,10 +22,10 @@ export const TCORE_STATS = {
   // Performance Fee (20% of total yield)
   performanceFee: PERFORMANCE_FEE,
   performanceFeeAllocation: {
-    bonusYield: FEE_ALLOCATION.bonusYield,
-    buybackTDD: FEE_ALLOCATION.buybackTDD,
-    protocolRevenue: FEE_ALLOCATION.protocolRevenue,
-    insuranceBuffer: FEE_ALLOCATION.insuranceBuffer,
+    bonusYield: BONUS_YIELD_ALLOCATION.bonus_pool,
+    buybackTDD: BONUS_YIELD_ALLOCATION.buyback_pool,
+    protocolRevenue: BONUS_YIELD_ALLOCATION.protocol_revenue,
+    insuranceBuffer: BONUS_YIELD_ALLOCATION.insurance_reserve,
   },
   
   // Self-Insurance Pool

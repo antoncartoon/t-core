@@ -1,13 +1,13 @@
-import { calculateQuadraticRisk, TIER_BREAKPOINTS, calculatePiecewiseAPY } from '@/utils/tzFormulas';
-import { PROTOCOL_TVL, CATEGORY_DISTRIBUTION } from '@/utils/riskRangeCalculations';
+import { calculateQuadraticRisk } from '@/utils/tzFormulas';
+import { 
+  TOTAL_TVL, 
+  TIER_BREAKPOINTS_LEGACY, 
+  TIER_TVL_DISTRIBUTION, 
+  getTierForSegment 
+} from '@/utils/protocolConstants';
 
-// Correct TVL distribution based on actual protocol data from riskRangeCalculations
-const TIER_TVL_DISTRIBUTION = {
-  safe: 0.10,      // 10% of TVL in Safe tier (0-9) 
-  conservative: 0.20, // 20% of TVL in Conservative tier (10-29)
-  balanced: 0.30,     // 30% of TVL in Balanced tier (30-59)
-  hero: 0.40          // 40% of TVL in Hero tier (60-99)
-};
+// Use global tier TVL distribution
+const PROTOCOL_TVL = TOTAL_TVL;
 
 interface StressScenarioResult {
   lossPercent: number;
@@ -24,9 +24,9 @@ interface StressScenarios {
  * Calculate which tier a segment belongs to using tier breakpoints
  */
 const getTierFromSegment = (segment: number): 'safe' | 'conservative' | 'balanced' | 'hero' => {
-  if (segment <= TIER_BREAKPOINTS.SAFE_END) return 'safe';
-  if (segment <= TIER_BREAKPOINTS.CONSERVATIVE_END) return 'conservative';
-  if (segment <= TIER_BREAKPOINTS.BALANCED_END) return 'balanced';
+  if (segment <= TIER_BREAKPOINTS_LEGACY.SAFE_END) return 'safe';
+  if (segment <= TIER_BREAKPOINTS_LEGACY.CONSERVATIVE_END) return 'conservative';
+  if (segment <= TIER_BREAKPOINTS_LEGACY.BALANCED_END) return 'balanced';
   return 'hero';
 };
 
@@ -44,8 +44,8 @@ const calculateTierRiskAbsorption = (
     
     case 'conservative':
       // Realistic conservative absorption based on scenario severity
-      const conservativeProgress = (avgSegment - TIER_BREAKPOINTS.CONSERVATIVE_START) / 
-                                 (TIER_BREAKPOINTS.CONSERVATIVE_END - TIER_BREAKPOINTS.CONSERVATIVE_START);
+      const conservativeProgress = (avgSegment - TIER_BREAKPOINTS_LEGACY.CONSERVATIVE_START) / 
+                                 (TIER_BREAKPOINTS_LEGACY.CONSERVATIVE_END - TIER_BREAKPOINTS_LEGACY.CONSERVATIVE_START);
       const baseAbsorption = 0.15 + (conservativeProgress * 0.25); // 15% to 40% base absorption
       
       // Scale with scenario severity for realistic stress testing
@@ -61,8 +61,8 @@ const calculateTierRiskAbsorption = (
     
     case 'hero':
       // Exponential progression using piecewise APY as scaling factor
-      const heroProgress = (avgSegment - TIER_BREAKPOINTS.HERO_START) / 
-                          (TIER_BREAKPOINTS.HERO_END - TIER_BREAKPOINTS.HERO_START);
+      const heroProgress = (avgSegment - TIER_BREAKPOINTS_LEGACY.HERO_START) / 
+                          (TIER_BREAKPOINTS_LEGACY.HERO_END - TIER_BREAKPOINTS_LEGACY.HERO_START);
       const exponentialScaling = Math.pow(1.2, heroProgress * 4);
       return Math.min(0.98, 0.70 + (exponentialScaling * 0.20)); // 70% to 98% absorption
   }

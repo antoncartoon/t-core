@@ -18,10 +18,12 @@
 // SECTION 1: PROTOCOL CONSTANTS & CONFIGURATION
 // ============================================================================
 
+import { T_BILLS_RATE, TARGET_APYS as GLOBAL_TARGET_APYS, TIER_BREAKPOINTS as GLOBAL_TIER_BREAKPOINTS } from '@/utils/protocolConstants';
+
 /**
  * Base economic parameters derived from T-Bills rate
  */
-export const T_BILLS_RATE = 0.05; // 5% T-Bills baseline
+export { T_BILLS_RATE } from '@/utils/protocolConstants';
 export const SAFE_MULTIPLIER = 1.2; // T-Bills × 1.2 for safe tier
 export const SAFE_APY = T_BILLS_RATE * SAFE_MULTIPLIER; // 6% effective safe rate
 
@@ -97,30 +99,24 @@ export const calculatePiecewiseAPY = (segment: number): number => {
   const i = Math.max(0, Math.min(99, Math.round(segment)));
   
   // Tier 1: Safe (0-9) - Fixed Rate
-  if (i <= TIER_BREAKPOINTS.SAFE_END) {
-    return TARGET_APYS.SAFE;
+  if (i <= 9) {
+    return 0.08; // 8% fixed
   }
   
-  // Tier 2: Conservative (10-29) - Linear Progression over 19 steps
-  if (i <= TIER_BREAKPOINTS.CONSERVATIVE_END) {
-    // Progress calculation: (segment - 10) / (29 - 10) = (segment - 10) / 19
-    const progress = (i - TIER_BREAKPOINTS.CONSERVATIVE_START) / 
-                    (TIER_BREAKPOINTS.CONSERVATIVE_END - TIER_BREAKPOINTS.CONSERVATIVE_START);
-    return TARGET_APYS.CONSERVATIVE_START + 
-           (TARGET_APYS.CONSERVATIVE_END - TARGET_APYS.CONSERVATIVE_START) * progress;
+  // Tier 2: Conservative (10-29) - Linear Progression
+  if (i <= 29) {
+    const progress = (i - 10) / 19;
+    return 0.08 + (0.04 * progress); // 8% to 12%
   }
   
-  // Tier 3: Balanced (30-59) - Quadratic Progression over 29 steps
-  if (i <= TIER_BREAKPOINTS.BALANCED_END) {
-    // Progress calculation: (segment - 30) / (59 - 30) = (segment - 30) / 29
-    const progress = (i - TIER_BREAKPOINTS.BALANCED_START) / 
-                    (TIER_BREAKPOINTS.BALANCED_END - TIER_BREAKPOINTS.BALANCED_START);
-    return TARGET_APYS.BALANCED_START + 
-           (TARGET_APYS.BALANCED_END - TARGET_APYS.BALANCED_START) * Math.pow(progress, 2);
+  // Tier 3: Balanced (30-59) - Quadratic Progression  
+  if (i <= 59) {
+    const progress = (i - 30) / 29;
+    return 0.12 + (0.06 * Math.pow(progress, 2)); // 12% to 18%
   }
   
   // Tier 4: Hero (60-99) - Exponential Progression
-  return TARGET_APYS.HERO_START * Math.pow(1.03, i - TIER_BREAKPOINTS.HERO_START);
+  return 0.18 * Math.pow(1.03, i - 60); // Starting at 18%
 };
 
 /**
@@ -143,7 +139,7 @@ export const calculateRangeWeightedAPY = (startSegment: number, endSegment: numb
     segmentCount++;
   }
   
-  return segmentCount > 0 ? totalAPY / segmentCount : TARGET_APYS.SAFE;
+  return segmentCount > 0 ? totalAPY / segmentCount : 0.08;
 };
 
 /**
@@ -236,9 +232,8 @@ export const calculateStressScenarios = (
   let lossMultiplier = quadraticRisk;
   
   // Hero tier gets exponential scaling for loss absorption
-  if (avgSegment >= TIER_BREAKPOINTS.HERO_START) {
-    const heroProgress = (avgSegment - TIER_BREAKPOINTS.HERO_START) / 
-                        (TIER_BREAKPOINTS.HERO_END - TIER_BREAKPOINTS.HERO_START);
+  if (avgSegment >= 60) {
+    const heroProgress = (avgSegment - 60) / (99 - 60);
     lossMultiplier = quadraticRisk * Math.pow(1.2, heroProgress * 4); // Scale factor of 4 for full range
   }
   
@@ -278,7 +273,7 @@ export const getTierForSegment = (segment: number): {
 } => {
   const i = Math.max(0, Math.min(99, Math.round(segment)));
   
-  if (i <= TIER_BREAKPOINTS.SAFE_END) {
+  if (i <= 9) {
     return {
       name: 'Safe',
       range: [0, 9],
@@ -288,7 +283,7 @@ export const getTierForSegment = (segment: number): {
     };
   }
   
-  if (i <= TIER_BREAKPOINTS.CONSERVATIVE_END) {
+  if (i <= 29) {
     return {
       name: 'Conservative',
       range: [10, 29],
@@ -298,7 +293,7 @@ export const getTierForSegment = (segment: number): {
     };
   }
   
-  if (i <= TIER_BREAKPOINTS.BALANCED_END) {
+  if (i <= 59) {
     return {
       name: 'Balanced',
       range: [30, 59],

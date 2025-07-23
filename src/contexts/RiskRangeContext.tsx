@@ -6,12 +6,14 @@ import {
   distributeYieldBottomUp,
   calculateHistoricalAPY,
   calculateProtocolYield28Days,
-  FIXED_BASE_APY,
   RISK_SCALE_MIN,
-  RISK_SCALE_MAX,
-  PROTOCOL_TVL,
-  PROTOCOL_APY_28_DAYS
+  RISK_SCALE_MAX
 } from '@/utils/riskRangeCalculations';
+import { 
+  TOTAL_TVL, 
+  PROTOCOL_APY_28D, 
+  FIXED_BASE_APY 
+} from '@/utils/protocolConstants';
 
 interface Asset {
   symbol: string;
@@ -43,13 +45,13 @@ export const RiskRangeProvider = ({ children }: { children: ReactNode }) => {
 
   const [liquidityPositions, setLiquidityPositions] = useState<LiquidityPosition[]>([]);
   
-  // Generate realistic 28-day historical yields around 10.5%
+  // Generate realistic 28-day historical yields around 10%
   const mockHistoricalYields = Array.from({ length: 28 }, () => 
-    PROTOCOL_APY_28_DAYS + (Math.random() - 0.5) * 0.02
+    PROTOCOL_APY_28D + (Math.random() - 0.5) * 0.02
   );
   
   const [protocolState, setProtocolState] = useState<ProtocolState>({
-    totalTVL: PROTOCOL_TVL,
+    totalTVL: TOTAL_TVL,
     totalYieldGenerated: calculateProtocolYield28Days(), // Real protocol yield for 28 days
     guaranteedAPY: FIXED_BASE_APY, // T-Bills * 1.2 = 6%
     riskTicks: generateRealProtocolRiskTicks(), // Real distribution
