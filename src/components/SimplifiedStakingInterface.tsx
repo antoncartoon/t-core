@@ -28,11 +28,15 @@ export const SimplifiedStakingInterface = () => {
   const yieldPrediction = numericAmount > 0 ? calculatePredictedYield(numericAmount, selectedRange) : null;
   const selectedTier = getTierForBucket(Math.floor((selectedRange[0] + selectedRange[1]) / 2));
 
-  // Generate mock liquidity data for visualization
-  const liquidityData = Array.from({ length: 100 }, (_, i) => ({
-    bucket: i,
-    liquidity: Math.random() * 1000000 + (i > 60 ? Math.random() * 2000000 : 0) // More liquidity in hero tier
-  }));
+  // Use actual protocol liquidity data for visualization
+  const liquidityData = Array.from({ length: 100 }, (_, i) => {
+    const tick = tcoreState.liquidityTicks[i];
+    const tickLiquidity = tick ? tick.totalLiquidity : 0;
+    return {
+      bucket: i,
+      liquidity: tickLiquidity
+    };
+  });
 
   const handleStake = async () => {
     if (numericAmount <= 0 || numericAmount > tddBalance) {

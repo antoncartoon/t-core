@@ -54,12 +54,16 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
   ];
 
   const formatLossPercent = (value: number | undefined): string => {
-    if (!value || value === 0) return '0.00';
+    if (!value) return '0.0000';
+    if (value === 0) return '0.0000';
+    if (value < 0.01) return value.toFixed(4);
     return value.toFixed(2);
   };
 
   const formatDollarLoss = (value: number | undefined): string => {
-    if (!value || value === 0) return '0.00';
+    if (!value) return '0.0000';
+    if (value === 0) return '0.0000';
+    if (value < 0.01) return value.toFixed(4);
     return value.toFixed(2);
   };
 

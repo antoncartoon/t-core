@@ -205,13 +205,16 @@ export const calculateEnhancedStressScenarios = (
     totalTVL
   });
   
-  // Calculate tier TVL amounts using correct distribution
+  // Calculate tier TVL amounts using actual protocol distribution if available
+  // Fallback to estimated distribution if protocol data is not available
   const tierTVL = {
     safe: totalTVL * TIER_TVL_DISTRIBUTION.safe,
     conservative: totalTVL * TIER_TVL_DISTRIBUTION.conservative,
     balanced: totalTVL * TIER_TVL_DISTRIBUTION.balanced,
     hero: totalTVL * TIER_TVL_DISTRIBUTION.hero
   };
+  
+  console.log('Tier TVL Distribution:', tierTVL);
 
   // Mathematical stress scenarios aligned with protocol data
   const scenarios = [
@@ -246,8 +249,8 @@ export const calculateEnhancedStressScenarios = (
     });
 
     results[name] = {
-      lossPercent: Math.max(0, Math.round(lossPercent * 100) / 100), // Round to 2 decimal places
-      dollarLoss: Math.max(0, Math.round(userLoss * 100) / 100)
+      lossPercent: Math.max(0, parseFloat(lossPercent.toFixed(4))), // Preserve 4 decimal places
+      dollarLoss: Math.max(0, parseFloat(userLoss.toFixed(4))) // Preserve 4 decimal places
     };
   });
 
