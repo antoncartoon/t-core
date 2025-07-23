@@ -15,6 +15,11 @@ import {
   calculateNormalizedRisk,
   analyzeRiskRange
 } from '@/utils/riskRangeCalculations';
+import { 
+  calculatePiecewiseAPY, 
+  getTierForSegment, 
+  calculateBonusYield 
+} from '@/utils/piecewiseAPY';
 import YieldCurveChart from './YieldCurveChart';
 import ActivePositions from './ActivePositions';
 
@@ -417,39 +422,193 @@ const StakingCard = () => {
             )}
           </div>
 
-          {/* Position Preview */}
+          {/* Enhanced Position Preview */}
           {analysis && stakeAmount > 0 && (
             <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-4 rounded-lg border border-primary/20">
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-sm">
-                    Estimated 
+              <div className="space-y-4">
+                {/* Core Metrics */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <div className="flex justify-between">
+                      <span className="text-sm">
+                        Estimated 
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="underline decoration-dotted cursor-help ml-1">APY</span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="max-w-xs">Annual Percentage Yield - the total return on your staked tokens including compound interest over one year.</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </span>
+                      <span className="font-bold text-primary">
+                        {(realisticAPY * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">Annual Return</span>
+                      <span className="font-medium text-green-600">
+                        ${(stakeAmount * realisticAPY).toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <div className="flex justify-between">
+                      <span className="text-sm">Capital Efficiency</span>
+                      <span className="font-medium">
+                        {analysis.capitalEfficiency.toFixed(1)}x
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-sm">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="underline decoration-dotted cursor-help">Quadratic Risk</span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p className="max-w-xs">Risk increases quadratically: Risk(i) = (i/99)² where i is your segment number</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </span>
+                      <span className="font-medium text-red-600">
+                        {(Math.pow(avgRisk / 99, 2) * 100).toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Enhanced Stress Testing */}
+                <div className="border-t pt-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium">Stress Test Scenarios</span>
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span className="underline decoration-dotted cursor-help ml-1">APY</span>
+                          <AlertTriangle className="w-4 h-4 text-muted-foreground cursor-help" />
                         </TooltipTrigger>
                         <TooltipContent>
-                          <p className="max-w-xs">Annual Percentage Yield - the total return on your staked tokens including compound interest over one year.</p>
+                          <p className="max-w-xs">Potential losses if total protocol value drops by these percentages</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
-                  </span>
-                  <span className="font-bold text-primary">
-                    {(realisticAPY * 100).toFixed(1)}%
-                  </span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 text-xs">
+                    <div className="bg-yellow-50 dark:bg-yellow-950/20 p-2 rounded text-center">
+                      <p className="text-yellow-700 dark:text-yellow-300 font-medium">1% TVL Drop</p>
+                      <p className="font-semibold text-yellow-800 dark:text-yellow-200">
+                        -${(analysis.potentialLoss.at5Percent * 0.2).toFixed(2)}
+                      </p>
+                    </div>
+                    <div className="bg-orange-50 dark:bg-orange-950/20 p-2 rounded text-center">
+                      <p className="text-orange-700 dark:text-orange-300 font-medium">5% TVL Drop</p>
+                      <p className="font-semibold text-orange-800 dark:text-orange-200">
+                        -${analysis.potentialLoss.at5Percent.toFixed(2)}
+                      </p>
+                    </div>
+                    <div className="bg-red-50 dark:bg-red-950/20 p-2 rounded text-center">
+                      <p className="text-red-700 dark:text-red-300 font-medium">10% TVL Drop</p>
+                      <p className="font-semibold text-red-800 dark:text-red-200">
+                        -${analysis.potentialLoss.at10Percent.toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Capital Efficiency</span>
-                  <span className="font-medium">
-                    {analysis.capitalEfficiency.toFixed(1)}x
-                  </span>
+
+                {/* Bonus Yield Estimate */}
+                <div className="border-t pt-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium">Bonus Yield Estimate</span>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <TrendingUp className="w-4 h-4 text-green-600 cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="max-w-xs">Additional yield from underrepresented tier bonuses using B(i) calculation</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  <div className="bg-green-50 dark:bg-green-950/20 p-2 rounded">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-green-700 dark:text-green-300">Potential Bonus APY</span>
+                      <span className="font-semibold text-green-800 dark:text-green-200">
+                        +{(() => {
+                          // Calculate bonus yield based on tier underweight
+                          const tierName = getTierForSegment(avgRisk).name.toLowerCase();
+                          const currentDistribution = { safe: 0.15, conservative: 0.25, balanced: 0.35, hero: 0.25 };
+                          const performanceFeePool = 0.02; // 2% performance fee pool
+                          const bonuses = calculateBonusYield(currentDistribution, performanceFeePool);
+                          const bonusAPY = bonuses[tierName] || 0;
+                          return (bonusAPY * 100).toFixed(2);
+                        })()}%
+                      </span>
+                    </div>
+                    <p className="text-xs text-green-600 dark:text-green-400 mt-1">
+                      Based on current tier distribution imbalance
+                    </p>
+                  </div>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-sm">Annual Return</span>
-                  <span className="font-medium text-green-600">
-                    ${(stakeAmount * realisticAPY).toFixed(2)}
-                  </span>
+
+                {/* Segment-by-Segment Details */}
+                <div className="border-t pt-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium">Range Analysis</span>
+                    <span className="text-xs text-muted-foreground">Segments {selectedRange[0]}-{selectedRange[1]}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div className="space-y-1">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="flex justify-between cursor-help">
+                              <span>Min Risk (Seg {selectedRange[0]}):</span>
+                              <span className="font-medium">
+                                {(Math.pow(selectedRange[0] / 99, 2) * 100).toFixed(2)}%
+                              </span>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="max-w-xs">Quadratic risk at segment {selectedRange[0]}: ({selectedRange[0]}/99)² = {(Math.pow(selectedRange[0] / 99, 2) * 100).toFixed(2)}%</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <div className="flex justify-between cursor-help">
+                              <span>Max Risk (Seg {selectedRange[1]}):</span>
+                              <span className="font-medium">
+                                {(Math.pow(selectedRange[1] / 99, 2) * 100).toFixed(2)}%
+                              </span>
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="max-w-xs">Quadratic risk at segment {selectedRange[1]}: ({selectedRange[1]}/99)² = {(Math.pow(selectedRange[1] / 99, 2) * 100).toFixed(2)}%</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex justify-between">
+                        <span>Min APY:</span>
+                        <span className="font-medium text-primary">
+                          {(calculatePiecewiseAPY(selectedRange[0]) * 100).toFixed(2)}%
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Max APY:</span>
+                        <span className="font-medium text-primary">
+                          {(calculatePiecewiseAPY(selectedRange[1]) * 100).toFixed(2)}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
