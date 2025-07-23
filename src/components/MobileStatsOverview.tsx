@@ -3,6 +3,7 @@ import React from 'react';
 import { TrendingUp, DollarSign, Users, Shield } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { SELF_INSURANCE_POOL } from '@/utils/protocolConstants';
+import { TCORE_STATS } from '@/data/tcoreData';
 
 const MobileStatsOverview = () => {
   const stats = [
@@ -22,7 +23,7 @@ const MobileStatsOverview = () => {
     },
     {
       title: 'Users',
-      value: '2,847',
+      value: TCORE_STATS.activeStakers.toLocaleString(),
       change: '+12%',
       icon: Users,
       color: 'text-purple-600'

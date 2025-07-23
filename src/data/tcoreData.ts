@@ -17,7 +17,7 @@ export const TCORE_STATS = {
   tddInStaking: STAKED_TVL,
   
   // Participation Statistics
-  activeStakers: 2847,
+  activeStakers: 88,
   totalParticipants: 3420,
   
   // Performance Fee (20% of total yield)
