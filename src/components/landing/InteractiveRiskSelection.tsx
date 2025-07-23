@@ -6,11 +6,17 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { NavLink } from 'react-router-dom';
 import { Calculator, TrendingUp, Shield, Zap, ArrowRight, Star, Crown } from 'lucide-react';
-import { calculatePrecisionAPY, getTierForBucket } from '@/utils/tzFormulas';
+import { 
+  calculateTCoreAPY, 
+  TIER_PRESETS,
+  FIXED_BASE_APY,
+  TIER1_WIDTH
+} from '@/utils/riskRangeCalculations';
+import TCoreWaterfallVisualization from './TCoreWaterfallVisualization';
 
 const InteractiveRiskSelection = () => {
   const [demoAmount] = useState(10000);
-  const [demoBucket, setDemoBucket] = useState(0);
+  const [demoBucket, setDemoBucket] = useState(50);
   const [isAnimating, setIsAnimating] = useState(true);
 
   // Auto-cycle through different risk levels for demo
@@ -19,7 +25,7 @@ const InteractiveRiskSelection = () => {
     
     const interval = setInterval(() => {
       setDemoBucket(prev => {
-        const buckets = [5, 15, 35, 75]; // Representative buckets for each tier
+        const buckets = [5, 20, 45, 80]; // Representative buckets for each tier
         const currentIndex = buckets.indexOf(prev);
         return buckets[(currentIndex + 1) % buckets.length];
       });
@@ -28,32 +34,37 @@ const InteractiveRiskSelection = () => {
     return () => clearInterval(interval);
   }, [isAnimating]);
 
-  const currentAPY = calculatePrecisionAPY(demoBucket);
-  const tier = getTierForBucket(demoBucket);
+  const currentAPY = calculateTCoreAPY(demoBucket);
   const annualYield = demoAmount * currentAPY;
 
+  // T-Core tier definitions with proper boundaries
   const tierExamples = [
-    { bucket: 5, name: 'Safe', color: 'bg-green-100 text-green-800 border-green-200', icon: Shield },
-    { bucket: 15, name: 'Conservative', color: 'bg-blue-100 text-blue-800 border-blue-200', icon: Shield },
-    { bucket: 35, name: 'Balanced', color: 'bg-yellow-100 text-yellow-800 border-yellow-200', icon: Star },
-    { bucket: 75, name: 'Hero', color: 'bg-purple-100 text-purple-800 border-purple-200', icon: Crown }
+    { bucket: 5, name: 'Safe', color: 'bg-green-100 text-green-800 border-green-200', icon: Shield, range: '0-9' },
+    { bucket: 20, name: 'Conservative', color: 'bg-blue-100 text-blue-800 border-blue-200', icon: Shield, range: '10-29' },
+    { bucket: 45, name: 'Balanced', color: 'bg-yellow-100 text-yellow-800 border-yellow-200', icon: Star, range: '30-59' },
+    { bucket: 80, name: 'Hero', color: 'bg-purple-100 text-purple-800 border-purple-200', icon: Crown, range: '60-99' }
   ];
 
-  // Generate curve data points for visualization
-  const generateCurveData = () => {
-    const points = [];
-    for (let bucket = 0; bucket <= 99; bucket += 2) {
-      const apy = calculatePrecisionAPY(bucket);
-      points.push({
-        bucket,
-        apy,
-        tier: getTierForBucket(bucket).name
-      });
-    }
-    return points;
+  // Get tier info for current bucket
+  const getCurrentTier = (bucket: number) => {
+    if (bucket <= 9) return { name: 'Safe', color: 'bg-green-100 text-green-800 border-green-200' };
+    if (bucket <= 29) return { name: 'Conservative', color: 'bg-blue-100 text-blue-800 border-blue-200' };
+    if (bucket <= 59) return { name: 'Balanced', color: 'bg-yellow-100 text-yellow-800 border-yellow-200' };
+    return { name: 'Hero', color: 'bg-purple-100 text-purple-800 border-purple-200' };
   };
 
-  const curveData = generateCurveData();
+  const currentTier = getCurrentTier(demoBucket);
+
+  // Calculate APY breakdown
+  const calculateAPYBreakdown = (bucket: number) => {
+    const baseAPY = FIXED_BASE_APY;
+    const totalAPY = calculateTCoreAPY(bucket);
+    const bonusAPY = totalAPY - baseAPY;
+    
+    return { baseAPY, bonusAPY, totalAPY };
+  };
+
+  const apyBreakdown = calculateAPYBreakdown(demoBucket);
 
   return (
     <section className="py-16 sm:py-20 bg-muted/20">
@@ -66,7 +77,8 @@ const InteractiveRiskSelection = () => {
             Choose Your Risk Strategy
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Experience live APY calculations across four risk tiers. Click any strategy to see instant results with mathematical precision.
+            Experience live APY calculations with T-Core's mathematical precision. 
+            Uneven tier widths ensure fair distribution, while bonus yield incentivizes balanced liquidity.
           </p>
         </div>
 
@@ -89,48 +101,67 @@ const InteractiveRiskSelection = () => {
               {/* Current Tier Display */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Current Tier:</span>
-                  <Badge variant="outline" className={tier.color}>
-                    Bucket {demoBucket} • {tier.name}
+                  <span className="text-sm text-muted-foreground">Current Level:</span>
+                  <Badge variant="outline" className={currentTier.color}>
+                    Level {demoBucket} • {currentTier.name}
                   </Badge>
                 </div>
                 
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Risk Level</span>
-                    <span>{((demoBucket / 99) * 100).toFixed(1)}%</span>
+                    <span>{demoBucket}/99</span>
                   </div>
                   <Progress value={(demoBucket / 99) * 100} className="h-2" />
                 </div>
               </div>
 
-              {/* Results */}
-              <div className="space-y-4 p-4 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
+              {/* APY Breakdown */}
+              <div className="space-y-4 p-4 bg-gradient-to-r from-green-50 to-purple-50 dark:from-green-950/20 dark:to-purple-950/20 rounded-lg border border-green-200 dark:border-green-800">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-green-600 mb-1">
-                    {(currentAPY * 100).toFixed(2)}%
+                  <div className="text-3xl font-bold text-primary mb-1">
+                    {(apyBreakdown.totalAPY * 100).toFixed(2)}%
                   </div>
-                  <div className="text-sm text-green-700">Annual APY</div>
+                  <div className="text-sm text-muted-foreground">Total APY</div>
                 </div>
                 
-                <div className="text-center border-t border-green-200 dark:border-green-800 pt-3">
-                  <div className="text-xl font-semibold text-green-600">
+                <div className="grid grid-cols-2 gap-4 text-center border-t pt-3">
+                  <div>
+                    <div className="text-lg font-semibold text-green-600">
+                      {(apyBreakdown.baseAPY * 100).toFixed(1)}%
+                    </div>
+                    <div className="text-xs text-green-700">Base APY</div>
+                  </div>
+                  <div>
+                    <div className="text-lg font-semibold text-purple-600">
+                      +{(apyBreakdown.bonusAPY * 100).toFixed(1}}%
+                    </div>
+                    <div className="text-xs text-purple-700">Risk Bonus</div>
+                  </div>
+                </div>
+                
+                <div className="text-center border-t pt-3">
+                  <div className="text-xl font-semibold text-primary">
                     ${annualYield.toLocaleString()}
                   </div>
-                  <div className="text-xs text-green-700">Expected Annual Yield</div>
+                  <div className="text-xs text-muted-foreground">Expected Annual Yield</div>
                 </div>
               </div>
 
+              {/* T-Core Formula */}
               <div className="text-xs text-muted-foreground p-3 bg-muted/30 rounded-lg">
-                <strong>Live Formula:</strong> APY(r) = 5.16% + (10% - 5.16%) × r^1.5
-                <br />
-                where r = {demoBucket}/99 = {(demoBucket/99).toFixed(3)}
+                <strong>T-Core Formula:</strong> 
+                {demoBucket <= TIER1_WIDTH ? (
+                  ` Fixed guarantee: ${(FIXED_BASE_APY * 100).toFixed(1)}% APY`
+                ) : (
+                  ` f(i) = 1.03^(${demoBucket}-${TIER1_WIDTH}) = ${Math.pow(1.03, demoBucket - TIER1_WIDTH).toFixed(3)}`
+                )}
               </div>
 
               {/* Interactive Tier Selection */}
               <div className="grid grid-cols-1 gap-3">
                 {tierExamples.map((example) => {
-                  const exampleAPY = calculatePrecisionAPY(example.bucket);
+                  const exampleAPY = calculateTCoreAPY(example.bucket);
                   const exampleYield = demoAmount * exampleAPY;
                   const isActive = demoBucket === example.bucket;
                   
@@ -162,7 +193,7 @@ const InteractiveRiskSelection = () => {
                         </div>
                       </div>
                       <div className="text-xs opacity-70">
-                        Bucket {example.bucket} • Risk: {((example.bucket/99)*100).toFixed(1)}%
+                        Levels {example.range} • Width: {example.range.split('-').map(Number).reduce((a, b) => b - a + 1)} levels
                       </div>
                     </div>
                   );
@@ -171,84 +202,64 @@ const InteractiveRiskSelection = () => {
             </CardContent>
           </Card>
 
-          {/* Right: Interactive Graph & Waterfall */}
+          {/* Right: Tier Structure Visualization */}
           <Card className="border-2 border-primary/20">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-primary" />
-                Risk Curve Visualization
+                T-Core Tier Structure
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
-              {/* Risk curve visualization */}
-              <div className="relative h-64 bg-muted/20 rounded-lg overflow-hidden">
-                {/* Background grid */}
-                <div className="absolute inset-0">
-                  {[...Array(10)].map((_, i) => (
-                    <div key={i} className="absolute border-t border-muted" style={{ top: `${i * 10}%`, width: '100%' }} />
-                  ))}
-                  {[...Array(5)].map((_, i) => (
-                    <div key={i} className="absolute border-l border-muted h-full" style={{ left: `${i * 25}%` }} />
-                  ))}
+              {/* Uneven Tier Widths Visualization */}
+              <div className="space-y-4">
+                <h4 className="font-medium">Uneven Tier Widths (Fair Distribution)</h4>
+                <div className="relative h-32 bg-muted/20 rounded-lg overflow-hidden">
+                  {tierExamples.map((tier, index) => {
+                    const [start, end] = tier.range.split('-').map(Number);
+                    const width = end - start + 1;
+                    const leftPercent = tierExamples.slice(0, index).reduce((sum, t) => {
+                      const [s, e] = t.range.split('-').map(Number);
+                      return sum + (e - s + 1);
+                    }, 0);
+                    
+                    const isActive = demoBucket >= start && demoBucket <= end;
+                    
+                    return (
+                      <div
+                        key={tier.name}
+                        className={`absolute h-full transition-all duration-300 border-r-2 border-background cursor-pointer ${
+                          isActive ? 'ring-2 ring-primary ring-inset' : ''
+                        }`}
+                        style={{
+                          left: `${leftPercent}%`,
+                          width: `${width}%`,
+                          backgroundColor: `hsl(var(${tier.color.split(' ')[0].replace('bg-', '--')}))`
+                        }}
+                        onClick={() => {
+                          setDemoBucket(tier.bucket);
+                          setIsAnimating(false);
+                        }}
+                      >
+                        <div className="flex flex-col items-center justify-center h-full text-white text-xs font-medium">
+                          <tier.icon className="h-4 w-4 mb-1" />
+                          <span>{tier.name}</span>
+                          <span className="opacity-70">{tier.range}</span>
+                          <span className="opacity-70 text-xs">{width} levels</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                  
+                  {/* Active level indicator */}
+                  <div
+                    className="absolute top-0 w-1 h-full bg-red-500 z-10 animate-pulse"
+                    style={{ left: `${demoBucket}%` }}
+                  />
                 </div>
-
-                {/* APY curve */}
-                <svg className="absolute inset-0 w-full h-full">
-                  <defs>
-                    <linearGradient id="curveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="rgb(34, 197, 94)" stopOpacity="0.3" />
-                      <stop offset="30%" stopColor="rgb(59, 130, 246)" stopOpacity="0.3" />
-                      <stop offset="60%" stopColor="rgb(234, 179, 8)" stopOpacity="0.3" />
-                      <stop offset="100%" stopColor="rgb(147, 51, 234)" stopOpacity="0.3" />
-                    </linearGradient>
-                  </defs>
-                  
-                  {/* Generate curve path */}
-                  <path
-                    d={curveData.map((point, index) => {
-                      const x = (point.bucket / 99) * 100;
-                      const y = 100 - ((point.apy - 0.05) / (0.12 - 0.05)) * 100;
-                      return `${index === 0 ? 'M' : 'L'} ${x}% ${Math.max(0, Math.min(100, y))}%`;
-                    }).join(' ')}
-                    stroke="hsl(var(--primary))"
-                    strokeWidth="3"
-                    fill="none"
-                    className="transition-all duration-500"
-                  />
-                  
-                  {/* Fill area */}
-                  <path
-                    d={curveData.map((point, index) => {
-                      const x = (point.bucket / 99) * 100;
-                      const y = 100 - ((point.apy - 0.05) / (0.12 - 0.05)) * 100;
-                      return `${index === 0 ? 'M' : 'L'} ${x}% ${Math.max(0, Math.min(100, y))}%`;
-                    }).join(' ') + ' L 100% 100% L 0% 100% Z'}
-                    fill="url(#curveGradient)"
-                    className="transition-all duration-500"
-                  />
-
-                  {/* Active tier highlight */}
-                  <rect
-                    x={`${(demoBucket / 99) * 100 - 2}%`}
-                    y="0%"
-                    width="4%"
-                    height="100%"
-                    fill="hsl(var(--primary))"
-                    fillOpacity="0.4"
-                    stroke="hsl(var(--primary))"
-                    strokeWidth="2"
-                    className="animate-pulse"
-                  />
-                </svg>
-
-                {/* Tier labels */}
-                <div className="absolute bottom-2 left-2 text-xs text-green-600 font-medium">Safe</div>
-                <div className="absolute bottom-2 left-1/4 text-xs text-blue-600 font-medium">Conservative</div>
-                <div className="absolute bottom-2 left-1/2 text-xs text-yellow-600 font-medium">Balanced</div>
-                <div className="absolute bottom-2 right-2 text-xs text-purple-600 font-medium">Hero</div>
               </div>
 
-              {/* Waterfall Distribution Explanation */}
+              {/* Waterfall Explanation */}
               <div className="space-y-4">
                 <h4 className="font-medium text-foreground">Waterfall Distribution</h4>
                 <div className="grid grid-cols-2 gap-4 text-sm">
@@ -257,11 +268,11 @@ const InteractiveRiskSelection = () => {
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span>Safe: Fixed guarantee</span>
+                        <span>Safe: Fixed {(FIXED_BASE_APY * 100).toFixed(1)}%</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                        <span>Conservative: Stable yield</span>
+                        <span>Conservative: Base + bonus</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
@@ -290,21 +301,31 @@ const InteractiveRiskSelection = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span>Safe: Protected</span>
+                        <span>Safe: Protected (0% loss)</span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="p-3 bg-muted/50 rounded-lg">
-                <p className="text-xs text-muted-foreground">
-                  💡 <strong>Mathematical Precision:</strong> All calculations use verified formulas. 
-                  Higher tiers earn more yield but provide insurance for lower tiers.
-                </p>
+              {/* Performance Fee Info */}
+              <div className="p-3 bg-gradient-to-r from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                <div className="flex items-center gap-2 text-purple-600 text-sm mb-2">
+                  <Zap className="w-4 h-4" />
+                  <span className="font-medium">Performance Fee Distribution</span>
+                </div>
+                <div className="text-xs text-purple-700 dark:text-purple-300 space-y-1">
+                  <div>20% performance fee → 25% bonus yield (incentives)</div>
+                  <div>25% buyback TDD → 25% protocol revenue → 25% insurance</div>
+                </div>
               </div>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Advanced Waterfall Visualization */}
+        <div className="mb-12">
+          <TCoreWaterfallVisualization />
         </div>
 
         {/* Single CTA */}
