@@ -16,13 +16,13 @@ const CompactRiskDemo = () => {
   const [demoAmount] = useState(10000);
   const [selectedStrategy, setSelectedStrategy] = useState('balanced');
 
-  // Helper function to convert risk percentage to user-friendly label
+  // Helper function to convert risk percentage to protection level
   const getRiskLabel = (riskPercent: number) => {
-    if (riskPercent <= 1) return 'Minimal Risk';
-    if (riskPercent <= 4) return 'Low Risk';
-    if (riskPercent <= 20) return 'Moderate Risk';
-    if (riskPercent <= 60) return 'Elevated Risk';
-    return 'Maximum Risk';
+    if (riskPercent <= 1) return 'Full Protection';
+    if (riskPercent <= 4) return 'High Protection';
+    if (riskPercent <= 20) return 'Medium Protection';
+    if (riskPercent <= 60) return 'Low Protection';
+    return 'Minimal Protection';
   };
 
   const getRiskColor = (riskPercent: number) => {
