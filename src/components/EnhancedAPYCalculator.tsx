@@ -12,13 +12,13 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsToolti
 import { 
   calculateTCoreAPY, 
   calculateTCorePersonalAPY, 
-  TIER_PRESETS,
   FIXED_BASE_APY,
   OPTIMAL_K,
   TIER1_WIDTH,
   AVERAGE_APY_TARGET,
   BONUS_SPREAD
 } from '@/utils/riskRangeCalculations';
+import { TIER_PRESETS } from '@/utils/tzFormulas';
 
 interface EnhancedAPYCalculatorProps {
   className?: string;

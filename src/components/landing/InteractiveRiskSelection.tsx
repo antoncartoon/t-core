@@ -8,10 +8,10 @@ import { NavLink } from 'react-router-dom';
 import { Calculator, TrendingUp, Shield, Zap, ArrowRight, Star, Crown } from 'lucide-react';
 import { 
   calculateTCoreAPY, 
-  TIER_PRESETS,
   FIXED_BASE_APY,
   TIER1_WIDTH
 } from '@/utils/riskRangeCalculations';
+import { TIER_PRESETS } from '@/utils/tzFormulas';
 import TCoreWaterfallVisualization from './TCoreWaterfallVisualization';
 
 const InteractiveRiskSelection = () => {

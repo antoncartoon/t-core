@@ -18,11 +18,11 @@ import {
 } from 'lucide-react';
 import { 
   calculateTCoreAPY, 
-  TIER_PRESETS,
   FIXED_BASE_APY,
   OPTIMAL_K,
   TIER1_WIDTH
 } from '@/utils/riskRangeCalculations';
+import { TIER_PRESETS } from '@/utils/tzFormulas';
 
 interface TCoreWaterfallVisualizationProps {
   className?: string;

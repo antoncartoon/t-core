@@ -11,13 +11,13 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { 
   calculateTCoreAPY, 
   calculateTCorePersonalAPY, 
-  TIER_PRESETS,
   FIXED_BASE_APY,
   OPTIMAL_K,
   TIER1_WIDTH,
   AVERAGE_APY_TARGET,
   BONUS_SPREAD
 } from '@/utils/riskRangeCalculations';
+import { TIER_PRESETS } from '@/utils/tzFormulas';
 import SkeletonAPYCalculator from '@/components/SkeletonAPYCalculator';
 
 interface APYCalculatorProps {
@@ -283,7 +283,7 @@ const APYCalculator: React.FC<APYCalculatorProps> = ({ className }) => {
                               onChange={(e) => {
                                 const newAllocations = [...multiSplitAllocations];
                                 newAllocations[index].tier = e.target.value;
-                                newAllocations[index].range = TIER_PRESETS[e.target.value as keyof typeof TIER_PRESETS].range;
+                                newAllocations[index].range = [...TIER_PRESETS[e.target.value as keyof typeof TIER_PRESETS].range] as [number, number];
                                 setMultiSplitAllocations(newAllocations);
                               }}
                               className="w-full p-2 border rounded"
