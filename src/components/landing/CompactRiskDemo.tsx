@@ -61,7 +61,7 @@ const CompactRiskDemo = () => {
   return <section className="py-16 sm:py-20 bg-muted/20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
-          <Badge variant="secondary" className="mb-4">QUADRATIC RISK & PIECdeleteEWISE YIELD MODEL</Badge>
+          
           <h2 className="text-3xl sm:text-4xl font-light mb-4">
             Choose Your Strategy
           </h2>
