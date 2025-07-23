@@ -2,6 +2,7 @@
 import React from 'react';
 import { TrendingUp, DollarSign, Users, Shield } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { SELF_INSURANCE_POOL } from '@/utils/protocolConstants';
 
 const MobileStatsOverview = () => {
   const stats = [
@@ -28,7 +29,7 @@ const MobileStatsOverview = () => {
     },
     {
       title: 'Insurance Pool',
-      value: '$1.2M',
+      value: `$${(SELF_INSURANCE_POOL / 1000).toFixed(0)}K`,
       change: '+5.3%',
       icon: Shield,
       color: 'text-emerald-600'

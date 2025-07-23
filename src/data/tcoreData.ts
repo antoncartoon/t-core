@@ -4,7 +4,8 @@ import {
   STAKED_TVL, 
   PROTOCOL_APY_28D, 
   PERFORMANCE_FEE, 
-  BONUS_YIELD_ALLOCATION
+  BONUS_YIELD_ALLOCATION,
+  SELF_INSURANCE_POOL
 } from '@/utils/protocolConstants';
 
 export const TCORE_STATS = {
@@ -29,7 +30,7 @@ export const TCORE_STATS = {
   },
   
   // Self-Insurance Pool
-  selfInsurancePool: 1200000, // $1.2M
+  selfInsurancePool: SELF_INSURANCE_POOL, // $5K
   
   // Buyback & Burn Statistics (Enhanced with simulation data)
   burnRate: 0.15, // 15% of post-distribution yields
