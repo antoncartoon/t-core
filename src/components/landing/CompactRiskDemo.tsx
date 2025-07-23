@@ -18,21 +18,19 @@ const CompactRiskDemo = () => {
 
   // Helper function to convert risk percentage to user-friendly label
   const getRiskLabel = (riskPercent: number) => {
-    if (riskPercent <= 0.5) return 'Minimal Risk';
-    if (riskPercent <= 2) return 'Low Risk';
-    if (riskPercent <= 8) return 'Medium Risk';
-    if (riskPercent <= 25) return 'High Risk';
-    if (riskPercent <= 50) return 'Very High Risk';
+    if (riskPercent <= 1) return 'Minimal Risk';
+    if (riskPercent <= 4) return 'Low Risk';
+    if (riskPercent <= 20) return 'Moderate Risk';
+    if (riskPercent <= 60) return 'Elevated Risk';
     return 'Maximum Risk';
   };
 
   const getRiskColor = (riskPercent: number) => {
-    if (riskPercent <= 0.5) return 'text-green-600';
-    if (riskPercent <= 2) return 'text-blue-600';
-    if (riskPercent <= 8) return 'text-yellow-600';
-    if (riskPercent <= 25) return 'text-orange-600';
-    if (riskPercent <= 50) return 'text-red-600';
-    return 'text-red-700';
+    if (riskPercent <= 1) return 'text-green-600';
+    if (riskPercent <= 4) return 'text-blue-600';
+    if (riskPercent <= 20) return 'text-yellow-600';
+    if (riskPercent <= 60) return 'text-orange-600';
+    return 'text-red-600';
   };
 
   const strategies = [
