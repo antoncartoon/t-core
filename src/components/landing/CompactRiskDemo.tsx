@@ -1,17 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { NavLink } from 'react-router-dom';
 import { Calculator, Shield, Star, Crown, ArrowRight, TrendingUp } from 'lucide-react';
-import { 
-  calculatePiecewiseAPY, 
-  getTierForSegment,
-  calculateQuadraticRisk,
-  TARGET_APYS
-} from '@/utils/tzFormulas';
-
+import { calculatePiecewiseAPY, getTierForSegment, calculateQuadraticRisk, TARGET_APYS } from '@/utils/tzFormulas';
 const CompactRiskDemo = () => {
   const [demoAmount] = useState(10000);
   const [selectedStrategy, setSelectedStrategy] = useState('balanced');
@@ -24,7 +17,6 @@ const CompactRiskDemo = () => {
     if (riskPercent <= 70) return 'Low Protection';
     return 'Minimal Protection';
   };
-
   const getRiskColor = (riskPercent: number) => {
     if (riskPercent <= 1) return 'text-green-600';
     if (riskPercent <= 4) return 'text-blue-600';
@@ -32,55 +24,44 @@ const CompactRiskDemo = () => {
     if (riskPercent <= 60) return 'text-indigo-600';
     return 'text-slate-600';
   };
-
-  const strategies = [
-    { 
-      id: 'safe', 
-      name: 'Safe', 
-      segment: 5, 
-      icon: Shield, 
-      color: 'bg-green-100 text-green-800 border-green-200',
-      description: 'Steady returns, fully protected'
-    },
-    { 
-      id: 'conservative', 
-      name: 'Conservative', 
-      segment: 20, 
-      icon: Shield, 
-      color: 'bg-blue-100 text-blue-800 border-blue-200',
-      description: 'Stable growth with safety'
-    },
-    { 
-      id: 'balanced', 
-      name: 'Balanced', 
-      segment: 45, 
-      icon: Star, 
-      color: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      description: 'Enhanced returns, moderate risk'
-    },
-    { 
-      id: 'hero', 
-      name: 'Hero', 
-      segment: 80, 
-      icon: Crown, 
-      color: 'bg-purple-100 text-purple-800 border-purple-200',
-      description: 'Maximum growth potential'
-    }
-  ];
-
+  const strategies = [{
+    id: 'safe',
+    name: 'Safe',
+    segment: 5,
+    icon: Shield,
+    color: 'bg-green-100 text-green-800 border-green-200',
+    description: 'Steady returns, fully protected'
+  }, {
+    id: 'conservative',
+    name: 'Conservative',
+    segment: 20,
+    icon: Shield,
+    color: 'bg-blue-100 text-blue-800 border-blue-200',
+    description: 'Stable growth with safety'
+  }, {
+    id: 'balanced',
+    name: 'Balanced',
+    segment: 45,
+    icon: Star,
+    color: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+    description: 'Enhanced returns, moderate risk'
+  }, {
+    id: 'hero',
+    name: 'Hero',
+    segment: 80,
+    icon: Crown,
+    color: 'bg-purple-100 text-purple-800 border-purple-200',
+    description: 'Maximum growth potential'
+  }];
   const selectedStrategyData = strategies.find(s => s.id === selectedStrategy) || strategies[2];
   const currentAPY = calculatePiecewiseAPY(selectedStrategyData.segment);
   const currentRisk = calculateQuadraticRisk(selectedStrategyData.segment);
   const annualYield = demoAmount * currentAPY;
   const tierInfo = getTierForSegment(selectedStrategyData.segment);
-
-  return (
-    <section className="py-16 sm:py-20 bg-muted/20">
+  return <section className="py-16 sm:py-20 bg-muted/20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
-          <Badge variant="secondary" className="mb-4">
-            QUADRATIC RISK & PIECEWISE YIELD MODEL
-          </Badge>
+          <Badge variant="secondary" className="mb-4">QUADRATIC RISK & PIECdeleteEWISE YIELD MODEL</Badge>
           <h2 className="text-3xl sm:text-4xl font-light mb-4">
             Choose Your Strategy
           </h2>
@@ -99,21 +80,11 @@ const CompactRiskDemo = () => {
           <CardContent className="space-y-6">
             {/* Strategy Selection */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-              {strategies.map((strategy) => {
-                const apy = calculatePiecewiseAPY(strategy.segment);
-                const risk = calculateQuadraticRisk(strategy.segment);
-                const isActive = selectedStrategy === strategy.id;
-                
-                return (
-                  <div
-                    key={strategy.id}
-                    className={`p-4 rounded-lg border-2 cursor-pointer transition-all hover:scale-105 ${
-                      isActive 
-                        ? `${strategy.color} border-current shadow-lg` 
-                        : 'border-border hover:border-primary/50'
-                    }`}
-                    onClick={() => setSelectedStrategy(strategy.id)}
-                  >
+              {strategies.map(strategy => {
+              const apy = calculatePiecewiseAPY(strategy.segment);
+              const risk = calculateQuadraticRisk(strategy.segment);
+              const isActive = selectedStrategy === strategy.id;
+              return <div key={strategy.id} className={`p-4 rounded-lg border-2 cursor-pointer transition-all hover:scale-105 ${isActive ? `${strategy.color} border-current shadow-lg` : 'border-border hover:border-primary/50'}`} onClick={() => setSelectedStrategy(strategy.id)}>
                     <div className="text-center space-y-2">
                       <strategy.icon className="h-5 w-5 mx-auto" />
                       <div className="font-medium text-sm">{strategy.name}</div>
@@ -125,9 +96,8 @@ const CompactRiskDemo = () => {
                         {getRiskLabel(risk * 100)}
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  </div>;
+            })}
             </div>
 
             {/* Results Display */}
@@ -160,6 +130,20 @@ const CompactRiskDemo = () => {
               </div>
             </div>
 
+            {/* How it Works */}
+            <div className="p-4 bg-muted/50 rounded-lg">
+              <div className="flex items-center gap-2 mb-3">
+                <TrendingUp className="w-4 h-4 text-primary" />
+                <span className="font-medium text-sm">Quadratic Risk & Piecewise Yield Model</span>
+              </div>
+              <div className="text-xs text-muted-foreground space-y-1">
+                <div>• <strong>Risk Function:</strong> Risk(i) = (i/99)² - quadratic increase</div>
+                <div>• <strong>Safe (0-9):</strong> Fixed 5.16% (T-Bills × 1.2)</div>
+                <div>• <strong>Conservative (10-29):</strong> Linear 5.16% → 7%</div>
+                <div>• <strong>Balanced (30-59):</strong> Quadratic 7% → 9.5%</div>
+                <div>• <strong>Hero (60-99):</strong> Exponential 9.5% × 1.03^(i-25)</div>
+              </div>
+            </div>
 
             {/* CTA */}
             <div className="text-center pt-4">
@@ -177,8 +161,6 @@ const CompactRiskDemo = () => {
           </CardContent>
         </Card>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default CompactRiskDemo;
