@@ -290,9 +290,9 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
                 {preset.name === 'Hero' && (
                   <Dialog open={isInsuranceDialogOpen} onOpenChange={setIsInsuranceDialogOpen}>
                     <DialogTrigger asChild>
-                      <button className="ml-1 p-0.5 hover:bg-muted rounded-full">
+                      <button className="ml-0.5 p-0.5 hover:bg-muted rounded-full">
                         <Info 
-                          size={12} 
+                          size={14} 
                           className="text-red-500 animate-pulse cursor-pointer hover:text-red-600" 
                         />
                       </button>
