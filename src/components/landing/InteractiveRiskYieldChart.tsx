@@ -1,19 +1,27 @@
+
 import React, { useState, useEffect } from 'react';
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, ReferenceLine, Tooltip } from 'recharts';
 import { Slider } from '@/components/ui/slider';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Shield, Star, Crown, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Shield, Star, Crown, TrendingUp, AlertTriangle, Zap } from 'lucide-react';
+import { 
+  calculatePiecewiseAPY, 
+  generatePiecewiseCurveData, 
+  getTierForSegment,
+  TARGET_APYS
+} from '@/utils/piecewiseAPY';
 
 const InteractiveRiskYieldChart = () => {
-  const [riskLevel, setRiskLevel] = useState([25]);
+  const [riskLevel, setRiskLevel] = useState([45]);
   const [animationProgress, setAnimationProgress] = useState(0);
 
   const tierPositions = [
-    { position: 5, name: 'Safe', icon: Shield, color: 'text-green-600' },
-    { position: 25, name: 'Conservative', icon: Shield, color: 'text-blue-600' },
-    { position: 50, name: 'Balanced', icon: Star, color: 'text-yellow-600' },
-    { position: 85, name: 'Hero', icon: Crown, color: 'text-purple-600' }
+    { position: 5, name: 'Safe', icon: Shield, color: 'text-green-600', range: [0, 9] },
+    { position: 20, name: 'Conservative', icon: Shield, color: 'text-blue-600', range: [10, 29] },
+    { position: 45, name: 'Balanced', icon: Star, color: 'text-yellow-600', range: [30, 59] },
+    { position: 80, name: 'Hero', icon: Crown, color: 'text-purple-600', range: [60, 99] }
   ];
 
   // Animation on mount
@@ -24,50 +32,26 @@ const InteractiveRiskYieldChart = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Generate yield curve data
-  const generateCurveData = () => {
-    const data = [];
-    for (let i = 0; i <= 100; i += 2) {
-      const risk = i;
-      // Realistic base APY: 6% to 15% (conservative growth)
-      const baseYield = 6 + (Math.pow(i / 100, 0.7) * 9);
-      
-      // Progressive bonus yield: exponential growth with risk
-      const bonusYield = Math.pow(i / 100, 2) * 20;
-      
-      // Total yield = base + bonus (max ~35% at Hero tier)
-      const totalYield = baseYield + bonusYield;
-      
-      data.push({ 
-        risk, 
-        yield: totalYield,
-        baseYield: baseYield,
-        bonusYield: bonusYield
-      });
-    }
-    return data;
-  };
-
-  const data = generateCurveData();
-  const currentRisk = riskLevel[0];
-  const currentData = data.find(d => d.risk === Math.round(currentRisk / 2) * 2) || data[0];
-  
-  // Calculate dynamic APY ranges
-  const minBaseAPY = data[0].baseYield;
-  const maxBaseAPY = data[data.length - 1].baseYield;
-  const maxBonusAPY = data[data.length - 1].bonusYield;
+  // Generate new piecewise curve data
+  const data = generatePiecewiseCurveData();
+  const currentSegment = riskLevel[0];
+  const currentAPY = calculatePiecewiseAPY(currentSegment);
+  const currentTier = getTierForSegment(currentSegment);
 
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
         <div className="bg-background border border-border rounded-lg p-3 shadow-lg">
-          <p className="text-sm font-medium text-foreground">{`Risk: ${label}%`}</p>
+          <p className="text-sm font-medium text-foreground">{`Segment: ${label}`}</p>
           <p className="text-sm text-primary">
-            {`Total Yield: ${data.yield.toFixed(1)}%`}
+            {`APY: ${data.apy.toFixed(2)}%`}
           </p>
           <p className="text-xs text-muted-foreground">
-            {`Base: ${data.baseYield.toFixed(1)}% + Bonus: ${data.bonusYield.toFixed(1)}%`}
+            {`Tier: ${data.tier}`}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {`Formula: ${data.formula}`}
           </p>
         </div>
       );
@@ -86,10 +70,10 @@ const InteractiveRiskYieldChart = () => {
           <div className="h-px bg-border flex-1" />
         </div>
         <h3 className="text-2xl font-light text-foreground mb-2">
-          Interactive Risk-Yield Curve
+          Interactive Piecewise Yield Curve
         </h3>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Base APY grows smoothly from {minBaseAPY.toFixed(1)}% to {maxBaseAPY.toFixed(1)}%, while bonus yield increases progressively with risk up to {maxBonusAPY.toFixed(1)}%
+          New fair and predictable yield model with 4 distinct tiers: Fixed Safe (5.16%), Linear Conservative (→7%), Quadratic Balanced (→9.5%), Exponential Hero (→15%)
         </p>
       </div>
 
@@ -100,21 +84,21 @@ const InteractiveRiskYieldChart = () => {
             <div className="inline-flex items-center space-x-4 p-4 bg-muted/30 rounded-lg">
               <div className="text-center">
                 <div className="text-2xl font-bold text-primary">
-                  {currentData.yield.toFixed(1)}%
+                  {(currentAPY * 100).toFixed(2)}%
                 </div>
-                <div className="text-xs text-muted-foreground">Total APY</div>
+                <div className="text-xs text-muted-foreground">Current APY</div>
+              </div>
+              <div className="text-center">
+                <Badge variant="outline" className={currentTier.color}>
+                  {currentTier.name}
+                </Badge>
+                <div className="text-xs text-muted-foreground mt-1">{currentTier.formula}</div>
               </div>
               <div className="text-center">
                 <div className="text-lg font-medium text-foreground">
-                  {currentData.baseYield.toFixed(1)}%
+                  Segment {currentSegment}
                 </div>
-                <div className="text-xs text-muted-foreground">Base Yield</div>
-              </div>
-              <div className="text-center">
-                <div className="text-lg font-medium text-yellow-600">
-                  +{currentData.bonusYield.toFixed(1)}%
-                </div>
-                <div className="text-xs text-muted-foreground">Bonus Yield</div>
+                <div className="text-xs text-muted-foreground">Risk Level</div>
               </div>
             </div>
           </div>
@@ -124,22 +108,18 @@ const InteractiveRiskYieldChart = () => {
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data} margin={{ top: 10, right: 30, left: 20, bottom: 5 }}>
                 <defs>
-                  <linearGradient id="baseGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.6}/>
+                  <linearGradient id="piecewiseGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
                     <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.2}/>
-                  </linearGradient>
-                  <linearGradient id="bonusGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="hsl(262, 83%, 58%)" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="hsl(262, 83%, 58%)" stopOpacity={0.3}/>
                   </linearGradient>
                 </defs>
                 <XAxis 
-                  dataKey="risk" 
+                  dataKey="segment" 
                   axisLine={false}
                   tickLine={false}
                   tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                   label={{ 
-                    value: 'Risk Level (%)', 
+                    value: 'Risk Segment', 
                     position: 'insideBottom', 
                     offset: -5, 
                     style: { fontSize: 10, fill: 'hsl(var(--muted-foreground))' } 
@@ -150,48 +130,39 @@ const InteractiveRiskYieldChart = () => {
                   tickLine={false}
                   tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground))' }}
                   label={{ 
-                    value: 'Yield (%)', 
+                    value: 'APY (%)', 
                     angle: -90, 
                     position: 'insideLeft', 
                     style: { fontSize: 10, fill: 'hsl(var(--muted-foreground))' } 
                   }}
+                  domain={[5, 16]}
                 />
                 <Tooltip content={<CustomTooltip />} />
-                {/* Base Yield Area */}
+                
+                {/* Piecewise curve area */}
                 <Area 
                   type="monotone" 
-                  dataKey="baseYield" 
-                  stackId="1"
+                  dataKey="apy" 
                   stroke="hsl(var(--primary))" 
-                  strokeWidth={1}
-                  fill="url(#baseGradient)"
-                  fillOpacity={animationProgress}
-                />
-                {/* Bonus Yield Area */}
-                <Area 
-                  type="monotone" 
-                  dataKey="bonusYield" 
-                  stackId="1"
-                  stroke="hsl(262, 83%, 58%)" 
-                  strokeWidth={1}
-                  fill="url(#bonusGradient)"
+                  strokeWidth={2}
+                  fill="url(#piecewiseGradient)"
                   fillOpacity={animationProgress}
                 />
                 
-                {/* Tier Position Markers */}
-                {tierPositions.map((tier, index) => (
+                {/* Tier boundary markers */}
+                {[9.5, 29.5, 59.5].map((boundary, index) => (
                   <ReferenceLine 
                     key={index}
-                    x={tier.position} 
+                    x={boundary} 
                     stroke="hsl(var(--border))" 
                     strokeDasharray="2 2"
-                    strokeOpacity={0.5}
+                    strokeOpacity={0.7}
                   />
                 ))}
                 
-                {/* Current Selection Line */}
+                {/* Current selection line */}
                 <ReferenceLine 
-                  x={currentRisk} 
+                  x={currentSegment} 
                   stroke="hsl(var(--destructive))" 
                   strokeWidth={2}
                   strokeDasharray="5 5"
@@ -203,13 +174,13 @@ const InteractiveRiskYieldChart = () => {
           {/* Risk Level Slider */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Risk Level</span>
-              <span className="text-sm text-muted-foreground">{currentRisk}%</span>
+              <span className="text-sm font-medium">Risk Segment</span>
+              <span className="text-sm text-muted-foreground">{currentSegment}</span>
             </div>
             <Slider
               value={riskLevel}
               onValueChange={setRiskLevel}
-              max={100}
+              max={99}
               min={0}
               step={1}
               className="w-full"
@@ -221,18 +192,55 @@ const InteractiveRiskYieldChart = () => {
                 <div key={index} className="flex flex-col items-center">
                   <tier.icon className={`w-3 h-3 ${tier.color} mb-1`} />
                   <span>{tier.name}</span>
+                  <span className="text-[10px]">{tier.range[0]}-{tier.range[1]}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Info Box */}
+          {/* Tier Breakdown */}
+          <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+            {tierPositions.map((tier, index) => {
+              const isSelected = currentSegment >= tier.range[0] && currentSegment <= tier.range[1];
+              const startAPY = calculatePiecewiseAPY(tier.range[0]);
+              const endAPY = calculatePiecewiseAPY(tier.range[1]);
+              
+              return (
+                <div
+                  key={tier.name}
+                  className={`p-3 rounded-lg border transition-all ${
+                    isSelected ? 'border-primary bg-primary/5' : 'border-border'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 mb-2">
+                    <tier.icon className={`w-4 h-4 ${tier.color}`} />
+                    <span className="font-medium text-sm">{tier.name}</span>
+                  </div>
+                  <div className="text-xs text-muted-foreground mb-1">
+                    {tier.range[0]}-{tier.range[1]}
+                  </div>
+                  <div className="text-sm font-medium">
+                    {tier.name === 'Safe' 
+                      ? `${(startAPY * 100).toFixed(2)}%`
+                      : `${(startAPY * 100).toFixed(1)}% → ${(endAPY * 100).toFixed(1)}%`
+                    }
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Formula Explanation */}
           <div className="mt-6 p-4 bg-gradient-to-r from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20 rounded-lg border border-purple-200 dark:border-purple-800">
-            <div className="flex items-center gap-2 text-purple-600 text-sm">
-              <TrendingUp className="w-4 h-4" />
-              <span className="font-medium">
-                Progressive Bonus Yield: Higher risk tiers earn exponentially more bonus yield to incentivize taking additional risk
-              </span>
+            <div className="flex items-center gap-2 text-purple-600 text-sm mb-2">
+              <Zap className="w-4 h-4" />
+              <span className="font-medium">Piecewise Function Model</span>
+            </div>
+            <div className="text-xs text-purple-700 dark:text-purple-300 space-y-1">
+              <div>• <strong>Safe (0-9):</strong> Fixed 5.16% = T-Bills × 1.2</div>
+              <div>• <strong>Conservative (10-29):</strong> Linear growth to 7%</div>
+              <div>• <strong>Balanced (30-59):</strong> Quadratic acceleration to 9.5%</div>
+              <div>• <strong>Hero (60-99):</strong> Exponential growth 9.5% × 1.03^(i-60)</div>
             </div>
           </div>
 
@@ -240,7 +248,7 @@ const InteractiveRiskYieldChart = () => {
           <Alert className="mt-4 border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20">
             <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
             <AlertDescription className="text-amber-700 dark:text-amber-300 text-sm">
-              <strong>Demonstration Tool:</strong> This interactive block is created for demonstration purposes. Actual yields may vary as they depend on current protocol yields, liquidity distribution across risk zones, and incentive distribution.
+              <strong>Updated Model:</strong> This new piecewise function provides fairer, more predictable yields with distinct tier characteristics. Each tier has its own growth logic for better transparency and user experience.
             </AlertDescription>
           </Alert>
         </CardContent>

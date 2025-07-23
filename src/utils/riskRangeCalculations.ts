@@ -1,22 +1,23 @@
-
 import { RiskRange, RiskTick, LiquidityPosition, RangeCalculationResult } from '@/types/riskRange';
+import { calculatePiecewiseAPY, calculateRangeWeightedAPY, getTierForSegment, TARGET_APYS } from '@/utils/piecewiseAPY';
 
-// T-Core Protocol constants with new T-Core formulas
-export const RISK_SCALE_MIN = 1;
-export const RISK_SCALE_MAX = 100;
+// Export the new piecewise calculation as the main APY calculator
+export const calculateTCoreAPY = calculatePiecewiseAPY;
+export const calculateRiskLevelAPR = calculatePiecewiseAPY;
+
+// Update constants to match new model
+export const RISK_SCALE_MIN = 0;
+export const RISK_SCALE_MAX = 99;
 export const T_BILL_RATE = 0.05; // 5% T-Bills rate
-export const FIXED_BASE_MULTIPLIER = 1.2; // T-Bills * 1.2 for tier1 guarantee
-export const FIXED_BASE_APY = T_BILL_RATE * FIXED_BASE_MULTIPLIER; // 6% guaranteed for tier1
-export const OPTIMAL_K = 1.03; // Optimal k value for gradual bonus growth
-export const VARIANCE_TARGET = 2.9e-7; // Target variance for liquidity uniformity
-export const TIER1_WIDTH = 25; // Width of tier1 (levels 1-25)
+export const FIXED_BASE_MULTIPLIER = 1.2; // T-Bills * 1.2 for Safe tier
+export const FIXED_BASE_APY = T_BILL_RATE * FIXED_BASE_MULTIPLIER; // 5.16% guaranteed for Safe tier
 
-// T-Core 4-tier preset structure
+// T-Core 4-tier preset structure with new piecewise ranges
 export const TIER_PRESETS = {
-  TIER1: { range: [1, 25], name: 'Fixed Safe', fixedAPY: FIXED_BASE_APY },
-  TIER2: { range: [26, 50], name: 'Low Bonus', fixedAPY: FIXED_BASE_APY },
-  TIER3: { range: [51, 75], name: 'Medium Bonus', fixedAPY: FIXED_BASE_APY },
-  TIER4: { range: [76, 100], name: 'High Bonus', fixedAPY: FIXED_BASE_APY }
+  SAFE: { range: [0, 9], name: 'Safe', fixedAPY: TARGET_APYS.SAFE },
+  CONSERVATIVE: { range: [10, 29], name: 'Conservative', fixedAPY: TARGET_APYS.CONSERVATIVE_END },
+  BALANCED: { range: [30, 59], name: 'Balanced', fixedAPY: TARGET_APYS.BALANCED_END },
+  HERO: { range: [60, 99], name: 'Hero', fixedAPY: TARGET_APYS.HERO_END }
 };
 
 // Protocol data with T-Core structure
@@ -27,78 +28,45 @@ export const PROTOCOL_APY_28_DAYS = 0.105; // 10.5%
 export const AVERAGE_APY_TARGET = 0.0873; // 8.73% from simulation
 export const BONUS_SPREAD = 0.0891; // 8.91% spread from simulation
 
-// Updated distribution matching T-Core tiers
+// Updated distribution matching T-Core tiers with new ranges
 export const CATEGORY_DISTRIBUTION = {
-  TIER1: { range: [1, 25], totalTDD: 4_750_000, isFixed: true },
-  TIER2: { range: [26, 50], totalTDD: 2_500_000, isFixed: false },
-  TIER3: { range: [51, 75], totalTDD: 3_250_000, isFixed: false },
-  TIER4: { range: [76, 100], totalTDD: 2_000_000, isFixed: false }
+  SAFE: { range: [0, 9], totalTDD: 875_000, isFixed: true }, // 10% (reduced from original)
+  CONSERVATIVE: { range: [10, 29], totalTDD: 1_750_000, isFixed: false }, // 20%
+  BALANCED: { range: [30, 59], totalTDD: 2_625_000, isFixed: false }, // 30%
+  HERO: { range: [60, 99], totalTDD: 3_500_000, isFixed: false } // 40%
 };
 
 /**
- * Calculate T-Core APY using exact formula from Knowledge Document:
- * tier1 APY = fixed_base = T-Bills_rate * 1.2 (6% guaranteed)
- * higher tiers APY = fixed_base + bonus * f(i), where f(i) = 1 * 1.03^(i - 25)
- * This is the EXACT formula specified in the Knowledge Document
- */
-export const calculateTCoreAPY = (riskLevel: number): number => {
-  if (riskLevel < RISK_SCALE_MIN || riskLevel > RISK_SCALE_MAX) {
-    return FIXED_BASE_APY;
-  }
-  
-  // Tier1 (1-25): guaranteed fixed APY, no bonus
-  if (riskLevel <= TIER1_WIDTH) {
-    return FIXED_BASE_APY; // 6% guaranteed
-  }
-  
-  // Higher tiers (26-100): fixed_base + bonus using exact formula f(i) = 1 * 1.03^(i - 25)
-  const f_i = 1 * Math.pow(1.03, riskLevel - 25); // Exact formula from Knowledge Document
-  
-  // Bonus calculation based on f(i) - using multiplicative approach for higher growth
-  const bonusMultiplier = f_i - 1; // Subtract 1 to get bonus component only
-  const bonus = bonusMultiplier * FIXED_BASE_APY * 0.5; // Scale bonus appropriately
-  
-  return FIXED_BASE_APY + bonus;
-};
-
-/**
- * Legacy function for backward compatibility
- */
-export const calculateRiskLevelAPR = (riskLevel: number): number => {
-  return calculateTCoreAPY(riskLevel);
-};
-
-/**
- * Generate T-Core risk ticks with 4-tier structure
+ * Generate T-Core risk ticks with 4-tier structure using new piecewise model
  */
 export const generateTCoreRiskTicks = (): RiskTick[] => {
   const ticks: RiskTick[] = [];
   
   // Calculate TDD per tick for each T-Core tier
-  const tier1TDDPerTick = CATEGORY_DISTRIBUTION.TIER1.totalTDD / 25; // 25 ticks (1-25)
-  const tier2TDDPerTick = CATEGORY_DISTRIBUTION.TIER2.totalTDD / 25; // 25 ticks (26-50)
-  const tier3TDDPerTick = CATEGORY_DISTRIBUTION.TIER3.totalTDD / 25; // 25 ticks (51-75)
-  const tier4TDDPerTick = CATEGORY_DISTRIBUTION.TIER4.totalTDD / 25; // 25 ticks (76-100)
+  const safeTDDPerTick = CATEGORY_DISTRIBUTION.SAFE.totalTDD / 10; // 10 ticks (0-9)
+  const conservativeTDDPerTick = CATEGORY_DISTRIBUTION.CONSERVATIVE.totalTDD / 20; // 20 ticks (10-29)
+  const balancedTDDPerTick = CATEGORY_DISTRIBUTION.BALANCED.totalTDD / 30; // 30 ticks (30-59)
+  const heroTDDPerTick = CATEGORY_DISTRIBUTION.HERO.totalTDD / 40; // 40 ticks (60-99)
   
   for (let i = RISK_SCALE_MIN; i <= RISK_SCALE_MAX; i++) {
     let totalLiquidity = 0;
     
     // Determine which T-Core tier this tick belongs to
-    if (i >= 1 && i <= 25) {
-      totalLiquidity = tier1TDDPerTick;
-    } else if (i >= 26 && i <= 50) {
-      totalLiquidity = tier2TDDPerTick;
-    } else if (i >= 51 && i <= 75) {
-      totalLiquidity = tier3TDDPerTick;
-    } else if (i >= 76 && i <= 100) {
-      totalLiquidity = tier4TDDPerTick;
+    if (i >= 0 && i <= 9) {
+      totalLiquidity = safeTDDPerTick;
+    } else if (i >= 10 && i <= 29) {
+      totalLiquidity = conservativeTDDPerTick;
+    } else if (i >= 30 && i <= 59) {
+      totalLiquidity = balancedTDDPerTick;
+    } else if (i >= 60 && i <= 99) {
+      totalLiquidity = heroTDDPerTick;
     }
     
     ticks.push({
       riskLevel: i,
       totalLiquidity,
       availableYield: 0,
-      apr: calculateTCoreAPY(i)
+      apr: calculatePiecewiseAPY(i)
     });
   }
   
@@ -110,6 +78,37 @@ export const generateTCoreRiskTicks = (): RiskTick[] => {
  */
 export const generateRealProtocolRiskTicks = (): RiskTick[] => {
   return generateTCoreRiskTicks();
+};
+
+/**
+ * Calculate T-Core personal APY using new piecewise formula
+ */
+export const calculateTCorePersonalAPY = (
+  userAmount: number,
+  riskRange: RiskRange
+): number => {
+  return calculateRangeWeightedAPY(riskRange.min, riskRange.max);
+};
+
+/**
+ * Legacy function for backward compatibility
+ */
+export const calculateRealisticRangeAPY = (
+  userAmount: number,
+  riskRange: RiskRange
+): number => {
+  return calculateTCorePersonalAPY(userAmount, riskRange);
+};
+
+/**
+ * Calculate user's position APR in a risk range (updated for piecewise)
+ */
+export const calculateRangeAPR = (
+  userAmount: number,
+  riskRange: RiskRange,
+  riskTicks: RiskTick[]
+): number => {
+  return calculateRangeWeightedAPY(riskRange.min, riskRange.max);
 };
 
 /**
@@ -132,7 +131,7 @@ export const findCoverageLevel = (
   for (let riskLevel = RISK_SCALE_MIN; riskLevel <= RISK_SCALE_MAX; riskLevel++) {
     const tick = riskTicks.find(t => t.riskLevel === riskLevel);
     const liquidity = tick?.totalLiquidity || 0;
-    const expectedAPR = calculateRiskLevelAPR(riskLevel);
+    const expectedAPR = calculatePiecewiseAPY(riskLevel);
     
     cumulativeYieldNeeded += liquidity * expectedAPR;
     
@@ -158,7 +157,7 @@ export const distributeYieldBottomUp = (
     const { riskLevel, totalLiquidity } = tick;
     
     if (riskLevel <= coverageLevel && totalLiquidity > 0) {
-      const expectedAPR = calculateRiskLevelAPR(riskLevel);
+      const expectedAPR = calculatePiecewiseAPY(riskLevel);
       const tickYield = Math.min(remainingYield, totalLiquidity * expectedAPR);
       remainingYield -= tickYield;
       
@@ -169,7 +168,7 @@ export const distributeYieldBottomUp = (
       };
     } else if (riskLevel === coverageLevel + 1 && remainingYield > 0 && totalLiquidity > 0) {
       // Partial coverage for level k+1
-      const tickYield = Math.min(remainingYield, totalLiquidity * calculateRiskLevelAPR(riskLevel));
+      const tickYield = Math.min(remainingYield, totalLiquidity * calculatePiecewiseAPY(riskLevel));
       remainingYield -= tickYield;
       
       return {
@@ -197,25 +196,23 @@ export const calculateTCoreSubordinationLoss = (
 ): { [riskLevel: number]: number } => {
   const lossPerTick: { [riskLevel: number]: number } = {};
   
-  // Tier1 (1-25) has 0 loss (guaranteed)
-  for (let i = 1; i <= TIER1_WIDTH; i++) {
+  // Tier1 (0-9) has 0 loss (guaranteed)
+  for (let i = 0; i <= 9; i++) {
     lossPerTick[i] = 0;
   }
   
-  // Calculate f(i) for higher tiers (26-100)
+  // Calculate f(i) for higher tiers (10-99)
   const higherTierFactors: { [riskLevel: number]: number } = {};
   let totalFactor = 0;
   
-  for (let i = TIER1_WIDTH + 1; i <= RISK_SCALE_MAX; i++) {
-    const p = 1; // Scale factor
-    const bonusExponent = i - TIER1_WIDTH;
-    const factor = p * Math.pow(OPTIMAL_K, bonusExponent);
+  for (let i = 10; i <= RISK_SCALE_MAX; i++) {
+    const factor = calculatePiecewiseAPY(i); // Use APY as the factor
     higherTierFactors[i] = factor;
     totalFactor += factor;
   }
   
   // Distribute losses based on subordination formula
-  for (let i = TIER1_WIDTH + 1; i <= RISK_SCALE_MAX; i++) {
+  for (let i = 10; i <= RISK_SCALE_MAX; i++) {
     if (totalFactor > 0) {
       const lossRatio = higherTierFactors[i] / totalFactor;
       lossPerTick[i] = totalLoss * lossRatio;
@@ -238,86 +235,11 @@ export const calculateLossDistribution = (
 };
 
 /**
- * Calculate user's normalized risk using the formula: r_norm = (average_risk_level - 1) / 99
+ * Calculate user's normalized risk using the formula: r_norm = (average_risk_level) / 99
  */
 export const calculateNormalizedRisk = (riskRange: RiskRange): number => {
   const averageRiskLevel = (riskRange.min + riskRange.max) / 2;
-  return (averageRiskLevel - 1) / 99;
-};
-
-/**
- * Calculate T-Core personal APY using formula:
- * Личный APY = ∑ [fixed_base if j in tier1 else fixed_base + bonus] * (S_user_j / S_j)
- */
-export const calculateTCorePersonalAPY = (
-  userAmount: number,
-  riskRange: RiskRange
-): number => {
-  // Handle tier1 ranges (guaranteed fixed APY)
-  if (riskRange.max <= TIER1_WIDTH) {
-    return FIXED_BASE_APY; // 6% guaranteed for tier1
-  }
-  
-  // Calculate range size and user allocation per tick
-  const rangeSize = riskRange.max - riskRange.min + 1;
-  const userTDDPerTick = userAmount / rangeSize;
-  
-  let weightedAPR = 0;
-  let totalWeight = 0;
-  
-  // Calculate weighted average APR across the range using T-Core formula
-  for (let tick = riskRange.min; tick <= riskRange.max; tick++) {
-    let tickAPR: number;
-    let weight = userTDDPerTick;
-    
-    if (tick <= TIER1_WIDTH) {
-      // Tier1: guaranteed fixed APY
-      tickAPR = FIXED_BASE_APY;
-    } else {
-      // Higher tiers: fixed_base + bonus
-      tickAPR = calculateTCoreAPY(tick);
-      
-      // Apply dilution effect based on T-Core tier structure
-      const baseLiquidity = (() => {
-        if (tick >= 1 && tick <= 25) return CATEGORY_DISTRIBUTION.TIER1.totalTDD / 25;
-        if (tick >= 26 && tick <= 50) return CATEGORY_DISTRIBUTION.TIER2.totalTDD / 25;
-        if (tick >= 51 && tick <= 75) return CATEGORY_DISTRIBUTION.TIER3.totalTDD / 25;
-        if (tick >= 76 && tick <= 100) return CATEGORY_DISTRIBUTION.TIER4.totalTDD / 25;
-        return 1000000; // fallback
-      })();
-      
-      // Dilution factor for large positions (S_user_j / S_j effect)
-      const dilutionFactor = 1 - (userTDDPerTick / (baseLiquidity + userTDDPerTick)) * 0.03;
-      tickAPR *= Math.max(0.97, dilutionFactor); // Max 3% dilution
-    }
-    
-    weightedAPR += tickAPR * weight;
-    totalWeight += weight;
-  }
-  
-  return totalWeight > 0 ? weightedAPR / totalWeight : FIXED_BASE_APY;
-};
-
-/**
- * Legacy function for backward compatibility
- */
-export const calculateRealisticRangeAPY = (
-  userAmount: number,
-  riskRange: RiskRange
-): number => {
-  return calculateTCorePersonalAPY(userAmount, riskRange);
-};
-
-/**
- * Calculate user's position APR in a risk range (legacy function, kept for compatibility)
- */
-export const calculateRangeAPR = (
-  userAmount: number,
-  riskRange: RiskRange,
-  riskTicks: RiskTick[]
-): number => {
-  // Use the new realistic calculation
-  return calculateRealisticRangeAPY(userAmount, riskRange);
+  return averageRiskLevel / 99;
 };
 
 /**
@@ -365,7 +287,7 @@ export const calculatePotentialLoss = (
 };
 
 /**
- * Generate risk ticks for all levels 1-100
+ * Generate risk ticks for all levels 0-99 (updated range)
  */
 export const generateInitialRiskTicks = (): RiskTick[] => {
   const ticks: RiskTick[] = [];
@@ -375,7 +297,7 @@ export const generateInitialRiskTicks = (): RiskTick[] => {
       riskLevel: i,
       totalLiquidity: 0,
       availableYield: 0,
-      apr: calculateRiskLevelAPR(i)
+      apr: calculatePiecewiseAPY(i)
     });
   }
   
@@ -390,36 +312,6 @@ export const calculateHistoricalAPY = (historicalYields: number[]): number => {
   
   const sum = historicalYields.reduce((acc, yield_) => acc + yield_, 0);
   return sum / historicalYields.length;
-};
-
-/**
- * Calculate comprehensive range analysis using exact formulas from document
- */
-// ============= BUYBACK & BURN CALCULATIONS =============
-
-/**
- * Calculate buyback amount for TDD based on post-distribution yields/fees
- * Formula: Burn_amount = fraction * (fees or yields_post_min)
- */
-export const calculateBuybackAmount = (
-  postDistributionYields: number,
-  burnFraction: number = 0.15 // 15% default burn rate
-): number => {
-  return postDistributionYields * burnFraction;
-};
-
-/**
- * Calculate value increase from supply reduction
- * Formula: Value_increase = (1 - initial_supply / new_supply) * 100
- */
-export const calculateValueIncrease = (
-  initialSupply: number,
-  burnedAmount: number,
-  currentPrice: number
-): number => {
-  const burnedTokens = burnedAmount / currentPrice;
-  const newSupply = initialSupply - burnedTokens;
-  return ((1 - initialSupply / newSupply) * 100);
 };
 
 /**
@@ -446,7 +338,7 @@ export const simulateAnnualValueIncrease = (
  */
 export const calculateSurplusPool = (
   totalYield: number,
-  tier1Stake: number = CATEGORY_DISTRIBUTION.TIER1.totalTDD
+  tier1Stake: number = CATEGORY_DISTRIBUTION.SAFE.totalTDD
 ): number => {
   const minYieldsRequired = tier1Stake * FIXED_BASE_APY;
   return Math.max(0, totalYield - minYieldsRequired);
@@ -464,17 +356,17 @@ export const calculateSurplusDistribution = (
   const distribution: { [riskLevel: number]: number } = {};
   
   // Tier1 gets 0 surplus (already has fixed minimum)
-  for (let i = 1; i <= TIER1_WIDTH; i++) {
+  for (let i = 0; i <= 9; i++) {
     distribution[i] = 0;
   }
   
-  // Calculate factors for higher tiers (26-100)
+  // Calculate factors for higher tiers (10-99)
   const higherTierFactors: { [riskLevel: number]: number } = {};
   let totalFactor = 0;
   let totalHigherStake = 0;
   
-  for (let i = TIER1_WIDTH + 1; i <= RISK_SCALE_MAX; i++) {
-    const factor = Math.pow(OPTIMAL_K, i - TIER1_WIDTH);
+  for (let i = 10; i <= RISK_SCALE_MAX; i++) {
+    const factor = calculatePiecewiseAPY(i);
     higherTierFactors[i] = factor;
     totalFactor += factor;
     
@@ -484,7 +376,7 @@ export const calculateSurplusDistribution = (
   }
   
   // Distribute surplus proportionally
-  for (let i = TIER1_WIDTH + 1; i <= RISK_SCALE_MAX; i++) {
+  for (let i = 10; i <= RISK_SCALE_MAX; i++) {
     if (totalFactor > 0 && totalHigherStake > 0) {
       const tick = riskTicks.find(t => t.riskLevel === i);
       const stake = tick?.totalLiquidity || 0;

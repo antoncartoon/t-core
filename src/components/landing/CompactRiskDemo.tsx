@@ -6,9 +6,10 @@ import { Badge } from '@/components/ui/badge';
 import { NavLink } from 'react-router-dom';
 import { Calculator, Shield, Star, Crown, ArrowRight, TrendingUp } from 'lucide-react';
 import { 
-  calculateTCoreAPY, 
-  FIXED_BASE_APY,
-} from '@/utils/riskRangeCalculations';
+  calculatePiecewiseAPY, 
+  getTierForSegment,
+  TARGET_APYS
+} from '@/utils/piecewiseAPY';
 
 const CompactRiskDemo = () => {
   const [demoAmount] = useState(10000);
@@ -18,53 +19,54 @@ const CompactRiskDemo = () => {
     { 
       id: 'safe', 
       name: 'Safe', 
-      bucket: 5, 
+      segment: 5, 
       icon: Shield, 
       color: 'bg-green-100 text-green-800 border-green-200',
-      description: 'Guaranteed returns'
+      description: 'Fixed 5.16% guarantee'
     },
     { 
       id: 'conservative', 
       name: 'Conservative', 
-      bucket: 20, 
+      segment: 20, 
       icon: Shield, 
       color: 'bg-blue-100 text-blue-800 border-blue-200',
-      description: 'Stable with bonus'
+      description: 'Linear growth to 7%'
     },
     { 
       id: 'balanced', 
       name: 'Balanced', 
-      bucket: 45, 
+      segment: 45, 
       icon: Star, 
       color: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      description: 'Optimal risk/reward'
+      description: 'Quadratic to 9.5%'
     },
     { 
       id: 'hero', 
       name: 'Hero', 
-      bucket: 80, 
+      segment: 80, 
       icon: Crown, 
       color: 'bg-purple-100 text-purple-800 border-purple-200',
-      description: 'Maximum potential'
+      description: 'Exponential growth'
     }
   ];
 
   const selectedStrategyData = strategies.find(s => s.id === selectedStrategy) || strategies[2];
-  const currentAPY = calculateTCoreAPY(selectedStrategyData.bucket);
+  const currentAPY = calculatePiecewiseAPY(selectedStrategyData.segment);
   const annualYield = demoAmount * currentAPY;
+  const tierInfo = getTierForSegment(selectedStrategyData.segment);
 
   return (
     <section className="py-16 sm:py-20 bg-muted/20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
           <Badge variant="secondary" className="mb-4">
-            LIVE DEMO
+            NEW PIECEWISE MODEL
           </Badge>
           <h2 className="text-3xl sm:text-4xl font-light mb-4">
             Choose Your Strategy
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            See how different risk levels affect your returns with T-Core's precision staking
+            Experience T-Core's new fair and predictable piecewise yield model with 4 distinct tiers
           </p>
         </div>
 
@@ -72,14 +74,14 @@ const CompactRiskDemo = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Calculator className="h-5 w-5 text-primary" />
-              Risk Strategy Calculator
+              Piecewise Strategy Calculator
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             {/* Strategy Selection */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               {strategies.map((strategy) => {
-                const apy = calculateTCoreAPY(strategy.bucket);
+                const apy = calculatePiecewiseAPY(strategy.segment);
                 const isActive = selectedStrategy === strategy.id;
                 
                 return (
@@ -97,7 +99,10 @@ const CompactRiskDemo = () => {
                       <div className="font-medium text-sm">{strategy.name}</div>
                       <div className="text-xs opacity-70">{strategy.description}</div>
                       <div className="font-bold text-lg">
-                        {(apy * 100).toFixed(1)}%
+                        {(apy * 100).toFixed(2)}%
+                      </div>
+                      <div className="text-[10px] opacity-60">
+                        Segment {strategy.segment}
                       </div>
                     </div>
                   </div>
@@ -117,6 +122,7 @@ const CompactRiskDemo = () => {
                   <div className="text-2xl font-bold text-primary">
                     {(currentAPY * 100).toFixed(2)}%
                   </div>
+                  <div className="text-xs text-muted-foreground mt-1">{tierInfo.formula}</div>
                 </div>
                 <div>
                   <div className="text-sm text-muted-foreground mb-1">Annual Yield</div>
@@ -131,12 +137,13 @@ const CompactRiskDemo = () => {
             <div className="p-4 bg-muted/50 rounded-lg">
               <div className="flex items-center gap-2 mb-3">
                 <TrendingUp className="w-4 h-4 text-primary" />
-                <span className="font-medium text-sm">How T-Core Works</span>
+                <span className="font-medium text-sm">New Piecewise Model</span>
               </div>
               <div className="text-xs text-muted-foreground space-y-1">
-                <div>• Safe strategies get guaranteed {(FIXED_BASE_APY * 100).toFixed(0)}% base yield</div>
-                <div>• Higher risk levels receive bonus yields from waterfall distribution</div>
-                <div>• Hero levels absorb losses first but get maximum upside potential</div>
+                <div>• <strong>Safe:</strong> Fixed {(TARGET_APYS.SAFE * 100).toFixed(2)}% (T-Bills × 1.2) - fully guaranteed</div>
+                <div>• <strong>Conservative:</strong> Linear growth from 5.16% to 7%</div>
+                <div>• <strong>Balanced:</strong> Quadratic acceleration from 7% to 9.5%</div>
+                <div>• <strong>Hero:</strong> Exponential growth starting at 9.5%</div>
               </div>
             </div>
 
@@ -150,7 +157,7 @@ const CompactRiskDemo = () => {
                 </Button>
               </NavLink>
               <div className="text-xs text-muted-foreground mt-2">
-                No lock-up periods • Mathematical precision • Transparent formulas
+                Piecewise formula • Fair distribution • Predictable yields
               </div>
             </div>
           </CardContent>
