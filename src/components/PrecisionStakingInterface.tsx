@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { Calculator, TrendingDown, DollarSign, AlertTriangle, BarChart3 } from 'lucide-react';
-import { calculatePrecisionAPY, calculatePredictedYield, calculateStressScenarios, getTierForBucket } from '@/utils/tzFormulas';
+import { calculatePiecewiseAPY, calculatePredictedYield, calculateStressScenarios, getTierForBucket } from '@/utils/tzFormulas';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
@@ -57,7 +56,7 @@ const PrecisionStakingInterface = () => {
   for (let bucket = 0; bucket <= 99; bucket++) {
     apyData.push({
       bucket,
-      apy: calculatePrecisionAPY(bucket) * 100,
+      apy: calculatePiecewiseAPY(bucket) * 100,
       isSelected: bucket >= bucketRange[0] && bucket <= bucketRange[1],
       tier: getTierForBucket(bucket)
     });

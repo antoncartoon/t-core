@@ -1,7 +1,31 @@
 
 // STRESS TEST FORMULAS - Using quadratic risk model and proper waterfall logic
 
-import { calculatePiecewiseAPY, getTierForSegment } from './piecewiseAPY';
+import { getTierForSegment } from './piecewiseAPY';
+
+/**
+ * Piecewise APY calculation (moved from piecewiseAPY.ts to avoid circular imports)
+ */
+export const calculatePiecewiseAPY = (segment: number): number => {
+  const i = Math.max(0, Math.min(99, segment));
+  
+  if (i <= 9) {
+    // Safe tier: Fixed 5.16% APY
+    return 0.0516;
+  } else if (i <= 29) {
+    // Conservative tier: Linear from 5.16% to 7%
+    const progress = (i - 10) / 19; // 0 to 1 over segments 10-29
+    return 0.0516 + (0.07 - 0.0516) * progress;
+  } else if (i <= 59) {
+    // Balanced tier: Quadratic from 7% to 9.5%
+    const progress = (i - 30) / 29; // 0 to 1 over segments 30-59
+    return 0.07 + (0.095 - 0.07) * Math.pow(progress, 2);
+  } else {
+    // Hero tier: Exponential from 9.5% with 1.03^(i-60) multiplier
+    const exponentialFactor = Math.pow(1.03, i - 60);
+    return 0.095 * exponentialFactor;
+  }
+};
 
 /**
  * Quadratic risk function: Risk(i) = (i/99)^2
@@ -109,6 +133,3 @@ export const getTierForBucket = (segment: number): {
     color: tier.color
   };
 };
-
-// Re-export the main piecewise APY function for consistency
-export const calculatePiecewiseAPY = calculatePiecewiseAPY;
