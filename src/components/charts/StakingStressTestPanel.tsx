@@ -2,8 +2,8 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AlertTriangle, Shield, TrendingDown } from 'lucide-react';
-import { calculateStressScenarios } from '@/utils/tzFormulas';
+import { AlertTriangle, Shield, TrendingDown, Info } from 'lucide-react';
+import { calculateEnhancedStressScenarios, getTierProtectionLevel } from '@/utils/stressTestCalculations';
 
 interface StakingStressTestPanelProps {
   amount: number;
@@ -16,8 +16,12 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
   selectedRange,
   totalTVL = 10000000 // Default 10M TVL for demo
 }) => {
-  // Calculate stress scenarios using the formula from tzFormulas
-  const stressScenarios = amount > 0 ? calculateStressScenarios(amount, selectedRange, totalTVL) : null;
+  // Calculate stress scenarios using enhanced waterfall model
+  const stressScenarios = amount > 0 ? calculateEnhancedStressScenarios(amount, selectedRange, totalTVL) : null;
+  
+  // Get tier protection info
+  const avgSegment = (selectedRange[0] + selectedRange[1]) / 2;
+  const tierProtection = getTierProtectionLevel(avgSegment);
 
   const scenarioConfigs = [
     {
@@ -77,13 +81,34 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5" />
-            Real-Time Stress Test Analysis
+            Waterfall Loss Distribution Analysis
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Potential losses for your ${amount.toLocaleString()} position in buckets {selectedRange[0]}-{selectedRange[1]}
+            Potential losses for your ${amount.toLocaleString()} position in segments {selectedRange[0]}-{selectedRange[1]} ({tierProtection.name} tier)
           </p>
         </CardHeader>
         <CardContent>
+          {/* Tier Protection Status */}
+          <div className="mb-6 p-4 bg-muted/30 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <Info className="h-4 w-4 text-blue-600" />
+                <span className="font-medium text-sm">Your Protection Level</span>
+              </div>
+              <Badge variant="outline" className={`${
+                tierProtection.riskLevel === 'low' ? 'text-green-600' :
+                tierProtection.riskLevel === 'medium' ? 'text-blue-600' :
+                tierProtection.riskLevel === 'high' ? 'text-yellow-600' :
+                'text-red-600'
+              }`}>
+                {tierProtection.name}
+              </Badge>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {tierProtection.protection} - Losses cascade from Hero → Balanced → Conservative → Safe tiers
+            </p>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {scenarioConfigs.map((scenario, index) => {
               const Icon = scenario.icon;
@@ -108,13 +133,13 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
                     <div className="flex justify-between items-center">
                       <span className="text-xs text-muted-foreground">Loss %:</span>
                       <span className={`font-bold text-sm ${scenario.textColor}`}>
-                        -{data?.lossPercent.toFixed(2)}%
+                        {data?.lossPercent === 0 ? '0.00' : data?.lossPercent.toFixed(2)}%
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-xs text-muted-foreground">Dollar Loss:</span>
                       <span className={`font-bold text-sm ${scenario.textColor}`}>
-                        -${data?.dollarLoss.toFixed(2)}
+                        ${data?.dollarLoss === 0 ? '0.00' : data?.dollarLoss.toFixed(2)}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
@@ -135,7 +160,7 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
               <div className="w-3 h-3 bg-primary rounded-full" />
               <span className="font-medium text-sm">Your Risk Profile</span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm">
               <div>
                 <p className="text-muted-foreground">Position Size</p>
                 <p className="font-semibold">${amount.toLocaleString()}</p>
@@ -145,9 +170,13 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
                 <p className="font-semibold">{selectedRange[0]} - {selectedRange[1]}</p>
               </div>
               <div>
+                <p className="text-muted-foreground">Tier Protection</p>
+                <p className="font-semibold">{tierProtection.name}</p>
+              </div>
+              <div>
                 <p className="text-muted-foreground">Max Potential Loss</p>
                 <p className="font-semibold text-red-600">
-                  -${stressScenarios.scenario10.dollarLoss.toFixed(2)}
+                  ${stressScenarios.scenario10.dollarLoss === 0 ? '0.00' : stressScenarios.scenario10.dollarLoss.toFixed(2)}
                 </p>
               </div>
             </div>
@@ -155,24 +184,33 @@ const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
         </CardContent>
       </Card>
 
-      {/* Insurance Protection Info */}
+      {/* Waterfall Protection Info */}
       <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
         <CardContent className="pt-6">
           <div className="flex items-start gap-3">
             <Shield className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
             <div className="space-y-2">
               <h4 className="font-semibold text-sm text-blue-800 dark:text-blue-200">
-                Hero Tier Insurance Protection
+                T-Core Waterfall Protection Model
               </h4>
               <p className="text-sm text-blue-700 dark:text-blue-300 leading-relaxed">
-                25% of all performance fees are continuously allocated to Hero tier participants as compensation 
-                for absorbing losses first. This creates a sustainable insurance mechanism where higher-risk participants 
-                protect lower tiers while earning proportionally higher rewards.
+                Losses cascade through the risk tiers in order: Hero (60-99) absorbs first, followed by Balanced (30-59), 
+                then Conservative (10-29), and finally Safe (0-9). Each tier absorbs losses up to their total TVL capacity 
+                before impacting lower tiers, providing mathematical protection for conservative positions.
               </p>
-              <div className="flex items-center gap-4 text-xs text-blue-600 dark:text-blue-400">
-                <span>• Waterfall loss absorption</span>
-                <span>• Performance fee compensation</span>
-                <span>• Automated rebalancing</span>
+              <div className="grid grid-cols-2 gap-4 text-xs text-blue-600 dark:text-blue-400 mt-3">
+                <div>
+                  <span className="font-medium">Hero Tier:</span> First loss absorption (40% TVL)
+                </div>
+                <div>
+                  <span className="font-medium">Balanced Tier:</span> Secondary protection (30% TVL)
+                </div>
+                <div>
+                  <span className="font-medium">Conservative Tier:</span> Tertiary protection (20% TVL)
+                </div>
+                <div>
+                  <span className="font-medium">Safe Tier:</span> Maximum protection (10% TVL)
+                </div>
               </div>
             </div>
           </div>
