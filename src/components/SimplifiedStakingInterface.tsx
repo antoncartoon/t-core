@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,7 +24,7 @@ export const SimplifiedStakingInterface = () => {
   const tddBalance = getAvailableBalance('TDD');
   const numericAmount = parseFloat(amount) || 0;
 
-  // Calculate predicted yield using the new formula
+  // Calculate predicted yield using the updated piecewise formula
   const yieldPrediction = numericAmount > 0 ? calculatePredictedYield(numericAmount, selectedRange) : null;
   const selectedTier = getTierForBucket(Math.floor((selectedRange[0] + selectedRange[1]) / 2));
 
@@ -130,11 +129,11 @@ export const SimplifiedStakingInterface = () => {
             </div>
           </div>
 
-          {/* Predicted Yield Display */}
+          {/* Updated Predicted Yield Display */}
           {yieldPrediction && (
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 p-4 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Expected Returns</span>
+                <span className="text-sm font-medium">Expected Returns (Piecewise APY)</span>
                 <Info className="w-4 h-4 text-muted-foreground" />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -156,7 +155,7 @@ export const SimplifiedStakingInterface = () => {
                   {selectedTier.name}
                 </Badge>
                 <span className="text-xs text-muted-foreground">
-                  Range: {selectedRange[0]}-{selectedRange[1]}
+                  Segments: {selectedRange[0]}-{selectedRange[1]}
                 </span>
               </div>
             </div>

@@ -1,9 +1,8 @@
-
 import React, { useState, useCallback, useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, ReferenceLine, ReferenceArea, Tooltip, BarChart, Bar } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { calculatePrecisionAPY, getTierForBucket } from '@/utils/tzFormulas';
+import { calculatePiecewiseAPY, getTierForSegment } from '@/utils/piecewiseAPY';
 
 interface InteractiveLiquidityChartProps {
   selectedRange: [number, number];
@@ -12,12 +11,12 @@ interface InteractiveLiquidityChartProps {
   liquidityData?: Array<{ bucket: number; liquidity: number }>;
 }
 
-// Predefined tier ranges for quick selection with colors
+// Updated tier presets to match the piecewise formula specification
 const TIER_PRESETS = [
-  { name: 'Safe', range: [0, 9] as [number, number], color: '#22c55e', bgColor: 'hsl(142, 76%, 36%)', description: 'Guaranteed T-Bills yield' },
-  { name: 'Conservative', range: [10, 29] as [number, number], color: '#3b82f6', bgColor: 'hsl(221, 83%, 53%)', description: 'Moderate risk, steady returns' },
-  { name: 'Balanced', range: [30, 59] as [number, number], color: '#eab308', bgColor: 'hsl(48, 96%, 53%)', description: 'Higher yield potential' },
-  { name: 'Hero', range: [60, 99] as [number, number], color: '#ef4444', bgColor: 'hsl(0, 84%, 60%)', description: 'Maximum yield, absorbs losses first' }
+  { name: 'Safe', range: [0, 9] as [number, number], color: '#22c55e', bgColor: 'hsl(142, 76%, 36%)', description: 'Fixed 5.16% APY' },
+  { name: 'Conservative', range: [10, 29] as [number, number], color: '#3b82f6', bgColor: 'hsl(221, 83%, 53%)', description: 'Linear 5.16% → 7%' },
+  { name: 'Balanced', range: [30, 59] as [number, number], color: '#eab308', bgColor: 'hsl(48, 96%, 53%)', description: 'Quadratic 7% → 9.5%' },
+  { name: 'Hero', range: [60, 99] as [number, number], color: '#ef4444', bgColor: 'hsl(0, 84%, 60%)', description: 'Exponential 9.5% × 1.03^(i-60)' }
 ];
 
 const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
@@ -29,15 +28,15 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<number | null>(null);
 
-  // Generate yield curve data with tier information
+  // Generate yield curve data using the correct piecewise APY formula
   const yieldCurveData = useMemo(() => {
     const data = [];
     for (let i = 0; i <= 99; i += 1) {
-      const apy = calculatePrecisionAPY(i) * 100;
-      const tier = getTierForBucket(i);
+      const apy = calculatePiecewiseAPY(i) * 100; // Convert to percentage
+      const tier = getTierForSegment(i);
       const liquidity = liquidityData.find(l => Math.abs(l.bucket - i) <= 1)?.liquidity || 0;
       
-      // Assign tier data for coloring
+      // Assign tier data for coloring based on correct ranges
       let tierIndex = 0;
       if (i >= 10 && i <= 29) tierIndex = 1;
       else if (i >= 30 && i <= 59) tierIndex = 2;
@@ -106,14 +105,18 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
+      const tier = getTierForSegment(label);
       return (
         <div className="bg-background border border-border rounded-lg p-3 shadow-lg">
-          <p className="text-sm font-medium">{`Bucket: ${label}`}</p>
+          <p className="text-sm font-medium">{`Segment: ${label}`}</p>
           <p className="text-sm text-primary">
             {`APY: ${data.apy.toFixed(2)}%`}
           </p>
           <p className="text-sm" style={{ color: data.tierColor }}>
             {`Tier: ${data.tierName}`}
+          </p>
+          <p className="text-xs text-muted-foreground">
+            {`Formula: ${tier.formula}`}
           </p>
           {data.liquidity > 0 && (
             <p className="text-sm text-muted-foreground">
@@ -162,13 +165,13 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <CardTitle className="text-lg">Yield Curve & Risk Tier Distribution</CardTitle>
+            <CardTitle className="text-lg">Piecewise APY Curve & Quadratic Risk Model</CardTitle>
             <Badge variant="outline" className="text-xs">
               Selected: {selectedRange[0]}-{selectedRange[1]}
             </Badge>
           </div>
           <p className="text-sm text-muted-foreground">
-            Click or drag to select risk range. Each colored zone represents a different risk tier with progressive yield.
+            Click or drag to select segments. Progressive formulas: Fixed → Linear → Quadratic → Exponential
           </p>
         </CardHeader>
         <CardContent>
@@ -316,18 +319,18 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
               </div>
               <div>
                 <p className="text-muted-foreground">Range Width</p>
-                <p className="font-semibold">{selectedRange[1] - selectedRange[0] + 1} buckets</p>
+                <p className="font-semibold">{selectedRange[1] - selectedRange[0] + 1} segments</p>
               </div>
               <div>
                 <p className="text-muted-foreground">Min APY</p>
                 <p className="font-semibold text-green-600">
-                  {(calculatePrecisionAPY(selectedRange[0]) * 100).toFixed(2)}%
+                  {(calculatePiecewiseAPY(selectedRange[0]) * 100).toFixed(2)}%
                 </p>
               </div>
               <div>
                 <p className="text-muted-foreground">Max APY</p>
                 <p className="font-semibold text-blue-600">
-                  {(calculatePrecisionAPY(selectedRange[1]) * 100).toFixed(2)}%
+                  {(calculatePiecewiseAPY(selectedRange[1]) * 100).toFixed(2)}%
                 </p>
               </div>
             </div>

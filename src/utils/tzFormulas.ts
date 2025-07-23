@@ -1,28 +1,18 @@
 
-// PRECISION FORMULAS - Mathematical implementation from specification
+// STRESS TEST FORMULAS - Using quadratic risk model and proper waterfall logic
+
+import { calculatePiecewiseAPY, getTierForSegment } from './piecewiseAPY';
 
 /**
- * Main APY Formula: APY(r) = APY_safe + (APY_protocol - APY_safe) × r^1.5
- * where r = (bucket number) / 99
+ * Quadratic risk function: Risk(i) = (i/99)^2
  */
-export const calculatePrecisionAPY = (bucketNumber: number): number => {
-  const APY_SAFE = 0.0516; // T-bills × 1.2 = 5.16%
-  const APY_PROTOCOL = 0.10; // Protocol average 10% APY
-  
-  // Ensure bucket is in range 0-99
-  const clampedBucket = Math.max(0, Math.min(99, bucketNumber));
-  
-  // Calculate r = bucket / 99
-  const r = clampedBucket / 99;
-  
-  // Apply formula: APY(r) = APY_safe + (APY_protocol - APY_safe) × r^1.5
-  const result = APY_SAFE + (APY_PROTOCOL - APY_SAFE) * Math.pow(r, 1.5);
-  
-  return result;
+export const calculateQuadraticRisk = (segment: number): number => {
+  const i = Math.max(0, Math.min(99, segment));
+  return Math.pow(i / 99, 2);
 };
 
 /**
- * Stress Loss Formula: Loss = min(residual_loss, user_position) / user_position
+ * Stress Loss Formula using quadratic risk model
  */
 export const calculateStressLoss = (
   userPosition: number,
@@ -35,7 +25,7 @@ export const calculateStressLoss = (
 };
 
 /**
- * Calculate stress scenarios: -1%, -5%, -10% TVL
+ * Calculate stress scenarios using quadratic risk model and proper waterfall logic
  */
 export const calculateStressScenarios = (
   userPosition: number,
@@ -46,47 +36,53 @@ export const calculateStressScenarios = (
   scenario5: { lossPercent: number; dollarLoss: number };
   scenario10: { lossPercent: number; dollarLoss: number };
 } => {
-  // Calculate average risk position
-  const avgBucket = (bucketRange[0] + bucketRange[1]) / 2;
-  const riskFactor = avgBucket / 99; // Normalize to 0-1
+  // Calculate average segment and its quadratic risk
+  const avgSegment = (bucketRange[0] + bucketRange[1]) / 2;
+  const quadraticRisk = calculateQuadraticRisk(avgSegment);
   
   // TVL loss scenarios
   const tvlLoss1 = totalTVL * 0.01; // -1% TVL
   const tvlLoss5 = totalTVL * 0.05; // -5% TVL  
   const tvlLoss10 = totalTVL * 0.10; // -10% TVL
   
-  // User bears losses proportional to risk position (higher buckets absorb more)
-  const userRiskShare = Math.pow(riskFactor, 2); // Quadratic risk scaling
+  // Higher segments absorb more losses in waterfall model
+  // Loss absorption scales with quadratic risk + exponential factor for hero tier
+  let lossMultiplier = quadraticRisk;
+  if (avgSegment >= 60) {
+    // Hero tier gets exponential loss absorption
+    lossMultiplier = quadraticRisk * Math.pow(1.2, (avgSegment - 60) / 10);
+  }
   
+  // Calculate actual losses based on waterfall model
+  const calculateScenarioLoss = (tvlLoss: number) => {
+    const userLossShare = tvlLoss * lossMultiplier;
+    const actualLoss = Math.min(userLossShare, userPosition);
+    return {
+      lossPercent: (actualLoss / userPosition) * 100,
+      dollarLoss: actualLoss
+    };
+  };
+
   return {
-    scenario1: {
-      lossPercent: calculateStressLoss(userPosition, tvlLoss1 * userRiskShare) * 100,
-      dollarLoss: Math.min(tvlLoss1 * userRiskShare, userPosition)
-    },
-    scenario5: {
-      lossPercent: calculateStressLoss(userPosition, tvlLoss5 * userRiskShare) * 100,
-      dollarLoss: Math.min(tvlLoss5 * userRiskShare, userPosition)
-    },
-    scenario10: {
-      lossPercent: calculateStressLoss(userPosition, tvlLoss10 * userRiskShare) * 100,
-      dollarLoss: Math.min(tvlLoss10 * userRiskShare, userPosition)
-    }
+    scenario1: calculateScenarioLoss(tvlLoss1),
+    scenario5: calculateScenarioLoss(tvlLoss5),
+    scenario10: calculateScenarioLoss(tvlLoss10)
   };
 };
 
 /**
- * Calculate predicted yield using precision formula
+ * Calculate predicted yield using piecewise APY formula
  */
 export const calculatePredictedYield = (
   amount: number,
   bucketRange: [number, number]
 ): { percentAPY: number; dollarYield: number } => {
-  // Calculate average APY across the selected range
+  // Calculate average APY across the selected range using piecewise formula
   let totalAPY = 0;
   const rangeSize = bucketRange[1] - bucketRange[0] + 1;
   
-  for (let bucket = bucketRange[0]; bucket <= bucketRange[1]; bucket++) {
-    totalAPY += calculatePrecisionAPY(bucket);
+  for (let segment = bucketRange[0]; segment <= bucketRange[1]; segment++) {
+    totalAPY += calculatePiecewiseAPY(segment);
   }
   
   const avgAPY = totalAPY / rangeSize;
@@ -99,24 +95,20 @@ export const calculatePredictedYield = (
 };
 
 /**
- * Get tier info for a bucket
+ * Get tier info for a segment (using piecewise implementation)
  */
-export const getTierForBucket = (bucket: number): {
+export const getTierForBucket = (segment: number): {
   name: string;
   range: string;
   color: string;
 } => {
-  if (bucket >= 0 && bucket <= 9) {
-    return { name: 'Safe', range: '0-9', color: 'text-green-600' };
-  } else if (bucket >= 10 && bucket <= 29) {
-    return { name: 'Conservative', range: '10-29', color: 'text-blue-600' };
-  } else if (bucket >= 30 && bucket <= 59) {
-    return { name: 'Balanced', range: '30-59', color: 'text-yellow-600' };
-  } else if (bucket >= 60 && bucket <= 99) {
-    return { name: 'Hero', range: '60-99', color: 'text-red-600' };
-  }
-  return { name: 'Unknown', range: '?', color: 'text-gray-600' };
+  const tier = getTierForSegment(segment);
+  return {
+    name: tier.name,
+    range: `${tier.range[0]}-${tier.range[1]}`,
+    color: tier.color
+  };
 };
 
-// Legacy function name for backward compatibility (deprecated)
-export const calculateTZCompliantAPY = calculatePrecisionAPY;
+// Re-export the main piecewise APY function for consistency
+export const calculatePiecewiseAPY = calculatePiecewiseAPY;
