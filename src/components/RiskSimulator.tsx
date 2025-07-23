@@ -15,6 +15,7 @@ import {
   FIXED_BASE_APY,
   OPTIMAL_K
 } from '@/utils/riskRangeCalculations';
+import { TOTAL_TVL } from '@/utils/protocolConstants';
 
 interface RiskSimulatorProps {
   className?: string;
@@ -34,7 +35,7 @@ const RiskSimulator: React.FC<RiskSimulatorProps> = ({ className }) => {
     const results: any[] = [];
     
     for (const scenario of scenarios) {
-      const protocolLoss = (scenario / 100) * 12_500_000; // Total protocol loss
+      const protocolLoss = (scenario / 100) * TOTAL_TVL; // Total protocol loss
       const lossDistribution = calculateTCoreSubordinationLoss(protocolLoss, riskTicks);
       
       for (let riskLevel = 1; riskLevel <= 100; riskLevel++) {
@@ -58,7 +59,7 @@ const RiskSimulator: React.FC<RiskSimulatorProps> = ({ className }) => {
 
   // Calculate user's specific risk for selected range
   const calculateUserRisk = () => {
-    const protocolLoss = (stressScenario / 100) * 12_500_000;
+    const protocolLoss = (stressScenario / 100) * TOTAL_TVL;
     const lossDistribution = calculateTCoreSubordinationLoss(protocolLoss, riskTicks);
     
     let totalLoss = 0;

@@ -4,7 +4,8 @@ import { Slider } from '@/components/ui/slider';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, Shield, AlertTriangle, BarChart3, Info } from 'lucide-react';
-import { calculateRiskLevelAPR, calculateRealisticRangeAPY, FIXED_BASE_APY, calculateTCoreAPY, RISK_SCALE_MIN, RISK_SCALE_MAX } from '@/utils/riskRangeCalculations';
+import { calculateRiskLevelAPR, calculateRealisticRangeAPY, calculateTCoreAPY, RISK_SCALE_MIN, RISK_SCALE_MAX } from '@/utils/riskRangeCalculations';
+import { FIXED_BASE_APY } from '@/utils/protocolConstants';
 import { calculateQuadraticRisk, getTierForSegment } from '@/utils/tzFormulas';
 
 interface RangeSelectorProps {

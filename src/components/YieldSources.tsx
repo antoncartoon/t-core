@@ -5,7 +5,8 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { ExternalLink, Shield, TrendingUp, Activity, DollarSign } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
-import { FIXED_BASE_APY, BONUS_SPREAD } from '@/utils/riskRangeCalculations';
+import { FIXED_BASE_APY } from '@/utils/protocolConstants';
+import { BONUS_SPREAD } from '@/utils/riskRangeCalculations';
 
 const YieldSources = () => {
   // T-Core yield breakdown: 60% fixed, 40% bonus

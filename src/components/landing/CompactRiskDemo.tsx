@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { NavLink } from 'react-router-dom';
 import { Calculator, Shield, Star, Crown, ArrowRight, TrendingUp } from 'lucide-react';
-import { calculatePiecewiseAPY, getTierForSegment, calculateQuadraticRisk, TARGET_APYS } from '@/utils/tzFormulas';
+import { calculatePiecewiseAPY, getTierForSegment, calculateQuadraticRisk } from '@/utils/tzFormulas';
+import { TARGET_APYS } from '@/utils/protocolConstants';
 const CompactRiskDemo = () => {
   const [demoAmount] = useState(10000);
   const [selectedStrategy, setSelectedStrategy] = useState('balanced');

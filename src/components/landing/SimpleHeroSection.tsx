@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { NavLink } from 'react-router-dom';
 import { ArrowRight, Play, Shield, TrendingUp, Lock, Calculator } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { T_BILL_RATE, FIXED_BASE_MULTIPLIER, FIXED_BASE_APY } from '@/utils/riskRangeCalculations';
+import { T_BILL_RATE, FIXED_BASE_MULTIPLIER } from '@/utils/riskRangeCalculations';
+import { FIXED_BASE_APY } from '@/utils/protocolConstants';
 
 interface SimpleHeroSectionProps {
   onStartTutorial?: () => void;

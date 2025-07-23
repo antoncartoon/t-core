@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Shield, TrendingDown, Info } from 'lucide-react';
 import { calculateEnhancedStressScenarios, getTierProtectionLevel } from '@/utils/stressTestCalculations';
+import { TOTAL_TVL } from '@/utils/protocolConstants';
 
 interface StakingStressTestPanelProps {
   amount: number;
@@ -14,7 +15,7 @@ interface StakingStressTestPanelProps {
 const StakingStressTestPanel: React.FC<StakingStressTestPanelProps> = ({
   amount,
   selectedRange,
-  totalTVL = 12500000 // Use actual protocol TVL
+  totalTVL = TOTAL_TVL // Use unified protocol constant (1M TVL)
 }) => {
   // Calculate stress scenarios using enhanced waterfall model
   const stressScenarios = amount > 0 ? calculateEnhancedStressScenarios(amount, selectedRange, totalTVL) : null;
