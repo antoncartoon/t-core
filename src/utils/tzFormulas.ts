@@ -476,6 +476,55 @@ export type TierInfo = {
  * INCENTIVES:
  * - calculateBonusYield
  * 
+/**
+ * Calculate comprehensive estimated APY including liquidity bonuses and protocol distributions
+ * @param amount - User deposit amount
+ * @param selectedRange - Selected risk range [start, end]
+ * @param liquidityData - Current liquidity data for all buckets
+ * @param protocolAPY28D - 28-day average protocol APY (as decimal, e.g., 0.10 for 10%)
+ * @param performanceFeeRate - Performance fee rate (as decimal, e.g., 0.20 for 20%)
+ * @returns Comprehensive estimated APY percentage
+ */
+export function calculateComprehensiveAPY(
+  amount: number,
+  selectedRange: [number, number],
+  liquidityData: Array<{ bucket: number; liquidity: number }>,
+  protocolAPY28D: number = 0.10,
+  performanceFeeRate: number = 0.20
+): number {
+  // Get current liquidity in selected range
+  const currentLiquidity = liquidityData
+    .slice(selectedRange[0], selectedRange[1] + 1)
+    .reduce((sum, item) => sum + item.liquidity, 0);
+  
+  const totalLiquidityAfterDeposit = currentLiquidity + amount;
+  
+  // Base APY from protocol calculations
+  const protocolBaseAPY = protocolAPY28D * 100; // Convert to percentage
+  
+  // Calculate weighted APY for the range using existing piecewise formula
+  const predictionResult = calculatePredictedYield(amount || 1000, selectedRange);
+  
+  // Factor in liquidity density impact (less crowded ranges get slight bonus)
+  const liquidityDensity = totalLiquidityAfterDeposit / (selectedRange[1] - selectedRange[0] + 1);
+  const liquidityBonus = liquidityDensity < 50000 ? 1.05 : 1.0; // 5% bonus for less crowded ranges
+  
+  // Factor in bonus yield from performance fees (simplified calculation)
+  const tierDistribution = { safe: 0.3, conservative: 0.4, balanced: 0.2, hero: 0.1 };
+  const bonusAllocation = calculateBonusYield(tierDistribution, performanceFeeRate * protocolBaseAPY / 100);
+  const bonusValues = Object.values(bonusAllocation) as number[];
+  const avgTierBonus = bonusValues.reduce((sum, val) => sum + val, 0) / bonusValues.length;
+  
+  // Combine all factors for comprehensive APY estimate
+  const estimatedAPY = predictionResult.percentAPY * liquidityBonus + (avgTierBonus * 100);
+  
+  return estimatedAPY;
+}
+
+/**
+ * COMPREHENSIVE APY:
+ * - calculateComprehensiveAPY
+ * 
  * TYPES:
  * - TierDistribution, StressTestResult, StressScenarios, TierInfo
  */

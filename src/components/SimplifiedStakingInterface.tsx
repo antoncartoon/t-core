@@ -10,7 +10,7 @@ import { useWallet } from '@/contexts/WalletContext';
 import { Shield, TrendingUp, Calculator, Info } from 'lucide-react';
 import InteractiveLiquidityChart from './charts/InteractiveLiquidityChart';
 import StakingStressTestPanel from './charts/StakingStressTestPanel';
-import { calculatePredictedYield, getTierForBucket } from '@/utils/tzFormulas';
+import { calculatePredictedYield, getTierForBucket, calculateComprehensiveAPY } from '@/utils/tzFormulas';
 
 export const SimplifiedStakingInterface = () => {
   const { createNFTPosition, tcoreState } = useTCore();
@@ -24,10 +24,6 @@ export const SimplifiedStakingInterface = () => {
   const tddBalance = getAvailableBalance('TDD');
   const numericAmount = parseFloat(amount) || 0;
 
-  // Calculate predicted yield using the updated piecewise formula
-  const yieldPrediction = numericAmount > 0 ? calculatePredictedYield(numericAmount, selectedRange) : null;
-  const selectedTier = getTierForBucket(Math.floor((selectedRange[0] + selectedRange[1]) / 2));
-
   // Use actual protocol liquidity data for visualization
   const liquidityData = Array.from({ length: 100 }, (_, i) => {
     const tick = tcoreState.liquidityTicks[i];
@@ -37,6 +33,11 @@ export const SimplifiedStakingInterface = () => {
       liquidity: tickLiquidity
     };
   });
+
+  // Calculate comprehensive predicted yield with incentives
+  const comprehensiveAPY = numericAmount > 0 ? calculateComprehensiveAPY(numericAmount, selectedRange, liquidityData) : null;
+  const yieldPrediction = numericAmount > 0 ? calculatePredictedYield(numericAmount, selectedRange) : null;
+  const selectedTier = getTierForBucket(Math.floor((selectedRange[0] + selectedRange[1]) / 2));
 
   const handleStake = async () => {
     if (numericAmount <= 0 || numericAmount > tddBalance) {
@@ -154,23 +155,23 @@ export const SimplifiedStakingInterface = () => {
       <Card className="max-w-2xl mx-auto">
         <CardContent className="space-y-6 pt-6">
           {/* Updated Predicted Yield Display */}
-          {yieldPrediction && (
+          {comprehensiveAPY && yieldPrediction && (
             <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 p-4 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Expected Returns (Piecewise APY)</span>
+                <span className="text-sm font-medium">Expected Returns (w/ Incentives)</span>
                 <Info className="w-4 h-4 text-muted-foreground" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Est. APY</p>
+                  <p className="text-sm text-muted-foreground">Est. Avg APY</p>
                   <p className="text-xl font-bold text-green-600">
-                    {yieldPrediction.percentAPY.toFixed(2)}%
+                    {comprehensiveAPY.toFixed(2)}%
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Annual Yield</p>
                   <p className="text-xl font-bold text-green-600">
-                    ${yieldPrediction.dollarYield.toFixed(2)}
+                    ${((numericAmount * comprehensiveAPY) / 100).toFixed(2)}
                   </p>
                 </div>
               </div>
