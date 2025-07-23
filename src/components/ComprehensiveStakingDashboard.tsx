@@ -1,33 +1,22 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Calculator,
-  Wallet, 
-  BarChart3, 
-  BookOpen,
-  Sparkles
-} from 'lucide-react';
+import { Calculator, Wallet, BarChart3, BookOpen, Sparkles } from 'lucide-react';
 
 // Import components
 import RiskAnalyticsDashboard from './analytics/RiskAnalyticsDashboard';
 import TutorialWalkthrough from './tutorial/TutorialWalkthrough';
 import { SimplifiedStakingInterface } from './SimplifiedStakingInterface';
 import { UserPositionsAndHealth } from './UserPositionsAndHealth';
-
 interface ComprehensiveDashboardProps {
   className?: string;
 }
-
-const ComprehensiveStakingDashboard: React.FC<ComprehensiveDashboardProps> = ({ 
-  className = '' 
+const ComprehensiveStakingDashboard: React.FC<ComprehensiveDashboardProps> = ({
+  className = ''
 }) => {
   const [activeTab, setActiveTab] = useState('staking');
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       {/* Feature Announcement Banner */}
       <div className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 border-b border-blue-200 dark:border-blue-800 p-3 sm:p-4 rounded-lg">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
@@ -37,7 +26,7 @@ const ComprehensiveStakingDashboard: React.FC<ComprehensiveDashboardProps> = ({
               <div className="absolute -top-1 -right-1 w-2 h-2 sm:w-3 sm:h-3 bg-blue-500 rounded-full animate-pulse"></div>
             </div>
             <div className="min-w-0 flex-1">
-              <h2 className="font-bold text-base sm:text-lg xl:text-xl leading-tight">Quadratic Risk & Piecewise APY Staking</h2>
+              <h2 className="font-bold text-base sm:text-lg xl:text-xl leading-tight"></h2>
               <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1 leading-relaxed">
                 Interactive yield curves, real-time stress testing, and precision risk management
               </p>
@@ -54,31 +43,19 @@ const ComprehensiveStakingDashboard: React.FC<ComprehensiveDashboardProps> = ({
         <div className="mb-4 sm:mb-6">
           <div className="overflow-x-auto">
             <TabsList className="inline-flex h-auto min-w-full sm:min-w-0 p-1">
-              <TabsTrigger 
-                value="staking" 
-                className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-xs sm:text-sm whitespace-nowrap"
-              >
+              <TabsTrigger value="staking" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-xs sm:text-sm whitespace-nowrap">
                 <Calculator className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                 <span>Interactive Staking</span>
               </TabsTrigger>
-              <TabsTrigger 
-                value="positions" 
-                className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-xs sm:text-sm whitespace-nowrap"
-              >
+              <TabsTrigger value="positions" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-xs sm:text-sm whitespace-nowrap">
                 <Wallet className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                 <span>My Positions</span>
               </TabsTrigger>
-              <TabsTrigger 
-                value="analytics" 
-                className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-xs sm:text-sm whitespace-nowrap"
-              >
+              <TabsTrigger value="analytics" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-xs sm:text-sm whitespace-nowrap">
                 <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                 <span>Analytics</span>
               </TabsTrigger>
-              <TabsTrigger 
-                value="tutorial" 
-                className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-xs sm:text-sm whitespace-nowrap"
-              >
+              <TabsTrigger value="tutorial" className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 px-2 sm:px-3 py-2 text-xs sm:text-sm whitespace-nowrap">
                 <BookOpen className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
                 <span>Tutorial</span>
               </TabsTrigger>
@@ -106,8 +83,6 @@ const ComprehensiveStakingDashboard: React.FC<ComprehensiveDashboardProps> = ({
           <TutorialWalkthrough />
         </TabsContent>
       </Tabs>
-    </div>
-  );
+    </div>;
 };
-
 export default ComprehensiveStakingDashboard;
