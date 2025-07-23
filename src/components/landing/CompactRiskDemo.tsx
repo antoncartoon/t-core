@@ -20,8 +20,8 @@ const CompactRiskDemo = () => {
   const getRiskLabel = (riskPercent: number) => {
     if (riskPercent <= 1) return 'Full Protection';
     if (riskPercent <= 4) return 'High Protection';
-    if (riskPercent <= 20) return 'Medium Protection';
-    if (riskPercent <= 60) return 'Low Protection';
+    if (riskPercent <= 30) return 'Moderate Protection';
+    if (riskPercent <= 70) return 'Low Protection';
     return 'Minimal Protection';
   };
 
