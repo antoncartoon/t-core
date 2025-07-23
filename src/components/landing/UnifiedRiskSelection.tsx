@@ -118,7 +118,7 @@ const UnifiedRiskSelection = () => {
             Interactive Risk-Yield Selection
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Four risk tiers with mathematical precision. Watch how yields change across the risk curve using advanced formulas.
+            Four risk tiers with mathematical precision. Quadratic risk function Risk(i) = (i/99)² combined with progressive piecewise APY formulas.
           </p>
         </div>
 
@@ -278,10 +278,11 @@ const UnifiedRiskSelection = () => {
                 </div>
                 
                 <div className="text-sm text-muted-foreground space-y-1">
-                  <div>Risk Buckets: {activeTierData.bucketRange[0]} to {activeTierData.bucketRange[1]}</div>
-                  <div>Formula: APY(r) = APY_safe + (APY_protocol - APY_safe) × r^1.5</div>
+                  <div>Risk Segments: {activeTierData.bucketRange[0]} to {activeTierData.bucketRange[1]} (of 0-99 total)</div>
+                  <div>Risk Function: Risk(i) = (i/99)² - quadratic increase with segment</div>
+                  <div>APY Formula: Progressive piecewise function with tier-specific curves</div>
                   <div className="text-xs opacity-75">
-                    Where r = bucket_number / 99 (mathematical precision)
+                    Segment {activeTierData.bucketRange[1]} has risk = {((activeTierData.bucketRange[1]/99)**2 * 100).toFixed(1)}%
                   </div>
                 </div>
               </div>
@@ -302,19 +303,19 @@ const UnifiedRiskSelection = () => {
                 <div className="space-y-2 text-sm">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                    <span>Safe: Fixed T-Bills × 1.2 guarantee</span>
+                    <span>Safe: Fixed 5.16% (Segments 0-9)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                    <span>Conservative: Target 7% APY</span>
+                    <span>Conservative: Linear 5.16% → 7% (Segments 10-29)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                    <span>Balanced: Target 9% APY</span>
+                    <span>Balanced: Quadratic 7% → 9.5% (Segments 30-59)</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                    <span>Hero: All residual yield</span>
+                    <span>Hero: Exponential 9.5% × 1.03^(i-60) (Segments 60-99)</span>
                   </div>
                 </div>
               </div>

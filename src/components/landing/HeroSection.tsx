@@ -29,7 +29,7 @@ const HeroSection = ({ onStartTutorial }: HeroSectionProps) => {
           </h1>
           
           <p className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed mb-8 sm:mb-12">
-            Mathematical precision meets DeFi innovation. Choose from 4 risk tiers: Safe (6%), Conservative (9%), Balanced (16%), or T-Core HERO (35% max).
+            Mathematical precision meets DeFi innovation. Choose from 4 risk tiers with progressive formulas: Safe (5.16% fixed), Conservative (linear to 7%), Balanced (quadratic to 9.5%), or Hero (exponential).
           </p>
         </div>
 
@@ -69,7 +69,7 @@ const HeroSection = ({ onStartTutorial }: HeroSectionProps) => {
           <div className="flex flex-col items-center text-center p-4 sm:p-6 rounded-lg border border-border bg-card/50">
             <Shield className="w-8 h-8 text-green-600 mb-3" />
             <h3 className="font-medium mb-2">Mathematical Precision</h3>
-            <p className="text-sm text-muted-foreground">T-Core formula: tier1 = 6% (fixed), higher = fixed + bonus × k^(i-25)</p>
+            <p className="text-sm text-muted-foreground">Quadratic risk function Risk(i) = (i/99)² with progressive piecewise APY formulas across 100 segments (0-99)</p>
           </div>
           
           <div className="flex flex-col items-center text-center p-4 sm:p-6 rounded-lg border border-border bg-card/50">

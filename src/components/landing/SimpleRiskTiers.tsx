@@ -5,45 +5,49 @@ import InteractiveRiskYieldChart from './InteractiveRiskYieldChart';
 const SimpleRiskTiers = () => {
   const tiers = [{
     name: 'Safe',
-    apy: '6%',
+    apy: '5.16%',
     risk: 'Zero Loss',
-    description: 'T-Bills*1.2 fixed guarantee',
+    description: 'Fixed APY (T-Bills × 1.2)',
     icon: Shield,
     color: 'text-green-600',
     bgColor: 'bg-green-50 dark:bg-green-950/20',
     borderColor: 'border-green-200 dark:border-green-800',
-    formula: 'Fixed: T-Bills * 1.2'
+    formula: 'Fixed: 5.16% (Segments 0-9)',
+    riskFormula: 'Risk(i) = (i/99)² ≈ 0.008'
   }, {
     name: 'Conservative',
-    apy: '~9%',
+    apy: '5.16% → 7%',
     risk: 'Low Risk',
-    description: 'Fixed + small bonus yield',
+    description: 'Linear growth formula',
     icon: Shield,
     color: 'text-blue-600',
     bgColor: 'bg-blue-50 dark:bg-blue-950/20',
     borderColor: 'border-blue-200 dark:border-blue-800',
-    formula: 'Small bonus yield'
+    formula: 'Linear: 5.16% → 7% (Segments 10-29)',
+    riskFormula: 'Risk(i) = (i/99)² ≈ 0.086'
   }, {
     name: 'Balanced',
-    apy: '~13%',
+    apy: '7% → 9.5%',
     risk: 'Medium Risk',
-    description: 'Moderate bonus yield ~18%',
+    description: 'Quadratic acceleration formula',
     icon: Star,
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-50 dark:bg-yellow-950/20',
     borderColor: 'border-yellow-200 dark:border-yellow-800',
-    formula: 'Medium bonus + bonus pool'
+    formula: 'Quadratic: 7% → 9.5% (Segments 30-59)',
+    riskFormula: 'Risk(i) = (i/99)² ≈ 0.354'
   }, {
     name: 'Hero',
-    apy: 'Up to 35%',
+    apy: '9.5% × 1.03^(i-60)',
     risk: 'High Risk',
-    description: 'Max bonus yield ~74%',
+    description: 'Exponential growth formula',
     icon: Crown,
     color: 'text-purple-600',
     bgColor: 'bg-gradient-to-br from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20',
     borderColor: 'border-purple-200 dark:border-purple-800',
     isHero: true,
-    formula: 'High bonus + 74% bonus share'
+    formula: 'Exponential: 9.5% × 1.03^(i-60) (Segments 60-99)',
+    riskFormula: 'Risk(i) = (i/99)² = 1.0 at max'
   }];
   return <section className="py-16 sm:py-20 bg-muted/20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -51,7 +55,7 @@ const SimpleRiskTiers = () => {
           <h2 className="text-3xl sm:text-4xl font-light text-foreground mb-4">
             Choose Your Risk Tier
           </h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">Four tiers designed for different risk appetites. Start safe, scale up when ready, or deploy your capital to several risk tiers.</p>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">Progressive formulas across four tiers with quadratic risk function Risk(i) = (i/99)². Start safe, scale up when ready.</p>
         </div>
         
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -73,12 +77,16 @@ const SimpleRiskTiers = () => {
                     {tier.apy}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    {tier.risk}
+                    {tier.risk} • {tier.riskFormula}
                   </div>
                 </div>
                 
                 <p className="text-sm text-muted-foreground mb-2">
                   {tier.description}
+                </p>
+                
+                <p className="text-xs text-muted-foreground/80 font-mono">
+                  {tier.formula}
                 </p>
                 
               </CardContent>
@@ -91,7 +99,7 @@ const SimpleRiskTiers = () => {
             <Card className="inline-block p-3 bg-gradient-to-r from-purple-50 to-yellow-50 dark:from-purple-950/20 dark:to-yellow-950/20 border-purple-200 dark:border-purple-800">
               <div className="flex items-center gap-2 text-purple-600 text-sm">
                 <TrendingUp className="w-4 h-4" />
-                <span className="font-medium">Waterfall: Heroes absorb losses first, earn bonus yield first</span>
+                <span className="font-medium">Quadratic Risk & Waterfall Distribution: Risk increases as (i/99)², Heroes protect lower tiers</span>
               </div>
             </Card>
             
