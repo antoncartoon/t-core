@@ -58,7 +58,7 @@ const LandingHeader = ({ onStartTutorial }: LandingHeaderProps) => {
               className="text-sm"
             >
               <Play className="w-4 h-4 mr-2" />
-              Interactive Tutorial
+              Tutorial
             </Button>
           )}
         </nav>

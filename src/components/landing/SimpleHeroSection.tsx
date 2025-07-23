@@ -42,7 +42,7 @@ const SimpleHeroSection = ({ onStartTutorial }: SimpleHeroSectionProps) => {
           </div>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 sm:mb-16">
-            <NavLink to="/staking">
+            <NavLink to="/app">
               <Button 
                 size={isMobile ? "default" : "lg"} 
                 className="w-full sm:w-auto text-base font-medium px-6 sm:px-8 py-4 sm:py-6 h-auto bg-primary hover:bg-primary/90 animate-pulse"
