@@ -73,7 +73,7 @@ const InteractiveRiskYieldChart = () => {
           Interactive Piecewise Yield Curve
         </h3>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          New fair and predictable yield model with 4 distinct tiers: Fixed Safe (5.16%), Linear Conservative (→7%), Quadratic Balanced (→9.5%), Exponential Hero (→15%)
+          Updated model with quadratic risk function and simplified piecewise APY: Safe (5.16%), Conservative (7%), Balanced (9%), Hero (exponential)
         </p>
       </div>
 
@@ -238,9 +238,9 @@ const InteractiveRiskYieldChart = () => {
             </div>
             <div className="text-xs text-purple-700 dark:text-purple-300 space-y-1">
               <div>• <strong>Safe (0-9):</strong> Fixed 5.16% = T-Bills × 1.2</div>
-              <div>• <strong>Conservative (10-29):</strong> Linear growth to 7%</div>
-              <div>• <strong>Balanced (30-59):</strong> Quadratic acceleration to 9.5%</div>
-              <div>• <strong>Hero (60-99):</strong> Exponential growth 9.5% × 1.03^(i-60)</div>
+              <div>• <strong>Conservative (10-29):</strong> Flat 7% APY</div>
+              <div>• <strong>Balanced (30-59):</strong> Flat 9% APY</div>
+              <div>• <strong>Hero (60-99):</strong> Exponential 1.03^(i-25)%</div>
             </div>
           </div>
 

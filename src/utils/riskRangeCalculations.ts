@@ -16,12 +16,12 @@ export const FIXED_BASE_APY = T_BILL_RATE * FIXED_BASE_MULTIPLIER; // 5.16% guar
 export const TIER1_WIDTH = 9; // Safe tier end (0-9)
 export const OPTIMAL_K = 75; // Optimal risk level for balanced positioning
 
-// T-Core 4-tier preset structure with new piecewise ranges
+// T-Core 4-tier preset structure with updated piecewise ranges
 export const TIER_PRESETS = {
   SAFE: { range: [0, 9], name: 'Safe', fixedAPY: TARGET_APYS.SAFE },
-  CONSERVATIVE: { range: [10, 29], name: 'Conservative', fixedAPY: TARGET_APYS.CONSERVATIVE_END },
-  BALANCED: { range: [30, 59], name: 'Balanced', fixedAPY: TARGET_APYS.BALANCED_END },
-  HERO: { range: [60, 99], name: 'Hero', fixedAPY: TARGET_APYS.HERO_END }
+  CONSERVATIVE: { range: [10, 29], name: 'Conservative', fixedAPY: TARGET_APYS.CONSERVATIVE },
+  BALANCED: { range: [30, 59], name: 'Balanced', fixedAPY: TARGET_APYS.BALANCED },
+  HERO: { range: [60, 99], name: 'Hero', fixedAPY: 0.15 } // Approximate max for Hero tier
 };
 
 // Protocol data with T-Core structure

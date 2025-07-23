@@ -30,7 +30,7 @@ const CompactRiskDemo = () => {
       segment: 20, 
       icon: Shield, 
       color: 'bg-blue-100 text-blue-800 border-blue-200',
-      description: 'Linear growth to 7%'
+      description: 'Flat 7% APY'
     },
     { 
       id: 'balanced', 
@@ -38,7 +38,7 @@ const CompactRiskDemo = () => {
       segment: 45, 
       icon: Star, 
       color: 'bg-yellow-100 text-yellow-800 border-yellow-200',
-      description: 'Quadratic to 9.5%'
+      description: 'Flat 9% APY'
     },
     { 
       id: 'hero', 
@@ -141,9 +141,9 @@ const CompactRiskDemo = () => {
               </div>
               <div className="text-xs text-muted-foreground space-y-1">
                 <div>• <strong>Safe:</strong> Fixed {(TARGET_APYS.SAFE * 100).toFixed(2)}% (T-Bills × 1.2) - fully guaranteed</div>
-                <div>• <strong>Conservative:</strong> Linear growth from 5.16% to 7%</div>
-                <div>• <strong>Balanced:</strong> Quadratic acceleration from 7% to 9.5%</div>
-                <div>• <strong>Hero:</strong> Exponential growth starting at 9.5%</div>
+                <div>• <strong>Conservative:</strong> Flat {(TARGET_APYS.CONSERVATIVE * 100).toFixed(1)}% APY</div>
+                <div>• <strong>Balanced:</strong> Flat {(TARGET_APYS.BALANCED * 100).toFixed(1)}% APY</div>
+                <div>• <strong>Hero:</strong> Exponential growth 1.03^(i-25)%</div>
               </div>
             </div>
 

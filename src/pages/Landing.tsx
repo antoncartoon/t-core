@@ -6,6 +6,7 @@ import SimpleHeroSection from '@/components/landing/SimpleHeroSection';
 import TDDExplainer from '@/components/landing/TDDExplainer';
 import SimpleWhyTCore from '@/components/landing/SimpleWhyTCore';
 import CompactRiskDemo from '@/components/landing/CompactRiskDemo';
+import { DualAxisRiskYieldChart } from '@/components/landing/DualAxisRiskYieldChart';
 import StatsSection from '@/components/landing/StatsSection';
 import TransparencyPreview from '@/components/landing/TransparencyPreview';
 import SecurityEmphasis from '@/components/landing/SecurityEmphasis';
@@ -37,6 +38,13 @@ const Landing = () => {
         
         {/* Simplified Risk Demo */}
         <CompactRiskDemo />
+        
+        {/* Dual Axis Risk & Yield Chart */}
+        <div className="py-16 bg-gradient-to-b from-muted/30 to-background">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6">
+            <DualAxisRiskYieldChart />
+          </div>
+        </div>
         
         <StatsSection />
         <TransparencyPreview />
