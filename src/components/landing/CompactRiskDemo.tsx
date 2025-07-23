@@ -16,6 +16,23 @@ const CompactRiskDemo = () => {
   const [demoAmount] = useState(10000);
   const [selectedStrategy, setSelectedStrategy] = useState('balanced');
 
+  // Helper function to convert risk percentage to user-friendly label
+  const getRiskLabel = (riskPercent: number) => {
+    if (riskPercent <= 0.5) return 'Minimal Risk';
+    if (riskPercent <= 2) return 'Low Risk';
+    if (riskPercent <= 5) return 'Medium Risk';
+    if (riskPercent <= 10) return 'High Risk';
+    return 'Very High Risk';
+  };
+
+  const getRiskColor = (riskPercent: number) => {
+    if (riskPercent <= 0.5) return 'text-green-600';
+    if (riskPercent <= 2) return 'text-blue-600';
+    if (riskPercent <= 5) return 'text-yellow-600';
+    if (riskPercent <= 10) return 'text-orange-600';
+    return 'text-red-600';
+  };
+
   const strategies = [
     { 
       id: 'safe', 
@@ -105,7 +122,7 @@ const CompactRiskDemo = () => {
                         {(apy * 100).toFixed(2)}%
                       </div>
                       <div className="text-[10px] opacity-60">
-                        Risk: {(risk * 100).toFixed(1)}%
+                        {getRiskLabel(risk * 100)}
                       </div>
                       <div className="text-[10px] opacity-60">
                         Segment {strategy.segment}
@@ -131,11 +148,11 @@ const CompactRiskDemo = () => {
                   <div className="text-xs text-muted-foreground mt-1">{tierInfo.formula}</div>
                 </div>
                 <div>
-                  <div className="text-sm text-muted-foreground mb-1">Risk Level</div>
-                  <div className="text-2xl font-bold text-red-600">
-                    {(currentRisk * 100).toFixed(1)}%
+                  <div className="text-sm text-muted-foreground mb-1">Protection Level</div>
+                  <div className={`text-2xl font-bold ${getRiskColor(currentRisk * 100)}`}>
+                    {getRiskLabel(currentRisk * 100)}
                   </div>
-                  <div className="text-xs text-muted-foreground mt-1">Quadratic: (i/99)²</div>
+                  <div className="text-xs text-muted-foreground mt-1">Waterfall protected</div>
                 </div>
                 <div>
                   <div className="text-sm text-muted-foreground mb-1">Annual Yield</div>
