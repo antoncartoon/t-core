@@ -32,7 +32,7 @@ export const RedeemCard = () => {
   const expectedUSDC = redeemAmount - fee;
 
   const canRedeemInstant = checkInstantRedeemAvailable(redeemAmount);
-  const canRedeemUniswap = redeemAmount <= 5000; // Uniswap limit
+  const hasHighSlippageRisk = redeemAmount > 50000; // High slippage warning
 
   const handleRedeem = async () => {
     if (!amount || redeemAmount <= 0) {
@@ -131,15 +131,10 @@ export const RedeemCard = () => {
           </Badge>
         );
       case 'uniswap':
-        return canRedeemUniswap ? (
+        return (
           <Badge variant="outline" className="text-purple-600 border-purple-600">
             <ExternalLink className="w-3 h-3 mr-1" />
             DEX
-          </Badge>
-        ) : (
-          <Badge variant="outline" className="text-red-600 border-red-600">
-            <AlertTriangle className="w-3 h-3 mr-1" />
-            Exceeds limit
           </Badge>
         );
       default:
@@ -231,9 +226,9 @@ export const RedeemCard = () => {
             <p className="text-xs text-muted-foreground">
               Trade via Uniswap DEX. Best for smaller amounts with immediate settlement.
             </p>
-            {!canRedeemUniswap && (
+            {hasHighSlippageRisk && (
               <div className="bg-yellow-50 dark:bg-yellow-950/20 p-2 rounded text-xs text-yellow-800 dark:text-yellow-200">
-                Amount exceeds Uniswap routing limit (max $5,000)
+                High amount may result in slippage. Please be careful with large trades.
               </div>
             )}
           </TabsContent>
