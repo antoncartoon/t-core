@@ -5,7 +5,7 @@ import { Slider } from '@/components/ui/slider';
 import { Badge } from '@/components/ui/badge';
 import { Shield, TrendingUp, Info, Crown } from 'lucide-react';
 import { TIER_DEFINITIONS } from '@/types/riskTiers';
-import { calculatePiecewiseAPY, calculateQuadraticRisk } from '@/utils/piecewiseAPY';
+import { calculatePiecewiseAPY, calculateQuadraticRisk } from '@/utils/tzFormulas';
 
 interface RiskTierSelectorProps {
   value: [number, number];

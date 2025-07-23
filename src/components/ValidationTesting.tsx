@@ -9,7 +9,7 @@ import {
   getTierForSegment,
   TIER_BREAKPOINTS,
   TARGET_APYS
-} from '@/utils/piecewiseAPY';
+} from '@/utils/tzFormulas';
 
 const ValidationTesting = () => {
   // Test mathematical accuracy at edge cases

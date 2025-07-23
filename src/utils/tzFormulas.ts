@@ -185,6 +185,18 @@ export const calculatePredictedYield = (
   };
 };
 
+// ============= TIER PRESETS =============
+
+/**
+ * Tier presets for quick selection
+ */
+export const TIER_PRESETS = {
+  safe: { name: 'Safe', range: [0, 9] },
+  conservative: { name: 'Conservative', range: [10, 29] },
+  balanced: { name: 'Balanced', range: [30, 59] },
+  hero: { name: 'Hero', range: [60, 99] }
+} as const;
+
 // ============= TIER UTILITIES =============
 
 /**

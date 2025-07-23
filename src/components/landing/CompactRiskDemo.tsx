@@ -10,7 +10,7 @@ import {
   getTierForSegment,
   calculateQuadraticRisk,
   TARGET_APYS
-} from '@/utils/piecewiseAPY';
+} from '@/utils/tzFormulas';
 
 const CompactRiskDemo = () => {
   const [demoAmount] = useState(10000);

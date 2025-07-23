@@ -1,6 +1,6 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
-import { calculatePiecewiseAPY, calculateQuadraticRisk, getTierForSegment } from '@/utils/piecewiseAPY';
+import { calculatePiecewiseAPY, calculateQuadraticRisk, getTierForSegment } from '@/utils/tzFormulas';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface DualAxisRiskYieldChartProps {

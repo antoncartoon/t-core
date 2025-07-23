@@ -19,7 +19,7 @@ import {
   calculatePiecewiseAPY, 
   getTierForSegment, 
   calculateBonusYield 
-} from '@/utils/piecewiseAPY';
+} from '@/utils/tzFormulas';
 import YieldCurveChart from './YieldCurveChart';
 import ActivePositions from './ActivePositions';
 

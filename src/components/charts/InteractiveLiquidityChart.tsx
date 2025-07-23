@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, ReferenceLine, ReferenceArea, Tooltip, BarChart, Bar } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { calculatePiecewiseAPY, getTierForSegment } from '@/utils/piecewiseAPY';
+import { calculatePiecewiseAPY, getTierForSegment } from '@/utils/tzFormulas';
 
 interface InteractiveLiquidityChartProps {
   selectedRange: [number, number];

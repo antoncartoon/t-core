@@ -17,7 +17,7 @@ import {
   calculatePiecewiseAPY, 
   getTierForSegment, 
   calculateBonusYield 
-} from '@/utils/piecewiseAPY';
+} from '@/utils/tzFormulas';
 
 // Compact risk range visualization for mobile
 const MobileRiskVisualization = ({ selectedRange, centerPoint }) => {
