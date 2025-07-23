@@ -475,7 +475,8 @@ export type TierInfo = {
  * 
  * INCENTIVES:
  * - calculateBonusYield
- * 
+ */
+
 /**
  * Calculate comprehensive estimated APY including liquidity bonuses and protocol distributions
  * @param amount - User deposit amount
