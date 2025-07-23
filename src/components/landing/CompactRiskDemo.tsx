@@ -112,7 +112,7 @@ const CompactRiskDemo = () => {
                   <div className="text-2xl font-bold text-primary">
                     {(currentAPY * 100).toFixed(2)}%
                   </div>
-                  <div className="text-xs text-muted-foreground mt-1">{tierInfo.formula}</div>
+                  
                 </div>
                 <div>
                   <div className="text-sm text-muted-foreground mb-1">Protection Level</div>
