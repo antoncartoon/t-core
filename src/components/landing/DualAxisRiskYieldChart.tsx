@@ -149,15 +149,15 @@ export const DualAxisRiskYieldChart: React.FC<DualAxisRiskYieldChartProps> = ({
         <div className="mt-3 grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span>Safe (0-9): 5.16%</span>
+            <span>Safe (0-9): Fixed 5.16%</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-            <span>Conservative (10-29): 7%</span>
+            <span>Conservative (10-29): Linear → 7%</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 bg-amber-500 rounded-full"></div>
-            <span>Balanced (30-59): 9%</span>
+            <span>Balanced (30-59): Quadratic → 9.5%</span>
           </div>
           <div className="flex items-center gap-1">
             <div className="w-2 h-2 bg-purple-500 rounded-full"></div>

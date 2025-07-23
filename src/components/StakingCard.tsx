@@ -54,10 +54,10 @@ const RiskRangeVisualization = ({ selectedRange, centerPoint }) => {
       
       {/* Labels */}
       <div className="flex justify-between text-xs text-muted-foreground">
-        <span className="text-blue-600 font-medium">Safe (1-3)</span>
-        <span className="text-green-600 font-medium">Conservative (4-24)</span>
-        <span className="text-yellow-600 font-medium">Balanced (25-80)</span>
-        <span className="text-purple-600 font-medium">T-Core HERO (81-100)</span>
+        <span className="text-blue-600 font-medium">Safe (0-9)</span>
+        <span className="text-green-600 font-medium">Conservative (10-29)</span>
+        <span className="text-yellow-600 font-medium">Balanced (30-59)</span>
+        <span className="text-purple-600 font-medium">Hero (60-99)</span>
       </div>
     </div>
   );
@@ -79,8 +79,8 @@ const StakingCard = () => {
   // Calculate selected range from center and width
   const calculateRange = (center, width) => {
     const halfWidth = width / 2;
-    const start = Math.max(1, Math.min(center - halfWidth, 100 - width));
-    const end = Math.min(100, start + width);
+    const start = Math.max(0, Math.min(center - halfWidth, 99 - width));
+    const end = Math.min(99, start + width);
     return [Math.round(start), Math.round(end)];
   };
 
@@ -98,43 +98,43 @@ const StakingCard = () => {
   const presets = [
     { 
       name: 'Safe', 
-      center: 2, 
-      width: 2, 
+      center: 4.5, 
+      width: 9, 
       color: 'blue', 
-      range: [1, 3],
+      range: [0, 9],
       icon: Shield,
-      description: 'T-Bill +20% guaranteed, zero loss risk',
-      tagline: 'Guaranteed Protection'
+      description: 'Fixed 5.16% APY (T-Bills × 1.2)',
+      tagline: 'Zero Risk Fixed Rate'
     },
     { 
       name: 'Conservative', 
-      center: 14, 
-      width: 20, 
+      center: 19.5, 
+      width: 19, 
       color: 'green', 
-      range: [4, 24],
+      range: [10, 29],
       icon: Building,
-      description: 'Stable yield, minimal drawdown risk',
-      tagline: 'Stable Growth'
+      description: 'Linear growth: 5.16% → 7%',
+      tagline: 'Progressive Growth'
     },
     { 
       name: 'Balanced', 
-      center: 52.5, 
-      width: 55, 
+      center: 44.5, 
+      width: 29, 
       color: 'yellow', 
-      range: [25, 80],
+      range: [30, 59],
       icon: Scale,
-      description: 'Optimal risk/reward, diversified exposure',
-      tagline: 'Balanced Returns'
+      description: 'Quadratic curve: 7% → 9.5%',
+      tagline: 'Accelerated Returns'
     },
     { 
-      name: 'T-Core HERO', 
-      center: 90.5, 
-      width: 19, 
+      name: 'Hero', 
+      center: 79.5, 
+      width: 39, 
       color: 'purple', 
-      range: [81, 100],
+      range: [60, 99],
       icon: Trophy,
-      description: 'Be the pool\'s insurance - max yield for heroes!',
-      tagline: 'Pool Insurance Provider'
+      description: 'Exponential: 9.5% × 1.03^(i-60)',
+      tagline: 'Maximum Yield'
     }
   ];
 
@@ -144,16 +144,16 @@ const StakingCard = () => {
   };
   
   const getRiskLabel = (avgRisk) => {
-    if (avgRisk <= 3) return 'Safe';
-    if (avgRisk <= 24) return 'Conservative';
-    if (avgRisk <= 80) return 'Balanced';
-    return 'T-Core HERO';
+    if (avgRisk <= 9) return 'Safe';
+    if (avgRisk <= 29) return 'Conservative';
+    if (avgRisk <= 59) return 'Balanced';
+    return 'Hero';
   };
 
   const getRiskColorClass = (avgRisk) => {
-    if (avgRisk <= 3) return 'text-blue-600';
-    if (avgRisk <= 24) return 'text-green-600';
-    if (avgRisk <= 80) return 'text-yellow-600';
+    if (avgRisk <= 9) return 'text-blue-600';
+    if (avgRisk <= 29) return 'text-green-600';
+    if (avgRisk <= 59) return 'text-yellow-600';
     return 'text-purple-600';
   };
 
@@ -385,8 +385,8 @@ const StakingCard = () => {
                   <Slider
                     value={[centerPoint]}
                     onValueChange={(value) => setCenterPoint(value[0])}
-                    max={100}
-                    min={1}
+                    max={99}
+                    min={0}
                     step={1}
                     className="w-full"
                   />

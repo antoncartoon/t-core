@@ -69,8 +69,8 @@ const MobileStakingCard = () => {
   // Calculate selected range from center and width
   const calculateRange = (center, width) => {
     const halfWidth = width / 2;
-    const start = Math.max(1, Math.min(center - halfWidth, 100 - width));
-    const end = Math.min(100, start + width);
+    const start = Math.max(0, Math.min(center - halfWidth, 99 - width));
+    const end = Math.min(99, start + width);
     return [Math.round(start), Math.round(end)];
   };
 
@@ -81,46 +81,46 @@ const MobileStakingCard = () => {
   const riskTicks = generateInitialRiskTicks();
   const analysis = stakeAmount > 0 ? analyzeRiskRange(stakeAmount, riskRange, riskTicks) : null;
 
-  // Risk presets - 4 levels with enhanced marketing
+  // Risk presets - 4 levels with progressive formulas
   const presets = [
     { 
       name: 'Safe', 
-      center: 2, 
-      width: 2, 
+      center: 4.5, 
+      width: 9, 
       color: 'blue', 
-      range: [1, 3],
+      range: [0, 9],
       icon: Shield,
-      description: 'T-Bill +20%',
+      description: 'Fixed 5.16%',
       tagline: 'Zero Risk'
     },
     { 
       name: 'Conservative', 
-      center: 14, 
-      width: 20, 
+      center: 19.5, 
+      width: 19, 
       color: 'green', 
-      range: [4, 24],
+      range: [10, 29],
       icon: Building,
-      description: 'Stable yield',
+      description: 'Linear 5.16%→7%',
       tagline: 'Low Risk'
     },
     { 
       name: 'Balanced', 
-      center: 52.5, 
-      width: 55, 
+      center: 44.5, 
+      width: 29, 
       color: 'yellow', 
-      range: [25, 80],
+      range: [30, 59],
       icon: Scale,
-      description: 'Risk/reward',
+      description: 'Quadratic 7%→9.5%',
       tagline: 'Med Risk'
     },
     { 
-      name: 'T-Core HERO', 
-      center: 90.5, 
-      width: 19, 
+      name: 'Hero', 
+      center: 79.5, 
+      width: 39, 
       color: 'purple', 
-      range: [81, 100],
+      range: [60, 99],
       icon: Trophy,
-      description: 'Pool insurance',
+      description: 'Exponential',
       tagline: 'Max Yield 🦸'
     }
   ];
@@ -131,16 +131,16 @@ const MobileStakingCard = () => {
   };
   
   const getRiskLabel = (avgRisk) => {
-    if (avgRisk <= 3) return 'Safe';
-    if (avgRisk <= 24) return 'Conservative';
-    if (avgRisk <= 80) return 'Balanced';
-    return 'T-Core HERO';
+    if (avgRisk <= 9) return 'Safe';
+    if (avgRisk <= 29) return 'Conservative';
+    if (avgRisk <= 59) return 'Balanced';
+    return 'Hero';
   };
 
   const getRiskColorClass = (avgRisk) => {
-    if (avgRisk <= 3) return 'text-blue-600';
-    if (avgRisk <= 24) return 'text-green-600';
-    if (avgRisk <= 80) return 'text-yellow-600';
+    if (avgRisk <= 9) return 'text-blue-600';
+    if (avgRisk <= 29) return 'text-green-600';
+    if (avgRisk <= 59) return 'text-yellow-600';
     return 'text-purple-600';
   };
 
@@ -335,8 +335,8 @@ const MobileStakingCard = () => {
                 <Slider
                   value={[centerPoint]}
                   onValueChange={(value) => setCenterPoint(value[0])}
-                  max={100}
-                  min={1}
+                  max={99}
+                  min={0}
                   step={1}
                   className="w-full"
                 />
