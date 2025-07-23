@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useTCore } from '@/contexts/TCoreContext';
 import { useWallet } from '@/contexts/WalletContext';
-import { Shield, TrendingUp, Calculator, Info } from 'lucide-react';
+import { Shield, TrendingUp, Calculator, Info, BarChart3, AlertTriangle } from 'lucide-react';
 import InteractiveLiquidityChart from './charts/InteractiveLiquidityChart';
 import StakingStressTestPanel from './charts/StakingStressTestPanel';
 import { calculatePredictedYield, getTierForBucket, calculateComprehensiveAPY } from '@/utils/tzFormulas';
@@ -90,137 +91,203 @@ export const SimplifiedStakingInterface = () => {
   };
 
   return (
-    <div className="space-y-6">
-      {/* Amount Input Section */}
-      <Card className="max-w-2xl mx-auto">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calculator className="h-5 w-5" />
-            Stake TDD Tokens
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Select your risk range and amount to start earning yield
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Amount Input */}
-          <div className="space-y-2">
-            <Label htmlFor="amount">Amount (TDD)</Label>
-            <div className="space-y-2">
-              <Input
-                id="amount"
-                type="number"
-                placeholder="0.00"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="text-lg h-12"
-              />
-              <div className="flex gap-2">
-                {[0.25, 0.5, 0.75, 1].map((percentage) => (
-                  <Button
-                    key={percentage}
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleQuickAmount(percentage)}
-                    className="flex-1"
-                  >
-                    {percentage === 1 ? 'Max' : `${percentage * 100}%`}
-                  </Button>
-                ))}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+      {/* Main Staking Interface - Left Column */}
+      <div className="lg:col-span-2 space-y-6">
+        {/* Compact Amount Input */}
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2">
+              <Calculator className="h-5 w-5" />
+              Stake TDD Tokens
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex gap-4">
+              <div className="flex-1">
+                <Label htmlFor="amount" className="text-sm font-medium">Amount (TDD)</Label>
+                <Input
+                  id="amount"
+                  type="number"
+                  placeholder="0.00"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="text-lg h-11 mt-1"
+                />
+                <p className="text-sm text-muted-foreground mt-1">
+                  Available: {tddBalance.toFixed(2)} TDD
+                </p>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Available: {tddBalance.toFixed(2)} TDD
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Interactive Liquidity Chart */}
-      <InteractiveLiquidityChart
-        selectedRange={selectedRange}
-        onRangeSelect={setSelectedRange}
-        amount={numericAmount}
-        liquidityData={liquidityData}
-      />
-
-      {/* Stress Test Panel */}
-      <StakingStressTestPanel
-        amount={numericAmount}
-        selectedRange={selectedRange}
-        totalTVL={tcoreState.totalTVL}
-      />
-
-      {/* Yield Prediction and Stake Action */}
-      <Card className="max-w-2xl mx-auto">
-        <CardContent className="space-y-6 pt-6">
-          {/* Updated Predicted Yield Display */}
-          {comprehensiveAPY && yieldPrediction && (
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 p-4 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">Expected Returns (w/ Incentives)</span>
-                <Info className="w-4 h-4 text-muted-foreground" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm text-muted-foreground">Est. Avg APY</p>
-                  <p className="text-xl font-bold text-green-600">
-                    {comprehensiveAPY.toFixed(2)}%
-                  </p>
+              <div className="flex flex-col gap-2 min-w-0">
+                <Label className="text-sm font-medium">Quick Select</Label>
+                <div className="grid grid-cols-2 gap-1">
+                  {[0.25, 0.5, 0.75, 1].map((percentage) => (
+                    <Button
+                      key={percentage}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleQuickAmount(percentage)}
+                      className="text-xs h-8 px-2"
+                    >
+                      {percentage === 1 ? 'Max' : `${percentage * 100}%`}
+                    </Button>
+                  ))}
                 </div>
-                <div>
-                  <p className="text-sm text-muted-foreground">Annual Yield</p>
-                  <p className="text-xl font-bold text-green-600">
-                    ${((numericAmount * comprehensiveAPY) / 100).toFixed(2)}
-                  </p>
-                </div>
-              </div>
-              <div className="mt-2 flex items-center gap-2">
-                <Badge variant="outline" style={{ color: selectedTier.color }}>
-                  {selectedTier.name}
-                </Badge>
-                <span className="text-xs text-muted-foreground">
-                  Segments: {selectedRange[0]}-{selectedRange[1]}
-                </span>
               </div>
             </div>
-          )}
+          </CardContent>
+        </Card>
 
-          {/* Stake Button */}
-          <div className="flex justify-center">
-            <Button
-              onClick={handleStake}
-              disabled={isStaking || numericAmount <= 0 || numericAmount > tddBalance}
-              className="max-w-sm h-12"
-              size="lg"
-            >
-              {isStaking ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-                  Creating Position...
+        {/* Enhanced Interactive Chart */}
+        <Card className="overflow-hidden">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Risk-Yield Selection
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Select your preferred risk range to visualize potential yields
+            </p>
+          </CardHeader>
+          <CardContent className="px-0 pb-0">
+            <div className="px-6 pb-4">
+              {/* Real-time Yield Display */}
+              {comprehensiveAPY && yieldPrediction && (
+                <div className="bg-gradient-to-r from-primary/5 to-primary/10 p-4 rounded-lg mb-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm font-medium">Expected Returns</span>
+                    <Badge variant="outline" style={{ color: selectedTier.color }}>
+                      {selectedTier.name} Tier
+                    </Badge>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <p className="text-xs text-muted-foreground">Est. APY</p>
+                      <p className="text-lg font-bold text-primary">
+                        {comprehensiveAPY.toFixed(2)}%
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Annual Yield</p>
+                      <p className="text-lg font-bold text-primary">
+                        ${((numericAmount * comprehensiveAPY) / 100).toFixed(2)}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-muted-foreground">Risk Range</p>
+                      <p className="text-lg font-bold">
+                        {selectedRange[0]}-{selectedRange[1]}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              ) : (
-                <>
-                  <TrendingUp className="w-4 h-4 mr-2" />
-                  Stake {numericAmount.toFixed(2)} TDD
-                </>
               )}
-            </Button>
-          </div>
+            </div>
+            
+            {/* Larger Chart */}
+            <div className="h-[400px]">
+              <InteractiveLiquidityChart
+                selectedRange={selectedRange}
+                onRangeSelect={setSelectedRange}
+                amount={numericAmount}
+                liquidityData={liquidityData}
+              />
+            </div>
+          </CardContent>
+        </Card>
 
-          {/* Protocol Stats */}
-          <div className="grid grid-cols-2 gap-4 pt-4 border-t text-center">
-            <div>
-              <p className="text-sm text-muted-foreground">Total TVL</p>
-              <p className="font-semibold">${tcoreState.totalTVL.toLocaleString()}</p>
+        {/* Prominent Stake Button */}
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex flex-col items-center space-y-4">
+              <Button
+                onClick={handleStake}
+                disabled={isStaking || numericAmount <= 0 || numericAmount > tddBalance}
+                className="w-full max-w-md h-14 text-lg"
+                size="lg"
+              >
+                {isStaking ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                    Creating Position...
+                  </div>
+                ) : (
+                  <>
+                    <TrendingUp className="w-5 h-5 mr-2" />
+                    Stake {numericAmount.toFixed(2)} TDD
+                  </>
+                )}
+              </Button>
+              {numericAmount > 0 && (
+                <p className="text-sm text-muted-foreground text-center">
+                  You'll create a position in the {selectedTier.name} tier with {comprehensiveAPY?.toFixed(2)}% estimated APY
+                </p>
+              )}
             </div>
-            <div>
-              <p className="text-sm text-muted-foreground">Active Positions</p>
-              <p className="font-semibold">{Object.keys(tcoreState.liquidityTicks).length}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Analytics Sidebar - Right Column */}
+      <div className="space-y-6">
+        {/* Protocol Stats */}
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg">Protocol Overview</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 gap-3">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Total TVL</span>
+                <span className="font-semibold">${tcoreState.totalTVL.toLocaleString()}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Active Positions</span>
+                <span className="font-semibold">{Object.keys(tcoreState.liquidityTicks).length}</span>
+              </div>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Your Balance</span>
+                <span className="font-semibold">{tddBalance.toFixed(2)} TDD</span>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+
+        {/* Compact Analytics */}
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <AlertTriangle className="h-4 w-4" />
+              Risk Analysis
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="stress-test" className="w-full">
+              <TabsList className="grid w-full grid-cols-1">
+                <TabsTrigger value="stress-test">Stress Testing</TabsTrigger>
+              </TabsList>
+              <TabsContent value="stress-test" className="mt-4">
+                <div className="space-y-4">
+                  {numericAmount > 0 ? (
+                    <StakingStressTestPanel
+                      amount={numericAmount}
+                      selectedRange={selectedRange}
+                      totalTVL={tcoreState.totalTVL}
+                    />
+                  ) : (
+                    <div className="text-center py-8">
+                      <AlertTriangle className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                      <p className="text-sm text-muted-foreground">
+                        Enter an amount to see stress test analysis
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
