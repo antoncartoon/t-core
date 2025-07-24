@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      parameter_change_log: {
+        Row: {
+          changed_by: string | null
+          created_at: string | null
+          id: string
+          new_value: Json | null
+          old_value: Json | null
+          parameter_key: string
+          reason: string | null
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string | null
+          id?: string
+          new_value?: Json | null
+          old_value?: Json | null
+          parameter_key: string
+          reason?: string | null
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string | null
+          id?: string
+          new_value?: Json | null
+          old_value?: Json | null
+          parameter_key?: string
+          reason?: string | null
+        }
+        Relationships: []
+      }
       pool_settings: {
         Row: {
           base_apy: number
@@ -24,6 +54,8 @@ export type Database = {
           max_capacity: number | null
           pool_name: string
           risk_multiplier: number
+          tier_name: string | null
+          tier_range: number[] | null
           updated_at: string
         }
         Insert: {
@@ -35,6 +67,8 @@ export type Database = {
           max_capacity?: number | null
           pool_name: string
           risk_multiplier?: number
+          tier_name?: string | null
+          tier_range?: number[] | null
           updated_at?: string
         }
         Update: {
@@ -46,6 +80,8 @@ export type Database = {
           max_capacity?: number | null
           pool_name?: string
           risk_multiplier?: number
+          tier_name?: string | null
+          tier_range?: number[] | null
           updated_at?: string
         }
         Relationships: []
@@ -129,6 +165,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      system_parameters: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          key: string
+          updated_at: string | null
+          value: Json
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          key: string
+          updated_at?: string | null
+          value: Json
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          key?: string
+          updated_at?: string | null
+          value?: Json
+        }
+        Relationships: []
       }
       transactions: {
         Row: {
