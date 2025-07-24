@@ -36,7 +36,12 @@ export const SimplifiedStakingInterface = () => {
   });
 
   // Calculate comprehensive predicted yield with incentives
-  const comprehensiveAPY = numericAmount > 0 ? calculateComprehensiveAPY(numericAmount, selectedRange) : null;
+  const comprehensiveAPY = numericAmount > 0 ? (() => {
+    const midpoint = (selectedRange[0] + selectedRange[1]) / 2;
+    // Safe tier shows fixed 6% APY without bonuses
+    if (midpoint <= 9) return 6.0;
+    return calculateComprehensiveAPY(numericAmount, selectedRange);
+  })() : null;
   const yieldPrediction = numericAmount > 0 ? calculatePredictedYield(numericAmount, selectedRange) : null;
   const selectedTier = getTierForBucket(Math.floor((selectedRange[0] + selectedRange[1]) / 2));
 
