@@ -10,7 +10,7 @@ const StatsSection = () => {
   const stats = [{
     icon: DollarSign,
     label: 'Total TDD Staked',
-    value: `${(TCORE_STATS.tddInStaking / 1000000).toFixed(1)}M TDD`,
+    value: formatCurrency(TCORE_STATS.totalValueLocked),
     change: formatGrowth(TCORE_STATS.growthMetrics.tvlGrowth),
     period: 'Last 30 days'
   }, {
@@ -63,7 +63,7 @@ const StatsSection = () => {
                     <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-primary mb-2 sm:mb-3" />
                     <div className="text-xl sm:text-2xl font-bold text-foreground mb-1">
                       {stat.label === 'Total TDD Staked' ? (
-                        <AnimatedCounter end={TCORE_STATS.tddInStaking / 1000000} suffix="M TDD" decimals={1} />
+                        <AnimatedCounter end={TCORE_STATS.totalValueLocked / 1000} prefix="$" suffix="K" decimals={0} />
                       ) : stat.label === 'T-Core APY' ? (
                         <AnimatedCounter end={TCORE_STATS.protocolAPY28Days * 100} suffix="%" decimals={2} />
                       ) : stat.label === 'Active Stakers' ? (
