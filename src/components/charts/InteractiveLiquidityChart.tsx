@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, ReferenceLine, ReferenceArea, Tooltip, BarChart, Bar } from 'recharts';
+import { BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -217,10 +218,10 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
                 onMouseUp={handleMouseUp}
                 margin={{ top: 10, right: 30, left: 20, bottom: 5 }}
               >
-                <defs>
+                 <defs>
                   {/* Create gradients for each tier */}
                   {TIER_PRESETS.map((preset, index) => (
-                    <React.Fragment key={preset.name}>
+                    <g key={preset.name}>
                       <linearGradient id={`${preset.name.toLowerCase()}Gradient`} x1="0" y1="0" x2="0" y2="1">
                         <stop offset="5%" stopColor={preset.bgColor} stopOpacity={0.8}/>
                         <stop offset="95%" stopColor={preset.bgColor} stopOpacity={0.2}/>
@@ -229,7 +230,7 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
                         <stop offset="5%" stopColor={preset.bgColor} stopOpacity={0.9}/>
                         <stop offset="95%" stopColor={preset.bgColor} stopOpacity={0.4}/>
                       </linearGradient>
-                    </React.Fragment>
+                    </g>
                   ))}
                 </defs>
                 
@@ -354,11 +355,16 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
             ))}
           </div>
 
-          {/* Tier Liquidity Distribution */}
-          <div className="mb-6 p-4 bg-muted/30 rounded-lg">
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-medium">Tier Liquidity Distribution</h4>
-              <div className="text-xs text-muted-foreground">Current vs Target</div>
+          {/* Tier Liquidity Distribution Visualization */}
+          <div className="border border-border bg-card rounded-lg p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-lg">
+                <BarChart className="w-4 h-4 text-primary" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">Liquidity Distribution</h3>
+                <p className="text-sm text-muted-foreground">Current allocation vs protocol targets</p>
+              </div>
             </div>
             <div className="space-y-3">
               {Object.entries(tierDistribution).map(([tierKey, data], index) => {
@@ -391,22 +397,25 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
                       </div>
                     </div>
                     
-                    {/* Progress bar showing current vs target */}
-                    <div className="relative h-2 bg-gray-200 rounded-full overflow-hidden">
-                      {/* Target line */}
+                    {/* Enhanced Progress bar showing current vs target */}
+                    <div className="relative h-4 bg-muted/50 rounded-lg overflow-hidden border border-border/50">
+                      {/* Target line indicator */}
                       <div 
-                        className="absolute top-0 w-0.5 h-full bg-gray-600 z-10"
-                        style={{ left: `${data.target * 100}%` }}
+                        className="absolute top-0 w-1 h-full bg-foreground/60 z-20 rounded-sm"
+                        style={{ left: `${Math.max(0, Math.min(100, data.target * 100 - 0.5))}%` }}
+                        title={`Target: ${(data.target * 100).toFixed(0)}%`}
                       />
-                      {/* Current fill */}
+                      {/* Current fill with enhanced styling */}
                       <div 
-                        className="h-full rounded-full transition-all duration-300"
+                        className="h-full transition-all duration-500 ease-out rounded-md shadow-sm"
                         style={{ 
-                          width: `${Math.min(data.current, 1) * 100}%`,
-                          backgroundColor: preset.color,
-                          opacity: isUnderTarget ? 0.7 : 0.9
+                          width: `${Math.min(data.current * 100, 100)}%`,
+                          backgroundColor: isUnderTarget ? 'hsl(25, 95%, 53%)' : preset.color,
+                          boxShadow: isUnderTarget ? '0 0 8px rgba(245, 158, 11, 0.3)' : `0 0 8px ${preset.color}33`
                         }}
                       />
+                      {/* Subtle background pattern */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent" />
                     </div>
                   </div>
                 );
