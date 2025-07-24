@@ -517,7 +517,7 @@ export function calculateTierBonusAPY(
 export function calculateComprehensiveAPY(
   amount: number,
   selectedRange: [number, number],
-  currentTierDistribution: TierDistribution = { safe: 0.08, conservative: 0.25, balanced: 0.35, hero: 0.32 },
+  currentTierDistribution: TierDistribution = { safe: 0.40, conservative: 0.20, balanced: 0.20, hero: 0.20 },
   performanceFeeRate: number = 0.25
 ): number {
   // Base APY from piecewise formula

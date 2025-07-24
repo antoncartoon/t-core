@@ -250,10 +250,10 @@ export const SimplifiedStakingInterface = () => {
           <CardContent>
             <div className="space-y-3">
               {[
-                { name: 'Safe', current: 45, target: 60, color: '#22c55e' },
-                { name: 'Conservative', current: 30, target: 25, color: '#3b82f6' },
-                { name: 'Balanced', current: 20, target: 12, color: '#f59e0b' },
-                { name: 'Hero', current: 5, target: 3, color: '#ef4444' }
+                { name: 'Safe', current: 40, target: 10, color: '#22c55e', status: 'overloaded' },
+                { name: 'Conservative', current: 20, target: 20, color: '#3b82f6', status: 'balanced' },
+                { name: 'Balanced', current: 20, target: 30, color: '#f59e0b', status: 'underloaded' },
+                { name: 'Hero', current: 20, target: 40, color: '#ef4444', status: 'underloaded' }
               ].map((tier) => (
                 <div key={tier.name} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -262,6 +262,10 @@ export const SimplifiedStakingInterface = () => {
                       style={{ backgroundColor: tier.color }}
                     />
                     <span className="text-sm font-medium">{tier.name}</span>
+                    <span className="text-xs">
+                      {tier.status === 'overloaded' ? '📉' : 
+                       tier.status === 'underloaded' ? '📈' : '✅'}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2 text-xs">
                     <span className="font-medium">{tier.current}%</span>
