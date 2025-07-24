@@ -1,5 +1,7 @@
+
 import React from 'react';
-import { ArrowRight, Coins, TrendingUp, Shield } from 'lucide-react';
+import { ArrowRight, Coins, TrendingUp, Shield, CircleDollarSign, Layers } from 'lucide-react';
+import { TCORE_STATS, formatCurrency } from '@/data/tcoreData';
 
 const TDDExplainer = () => {
   return (
@@ -14,6 +16,35 @@ const TDDExplainer = () => {
             Earn risk-tranched yields through staking with centralized management and multisig security, 
             transitioning to full DAO governance in Q1 2027.
           </p>
+        </div>
+
+        {/* TDD Supply Metrics */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12 max-w-2xl mx-auto">
+          <div className="text-center p-6 bg-background rounded-lg border">
+            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Layers className="w-6 h-6 text-primary" />
+            </div>
+            <h4 className="font-medium text-foreground mb-2">Total TDD Minted</h4>
+            <p className="text-2xl font-bold text-primary mb-1">
+              {TCORE_STATS.totalTDDIssued.toLocaleString()} TDD
+            </p>
+            <p className="text-sm text-muted-foreground">
+              1:1 backed by stablecoins
+            </p>
+          </div>
+
+          <div className="text-center p-6 bg-background rounded-lg border">
+            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CircleDollarSign className="w-6 h-6 text-green-600" />
+            </div>
+            <h4 className="font-medium text-foreground mb-2">Market Cap</h4>
+            <p className="text-2xl font-bold text-green-600 mb-1">
+              {formatCurrency(TCORE_STATS.totalTDDIssued)}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              USD value of TDD supply
+            </p>
+          </div>
         </div>
 
         <div className="text-center mb-12">
