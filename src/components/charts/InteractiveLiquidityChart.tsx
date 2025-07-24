@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Info } from 'lucide-react';
-import { calculatePiecewiseAPY, getTierForSegment, calculatePredictedYield, calculateBonusYield, calculateComprehensiveAPY } from '@/utils/tzFormulas';
+import { calculatePiecewiseAPY, getTierForSegment, calculatePredictedYield, calculateBonusYield, calculateComprehensiveAPY, TARGET_TIER_WEIGHTS } from '@/utils/tzFormulas';
 import { PROTOCOL_APY_28D, PERFORMANCE_FEE } from '@/utils/protocolConstants';
 
 interface InteractiveLiquidityChartProps {
@@ -28,6 +28,33 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
   amount,
   liquidityData = []
 }) => {
+  // Calculate current tier distribution from liquidityData
+  const tierDistribution = useMemo(() => {
+    const totalLiquidity = liquidityData.reduce((sum, item) => sum + item.liquidity, 0);
+    
+    if (totalLiquidity === 0) {
+      // Mock data when no liquidity data available
+      return {
+        safe: { current: 0.08, target: TARGET_TIER_WEIGHTS.safe }, // 8% current vs 10% target
+        conservative: { current: 0.25, target: TARGET_TIER_WEIGHTS.conservative }, // 25% vs 20%
+        balanced: { current: 0.35, target: TARGET_TIER_WEIGHTS.balanced }, // 35% vs 30%
+        hero: { current: 0.32, target: TARGET_TIER_WEIGHTS.hero } // 32% vs 40%
+      };
+    }
+    
+    // Calculate actual distribution from liquidity data
+    const safeLiquidity = liquidityData.slice(0, 10).reduce((sum, item) => sum + item.liquidity, 0);
+    const conservativeLiquidity = liquidityData.slice(10, 30).reduce((sum, item) => sum + item.liquidity, 0);
+    const balancedLiquidity = liquidityData.slice(30, 60).reduce((sum, item) => sum + item.liquidity, 0);
+    const heroLiquidity = liquidityData.slice(60, 100).reduce((sum, item) => sum + item.liquidity, 0);
+    
+    return {
+      safe: { current: safeLiquidity / totalLiquidity, target: TARGET_TIER_WEIGHTS.safe },
+      conservative: { current: conservativeLiquidity / totalLiquidity, target: TARGET_TIER_WEIGHTS.conservative },
+      balanced: { current: balancedLiquidity / totalLiquidity, target: TARGET_TIER_WEIGHTS.balanced },
+      hero: { current: heroLiquidity / totalLiquidity, target: TARGET_TIER_WEIGHTS.hero }
+    };
+  }, [liquidityData]);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState<number | null>(null);
   const [isInsuranceDialogOpen, setIsInsuranceDialogOpen] = useState(false);
@@ -325,6 +352,75 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
                 )}
               </div>
             ))}
+          </div>
+
+          {/* Tier Liquidity Distribution */}
+          <div className="mb-6 p-4 bg-muted/30 rounded-lg">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-medium">Tier Liquidity Distribution</h4>
+              <div className="text-xs text-muted-foreground">Current vs Target</div>
+            </div>
+            <div className="space-y-3">
+              {Object.entries(tierDistribution).map(([tierKey, data], index) => {
+                const preset = TIER_PRESETS[index];
+                const isUnderTarget = data.current < data.target;
+                const difference = Math.abs(data.current - data.target);
+                
+                return (
+                  <div key={tierKey} className="space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className="w-3 h-3 rounded-full" 
+                          style={{ backgroundColor: preset.color }}
+                        />
+                        <span className="font-medium">{preset.name}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={isUnderTarget ? "text-orange-600" : "text-green-600"}>
+                          {(data.current * 100).toFixed(1)}%
+                        </span>
+                        <span className="text-muted-foreground">
+                          / {(data.target * 100).toFixed(0)}%
+                        </span>
+                        {isUnderTarget && difference > 0.02 && (
+                          <span className="text-xs text-orange-600 font-medium">
+                            +{(difference * 100).toFixed(1)}% bonus
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* Progress bar showing current vs target */}
+                    <div className="relative h-2 bg-gray-200 rounded-full overflow-hidden">
+                      {/* Target line */}
+                      <div 
+                        className="absolute top-0 w-0.5 h-full bg-gray-600 z-10"
+                        style={{ left: `${data.target * 100}%` }}
+                      />
+                      {/* Current fill */}
+                      <div 
+                        className="h-full rounded-full transition-all duration-300"
+                        style={{ 
+                          width: `${Math.min(data.current, 1) * 100}%`,
+                          backgroundColor: preset.color,
+                          opacity: isUnderTarget ? 0.7 : 0.9
+                        }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="mt-3 text-xs text-muted-foreground">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-1">
+                  <div className="w-0.5 h-3 bg-gray-600" />
+                  <span>Target</span>
+                </div>
+                <span>Under-allocated tiers receive bonus yield incentives</span>
+              </div>
+            </div>
           </div>
 
 
