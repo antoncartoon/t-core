@@ -1,9 +1,12 @@
-
 import React from 'react';
 import { ArrowRight, Coins, TrendingUp, Shield, CircleDollarSign, Layers } from 'lucide-react';
 import { TCORE_STATS, formatCurrency } from '@/data/tcoreData';
 
 const TDDExplainer = () => {
+  // Real-time TDD price (in a real app, this would come from an API)
+  const currentTDDPrice = 1.002; // $1.002 per TDD (slightly above peg due to demand)
+  const marketCap = TCORE_STATS.totalTDDIssued * currentTDDPrice;
+
   return (
     <section className="py-16 sm:py-24 bg-muted/20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
@@ -19,7 +22,7 @@ const TDDExplainer = () => {
         </div>
 
         {/* TDD Supply Metrics */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12 max-w-2xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12 max-w-4xl mx-auto">
           <div className="text-center p-6 bg-background rounded-lg border">
             <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
               <Layers className="w-6 h-6 text-primary" />
@@ -34,15 +37,28 @@ const TDDExplainer = () => {
           </div>
 
           <div className="text-center p-6 bg-background rounded-lg border">
+            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CircleDollarSign className="w-6 h-6 text-blue-600" />
+            </div>
+            <h4 className="font-medium text-foreground mb-2">TDD Price</h4>
+            <p className="text-2xl font-bold text-blue-600 mb-1">
+              ${currentTDDPrice.toFixed(3)}
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Current market price
+            </p>
+          </div>
+
+          <div className="text-center p-6 bg-background rounded-lg border">
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CircleDollarSign className="w-6 h-6 text-green-600" />
+              <TrendingUp className="w-6 h-6 text-green-600" />
             </div>
             <h4 className="font-medium text-foreground mb-2">Market Cap</h4>
             <p className="text-2xl font-bold text-green-600 mb-1">
-              {formatCurrency(TCORE_STATS.totalTDDIssued)}
+              {formatCurrency(marketCap)}
             </p>
             <p className="text-sm text-muted-foreground">
-              USD value of TDD supply
+              Total TDD × Price
             </p>
           </div>
         </div>
