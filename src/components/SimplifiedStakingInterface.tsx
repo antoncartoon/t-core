@@ -241,88 +241,40 @@ export const SimplifiedStakingInterface = () => {
 
         {/* Liquidity Distribution Visualization */}
         <Card>
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" />
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-base">
+              <BarChart3 className="h-4 w-4" />
               Liquidity Distribution
             </CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Protocol vs Target Allocation
-            </p>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {tierPresets.map((tier, index) => {
-                const currentPercentage = tierDistribution[index]?.percentage || 0;
-                const targetPercentage = tier.targetWeight * 100;
-                const difference = currentPercentage - targetPercentage;
-                const isOverAllocated = difference > 0;
-                
-                return (
-                  <div key={tier.name} className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div 
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: tier.color }}
-                        />
-                        <span className="text-sm font-medium">{tier.name}</span>
-                        <span className="text-xs text-muted-foreground">
-                          ({tier.range[0]}-{tier.range[1]})
-                        </span>
-                      </div>
-                      <div className="text-right">
-                        <span className="text-sm font-semibold">
-                          {currentPercentage.toFixed(1)}%
-                        </span>
-                        <span className="text-xs text-muted-foreground ml-1">
-                          (Target: {targetPercentage.toFixed(1)}%)
-                        </span>
-                      </div>
-                    </div>
-                    
-                    {/* Current Allocation Progress Bar */}
-                    <div className="relative">
-                      <div className="w-full bg-secondary/30 rounded-full h-2">
-                        <div 
-                          className="h-2 rounded-full transition-all duration-500"
-                          style={{ 
-                            width: `${Math.min(currentPercentage * 2, 100)}%`,
-                            backgroundColor: tier.color 
-                          }}
-                        />
-                      </div>
-                      {/* Target line indicator */}
-                      <div 
-                        className="absolute top-0 w-0.5 h-2 bg-foreground/40"
-                        style={{ left: `${Math.min(targetPercentage * 2, 100)}%` }}
-                      />
-                    </div>
-                    
-                    {/* Difference indicator */}
-                    <div className="flex items-center justify-between text-xs">
-                      <span className={`flex items-center gap-1 ${
-                        isOverAllocated ? 'text-orange-500' : 'text-blue-500'
-                      }`}>
-                        {isOverAllocated ? '↑' : '↓'}
-                        {Math.abs(difference).toFixed(1)}% {isOverAllocated ? 'over' : 'under'}
-                      </span>
-                      <span className="text-muted-foreground">
-                        TVL: ${(tierDistribution[index]?.tvl || 0).toLocaleString()}
-                      </span>
-                    </div>
+            <div className="space-y-3">
+              {[
+                { name: 'Safe', current: 45, target: 60, color: '#22c55e' },
+                { name: 'Conservative', current: 30, target: 25, color: '#3b82f6' },
+                { name: 'Balanced', current: 20, target: 12, color: '#f59e0b' },
+                { name: 'Hero', current: 5, target: 3, color: '#ef4444' }
+              ].map((tier) => (
+                <div key={tier.name} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div 
+                      className="w-2.5 h-2.5 rounded-full"
+                      style={{ backgroundColor: tier.color }}
+                    />
+                    <span className="text-sm font-medium">{tier.name}</span>
                   </div>
-                );
-              })}
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="font-medium">{tier.current}%</span>
+                    <span className="text-muted-foreground">→ {tier.target}%</span>
+                  </div>
+                </div>
+              ))}
             </div>
 
-            {/* Summary */}
-            <div className="mt-4 pt-4 border-t border-border">
+            <div className="mt-4 pt-3 border-t border-border">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-muted-foreground">Total Protocol TVL</span>
-                <span className="font-semibold">
-                  ${(tcoreState.totalTVL || 850000).toLocaleString()}
-                </span>
+                <span className="font-semibold">$900,000</span>
               </div>
             </div>
           </CardContent>
