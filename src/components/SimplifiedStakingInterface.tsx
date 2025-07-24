@@ -36,7 +36,7 @@ export const SimplifiedStakingInterface = () => {
   });
 
   // Calculate comprehensive predicted yield with incentives
-  const comprehensiveAPY = numericAmount > 0 ? calculateComprehensiveAPY(numericAmount, selectedRange, liquidityData) : null;
+  const comprehensiveAPY = numericAmount > 0 ? calculateComprehensiveAPY(numericAmount, selectedRange) : null;
   const yieldPrediction = numericAmount > 0 ? calculatePredictedYield(numericAmount, selectedRange) : null;
   const selectedTier = getTierForBucket(Math.floor((selectedRange[0] + selectedRange[1]) / 2));
 

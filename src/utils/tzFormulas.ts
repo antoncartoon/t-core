@@ -98,25 +98,25 @@ export const calculatePiecewiseAPY = (segment: number): number => {
   // Input validation and normalization
   const i = Math.max(0, Math.min(99, Math.round(segment)));
   
-  // Tier 1: Safe (0-9) - Fixed Rate
+  // Tier 1: Safe (0-9) - Fixed Rate (T-Bills × 1.2 = 6%)
   if (i <= 9) {
-    return 0.08; // 8% fixed
+    return 0.06; // 6% fixed (T-Bills × 1.2)
   }
   
   // Tier 2: Conservative (10-29) - Linear Progression
   if (i <= 29) {
     const progress = (i - 10) / 19;
-    return 0.08 + (0.04 * progress); // 8% to 12%
+    return 0.06 + (0.01 * progress); // 6% to 7%
   }
   
   // Tier 3: Balanced (30-59) - Quadratic Progression  
   if (i <= 59) {
     const progress = (i - 30) / 29;
-    return 0.12 + (0.06 * Math.pow(progress, 2)); // 12% to 18%
+    return 0.07 + (0.025 * Math.pow(progress, 2)); // 7% to 9.5%
   }
   
   // Tier 4: Hero (60-99) - Exponential Progression
-  return 0.18 * Math.pow(1.03, i - 60); // Starting at 18%
+  return 0.095 * Math.pow(1.03, i - 60); // Starting at 9.5%
 };
 
 /**
@@ -139,7 +139,7 @@ export const calculateRangeWeightedAPY = (startSegment: number, endSegment: numb
     segmentCount++;
   }
   
-  return segmentCount > 0 ? totalAPY / segmentCount : 0.08;
+  return segmentCount > 0 ? totalAPY / segmentCount : 0.06;
 };
 
 /**
@@ -277,7 +277,7 @@ export const getTierForSegment = (segment: number): {
     return {
       name: 'Safe',
       range: [0, 9],
-      formula: 'Fixed 5.16%',
+      formula: 'Fixed 6%',
       color: 'text-green-600',
       targetWeight: TARGET_TIER_WEIGHTS.safe
     };
@@ -287,7 +287,7 @@ export const getTierForSegment = (segment: number): {
     return {
       name: 'Conservative',
       range: [10, 29],
-      formula: 'Linear: 5.16% → 7%',
+      formula: 'Linear: 6% → 7%',
       color: 'text-blue-600',
       targetWeight: TARGET_TIER_WEIGHTS.conservative
     };
@@ -478,48 +478,59 @@ export type TierInfo = {
  */
 
 /**
- * Calculate comprehensive estimated APY including liquidity bonuses and protocol distributions
+ * Calculate tier-level bonus APY based on current vs target distribution
+ * @param userRange - User's selected risk range [start, end]
+ * @param currentTierDistribution - Current liquidity distribution across tiers
+ * @param performanceFeePool - Available performance fee pool for bonuses
+ * @returns Tier bonus APY as decimal (e.g., 0.005 = 0.5%)
+ */
+export function calculateTierBonusAPY(
+  userRange: [number, number],
+  currentTierDistribution: TierDistribution,
+  performanceFeePool: number
+): number {
+  // Determine which tier(s) the user's range covers
+  const [start, end] = userRange;
+  let userTier: keyof TierDistribution;
+  
+  // Determine primary tier based on range midpoint
+  const midpoint = (start + end) / 2;
+  if (midpoint <= 9) userTier = 'safe';
+  else if (midpoint <= 29) userTier = 'conservative';
+  else if (midpoint <= 59) userTier = 'balanced';
+  else userTier = 'hero';
+  
+  // Calculate bonus yield allocation for the user's tier
+  const bonusAllocation = calculateBonusYield(currentTierDistribution, performanceFeePool);
+  
+  return bonusAllocation[userTier];
+}
+
+/**
+ * Calculate comprehensive estimated APY with simplified tier-level bonuses
  * @param amount - User deposit amount
  * @param selectedRange - Selected risk range [start, end]
- * @param liquidityData - Current liquidity data for all buckets
- * @param protocolAPY28D - 28-day average protocol APY (as decimal, e.g., 0.10 for 10%)
- * @param performanceFeeRate - Performance fee rate (as decimal, e.g., 0.20 for 20%)
+ * @param currentTierDistribution - Current tier distribution
+ * @param performanceFeeRate - Performance fee rate (as decimal, e.g., 0.25 for 25%)
  * @returns Comprehensive estimated APY percentage
  */
 export function calculateComprehensiveAPY(
   amount: number,
   selectedRange: [number, number],
-  liquidityData: Array<{ bucket: number; liquidity: number }>,
-  protocolAPY28D: number = 0.10,
-  performanceFeeRate: number = 0.20
+  currentTierDistribution: TierDistribution = { safe: 0.08, conservative: 0.25, balanced: 0.35, hero: 0.32 },
+  performanceFeeRate: number = 0.25
 ): number {
-  // Get current liquidity in selected range
-  const currentLiquidity = liquidityData
-    .slice(selectedRange[0], selectedRange[1] + 1)
-    .reduce((sum, item) => sum + item.liquidity, 0);
+  // Base APY from piecewise formula
+  const baseAPY = calculateRangeWeightedAPY(selectedRange[0], selectedRange[1]);
   
-  const totalLiquidityAfterDeposit = currentLiquidity + amount;
+  // Performance fee pool (25% of protocol fees)
+  const performanceFeePool = performanceFeeRate;
   
-  // Base APY from protocol calculations
-  const protocolBaseAPY = protocolAPY28D * 100; // Convert to percentage
+  // Calculate tier-level bonus
+  const tierBonus = calculateTierBonusAPY(selectedRange, currentTierDistribution, performanceFeePool);
   
-  // Calculate weighted APY for the range using existing piecewise formula
-  const predictionResult = calculatePredictedYield(amount || 1000, selectedRange);
-  
-  // Factor in liquidity density impact (less crowded ranges get slight bonus)
-  const liquidityDensity = totalLiquidityAfterDeposit / (selectedRange[1] - selectedRange[0] + 1);
-  const liquidityBonus = liquidityDensity < 50000 ? 1.05 : 1.0; // 5% bonus for less crowded ranges
-  
-  // Factor in bonus yield from performance fees (simplified calculation)
-  const tierDistribution = { safe: 0.3, conservative: 0.4, balanced: 0.2, hero: 0.1 };
-  const bonusAllocation = calculateBonusYield(tierDistribution, performanceFeeRate * protocolBaseAPY / 100);
-  const bonusValues = Object.values(bonusAllocation) as number[];
-  const avgTierBonus = bonusValues.reduce((sum, val) => sum + val, 0) / bonusValues.length;
-  
-  // Combine all factors for comprehensive APY estimate
-  const estimatedAPY = predictionResult.percentAPY * liquidityBonus + (avgTierBonus * 100);
-  
-  return estimatedAPY;
+  // Return combined APY as percentage
+  return (baseAPY + tierBonus) * 100;
 }
 
 /**

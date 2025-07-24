@@ -344,10 +344,7 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
                 <p className="font-semibold text-green-600">
                   {calculateComprehensiveAPY(
                     amount || 1000, 
-                    selectedRange, 
-                    liquidityData, 
-                    PROTOCOL_APY_28D, 
-                    PERFORMANCE_FEE
+                    selectedRange
                   ).toFixed(2)}%
                 </p>
               </div>
