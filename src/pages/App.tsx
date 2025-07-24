@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { NavLink, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -65,7 +66,7 @@ const App = () => {
                   First step: Convert USDC to TDD tokens for staking, or redeem TDD back to USDC
                 </p>
                 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-4xl">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 justify-items-center">
                   <DepositCard />
                   <RedeemCard />
                 </div>
