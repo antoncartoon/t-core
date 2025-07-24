@@ -18,7 +18,7 @@
 // SECTION 1: PROTOCOL CONSTANTS & CONFIGURATION
 // ============================================================================
 
-import { T_BILLS_RATE, TARGET_APYS as GLOBAL_TARGET_APYS, TIER_BREAKPOINTS as GLOBAL_TIER_BREAKPOINTS, FIXED_BASE_APY } from '@/utils/protocolConstants';
+import { T_BILLS_RATE, TARGET_APYS as GLOBAL_TARGET_APYS, TIER_BREAKPOINTS as GLOBAL_TIER_BREAKPOINTS, FIXED_BASE_APY, CURRENT_LIQUIDITY_DISTRIBUTION } from '@/utils/protocolConstants';
 
 /**
  * Base economic parameters derived from T-Bills rate
@@ -522,8 +522,7 @@ export function calculateComprehensiveAPY(
   currentTierDistribution?: TierDistribution,
   performanceFeeRate: number = 0.25
 ): number {
-  // Import current distribution from protocolConstants
-  const { CURRENT_LIQUIDITY_DISTRIBUTION } = require('@/utils/protocolConstants');
+  // Use current distribution from protocolConstants
   const distribution = currentTierDistribution || CURRENT_LIQUIDITY_DISTRIBUTION;
   
   // Base APY from piecewise formula
