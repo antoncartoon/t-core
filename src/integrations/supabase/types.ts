@@ -14,7 +14,221 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      pool_settings: {
+        Row: {
+          base_apy: number
+          created_at: string
+          current_tvl: number
+          id: string
+          is_active: boolean
+          max_capacity: number | null
+          pool_name: string
+          risk_multiplier: number
+          updated_at: string
+        }
+        Insert: {
+          base_apy?: number
+          created_at?: string
+          current_tvl?: number
+          id?: string
+          is_active?: boolean
+          max_capacity?: number | null
+          pool_name: string
+          risk_multiplier?: number
+          updated_at?: string
+        }
+        Update: {
+          base_apy?: number
+          created_at?: string
+          current_tvl?: number
+          id?: string
+          is_active?: boolean
+          max_capacity?: number | null
+          pool_name?: string
+          risk_multiplier?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      staking_positions: {
+        Row: {
+          amount: number
+          block_number: number | null
+          created_at: string
+          desired_apy: number
+          id: string
+          risk_score: number
+          status: string
+          tx_hash: string | null
+          updated_at: string
+          user_id: string
+          wallet_id: string
+        }
+        Insert: {
+          amount: number
+          block_number?: number | null
+          created_at?: string
+          desired_apy: number
+          id?: string
+          risk_score: number
+          status?: string
+          tx_hash?: string | null
+          updated_at?: string
+          user_id: string
+          wallet_id: string
+        }
+        Update: {
+          amount?: number
+          block_number?: number | null
+          created_at?: string
+          desired_apy?: number
+          id?: string
+          risk_score?: number
+          status?: string
+          tx_hash?: string | null
+          updated_at?: string
+          user_id?: string
+          wallet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staking_positions_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "wallets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transactions: {
+        Row: {
+          amount: number
+          block_number: number | null
+          created_at: string
+          gas_price: number | null
+          gas_used: number | null
+          id: string
+          staking_position_id: string | null
+          status: string
+          token_symbol: string
+          tx_hash: string | null
+          type: string
+          updated_at: string
+          user_id: string
+          wallet_id: string
+        }
+        Insert: {
+          amount: number
+          block_number?: number | null
+          created_at?: string
+          gas_price?: number | null
+          gas_used?: number | null
+          id?: string
+          staking_position_id?: string | null
+          status?: string
+          token_symbol: string
+          tx_hash?: string | null
+          type: string
+          updated_at?: string
+          user_id: string
+          wallet_id: string
+        }
+        Update: {
+          amount?: number
+          block_number?: number | null
+          created_at?: string
+          gas_price?: number | null
+          gas_used?: number | null
+          id?: string
+          staking_position_id?: string | null
+          status?: string
+          token_symbol?: string
+          tx_hash?: string | null
+          type?: string
+          updated_at?: string
+          user_id?: string
+          wallet_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_staking_position_id_fkey"
+            columns: ["staking_position_id"]
+            isOneToOne: false
+            referencedRelation: "staking_positions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "wallets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wallets: {
+        Row: {
+          address: string
+          chain_id: number
+          created_at: string
+          id: string
+          is_primary: boolean
+          provider: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          chain_id?: number
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          provider: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          chain_id?: number
+          created_at?: string
+          id?: string
+          is_primary?: boolean
+          provider?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
