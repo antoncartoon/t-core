@@ -26,7 +26,7 @@ const KeyStats = () => {
     {
       icon: Shield,
       label: 'Safe Tier Guarantee',
-      value: '6%',
+      value: '5.16%',
       color: 'text-green-600'
     }
   ];

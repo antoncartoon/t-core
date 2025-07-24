@@ -149,7 +149,7 @@ const AnimatedYieldDistribution = () => {
           <CardContent className="p-4">
             <h4 className="font-medium mb-2">Формула для {selectedTier}:</h4>
             <div className="font-mono text-sm text-muted-foreground space-y-1">
-              <div>Базовая доходность: T-Bills * 1.2 = 6%</div>
+              <div>Базовая доходность: T-Bills * 1.2 = 5.16%</div>
               <div>Бонус: f(i) = 1.03^(i-25) * распределение_ликвидности</div>
               <div>Общая доходность: Базовая + Бонус + Инсентивы_от_комиссий</div>
             </div>

@@ -7,13 +7,13 @@ const SimpleWhyTCore = () => {
     {
       icon: Shield,
       title: 'Safety First',
-      description: 'Guaranteed 6% minimum return for Safe tier backed by T-Bills + Bluechip DeFi. Minimal risk exposure.',
+      description: 'Guaranteed 5.16% minimum return for Safe tier backed by T-Bills + Bluechip DeFi. Minimal risk exposure.',
       color: 'text-green-600'
     },
     {
       icon: TrendingUp,
       title: 'Scalable Returns',
-      description: 'Choose your risk level from 6% safe to unlimited heroic yields. Higher risk, higher reward potential.',
+      description: 'Choose your risk level from 5.16% safe to unlimited heroic yields. Higher risk, higher reward potential.',
       color: 'text-primary'
     },
     {
