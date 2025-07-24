@@ -240,7 +240,7 @@ export const SimplifiedStakingInterface = () => {
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Total TVL</span>
                 <span className="font-semibold">
-                  ${(tcoreState.totalTVL || 850000).toLocaleString()}
+                  ${(tcoreState.totalTVL || 900000).toLocaleString()}
                 </span>
               </div>
               <div className="flex justify-between items-center">
