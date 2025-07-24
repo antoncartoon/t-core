@@ -39,40 +39,42 @@ const AppRouter = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <PWAInstallPrompt />
-        <OfflineIndicator />
-        
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/app" element={
-              <ProtectedRoute>
-                <App />
-              </ProtectedRoute>
-            } />
-            <Route path="/portfolio" element={
-              <ProtectedRoute>
-                <Portfolio />
-              </ProtectedRoute>
-            } />
-            <Route path="/defi" element={
-              <ProtectedRoute>
-                <DeFi />
-              </ProtectedRoute>
-            } />
-            <Route path="/transparency" element={<Transparency />} />
-            <Route path="/docs" element={<Docs />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/disclaimer" element={<Disclaimer />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
+        <WalletProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <PWAInstallPrompt />
+            <OfflineIndicator />
+            
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/app" element={
+                  <ProtectedRoute>
+                    <App />
+                  </ProtectedRoute>
+                } />
+                <Route path="/portfolio" element={
+                  <ProtectedRoute>
+                    <Portfolio />
+                  </ProtectedRoute>
+                } />
+                <Route path="/defi" element={
+                  <ProtectedRoute>
+                    <DeFi />
+                  </ProtectedRoute>
+                } />
+                <Route path="/transparency" element={<Transparency />} />
+                <Route path="/docs" element={<Docs />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/disclaimer" element={<Disclaimer />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </WalletProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };

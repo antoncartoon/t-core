@@ -153,8 +153,10 @@ export const useWalletManager = () => {
   // Initialize wallet on first connection
   useEffect(() => {
     if (user && walletAddress && wallets.length === 0 && !isLoading) {
+      // Get provider from user metadata
+      const provider = user.user_metadata?.wallet_provider || 'unknown';
       // Create wallet entry for newly connected user
-      createWallet(walletAddress, 'mock', 1);
+      createWallet(walletAddress, provider, 1);
     }
   }, [user, walletAddress, wallets.length, isLoading]);
 

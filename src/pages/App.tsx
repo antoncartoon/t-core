@@ -9,6 +9,7 @@ import StatsOverview from '@/components/StatsOverview';
 import DepositCard from '@/components/DepositCard';
 import { RedeemCard } from '@/components/RedeemCard';
 import ComprehensiveStakingDashboard from '@/components/ComprehensiveStakingDashboard';
+import FinancialOperationsTest from '@/components/FinancialOperationsTest';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TrendingUp, PlusCircle, ArrowRightLeft, BarChart3, Wallet } from 'lucide-react';
@@ -77,9 +78,21 @@ const App = () => {
                   <DepositCard />
                   <RedeemCard />
                 </div>
-              </div>
+                </div>
 
-              {/* Quick Actions */}
+                {/* Financial Operations Test (Phase 3 Testing) */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-green-600" />
+                    <h2 className="text-xl font-semibold">Phase 3: Financial Operations Test</h2>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Test the complete financial operations with real Web3 authentication
+                  </p>
+                  <FinancialOperationsTest />
+                </div>
+
+                {/* Quick Actions */}
               <div className="bg-muted/30 p-6 rounded-lg">
                 <h3 className="text-lg font-semibold mb-4">Next Steps</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
