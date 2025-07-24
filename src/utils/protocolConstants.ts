@@ -12,7 +12,7 @@ export const TOTAL_TDD_SUPPLY = 1_000_000; // 1M TDD tokens issued
 export const STAKED_TDD_AMOUNT = 900_000;  // 900K TDD tokens staked (90% staking rate)
 
 // Protocol USD Values (demonstration)
-export const PROTOCOL_USD_TVL = 850_000; // $850K actual USD value in protocol
+export const PROTOCOL_USD_TVL = 900_000; // $900K actual USD value in protocol
 
 export const PROTOCOL_APY_28D = 0.10; // 10% base protocol APY
 export const PERFORMANCE_FEE = 0.20;  // 20% performance fee
