@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -44,6 +44,44 @@ export const SimplifiedStakingInterface = () => {
   })() : null;
   const yieldPrediction = numericAmount > 0 ? calculatePredictedYield(numericAmount, selectedRange) : null;
   const selectedTier = getTierForBucket(Math.floor((selectedRange[0] + selectedRange[1]) / 2));
+
+  // Tier definitions for liquidity distribution
+  const tierPresets = [
+    { name: 'Safe', range: [0, 9], color: '#22c55e', targetWeight: 0.6 },
+    { name: 'Conservative', range: [10, 29], color: '#3b82f6', targetWeight: 0.25 },
+    { name: 'Balanced', range: [30, 69], color: '#f59e0b', targetWeight: 0.12 },
+    { name: 'Hero', range: [70, 99], color: '#ef4444', targetWeight: 0.03 }
+  ];
+
+  // Calculate tier distribution for liquidity visualization
+  const tierDistribution = useMemo(() => {
+    console.log('Calculating tier distribution with liquidityData:', liquidityData);
+    
+    const totalLiquidity = liquidityData.reduce((sum, item) => sum + item.liquidity, 0);
+    console.log('Total liquidity:', totalLiquidity);
+    
+    if (totalLiquidity === 0) {
+      // Mock data when no liquidity
+      console.log('Using mock data for tier distribution');
+      return [
+        { percentage: 45, tvl: 382500 },
+        { percentage: 30, tvl: 255000 },
+        { percentage: 20, tvl: 170000 },
+        { percentage: 5, tvl: 42500 }
+      ];
+    }
+
+    return tierPresets.map((tier) => {
+      const tierLiquidity = liquidityData
+        .filter(item => item.bucket >= tier.range[0] && item.bucket <= tier.range[1])
+        .reduce((sum, item) => sum + item.liquidity, 0);
+      
+      const percentage = (tierLiquidity / totalLiquidity) * 100;
+      const tvl = (percentage / 100) * (tcoreState.totalTVL || 850000);
+      
+      return { percentage, tvl };
+    });
+  }, [liquidityData, tcoreState.totalTVL]);
 
   const handleStake = async () => {
     if (numericAmount <= 0 || numericAmount > tddBalance) {
@@ -197,6 +235,95 @@ export const SimplifiedStakingInterface = () => {
                 amount={numericAmount}
                 liquidityData={liquidityData}
               />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Liquidity Distribution Visualization */}
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Liquidity Distribution
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Protocol vs Target Allocation
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {tierPresets.map((tier, index) => {
+                const currentPercentage = tierDistribution[index]?.percentage || 0;
+                const targetPercentage = tier.targetWeight * 100;
+                const difference = currentPercentage - targetPercentage;
+                const isOverAllocated = difference > 0;
+                
+                return (
+                  <div key={tier.name} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div 
+                          className="w-3 h-3 rounded-full"
+                          style={{ backgroundColor: tier.color }}
+                        />
+                        <span className="text-sm font-medium">{tier.name}</span>
+                        <span className="text-xs text-muted-foreground">
+                          ({tier.range[0]}-{tier.range[1]})
+                        </span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-sm font-semibold">
+                          {currentPercentage.toFixed(1)}%
+                        </span>
+                        <span className="text-xs text-muted-foreground ml-1">
+                          (Target: {targetPercentage.toFixed(1)}%)
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {/* Current Allocation Progress Bar */}
+                    <div className="relative">
+                      <div className="w-full bg-secondary/30 rounded-full h-2">
+                        <div 
+                          className="h-2 rounded-full transition-all duration-500"
+                          style={{ 
+                            width: `${Math.min(currentPercentage * 2, 100)}%`,
+                            backgroundColor: tier.color 
+                          }}
+                        />
+                      </div>
+                      {/* Target line indicator */}
+                      <div 
+                        className="absolute top-0 w-0.5 h-2 bg-foreground/40"
+                        style={{ left: `${Math.min(targetPercentage * 2, 100)}%` }}
+                      />
+                    </div>
+                    
+                    {/* Difference indicator */}
+                    <div className="flex items-center justify-between text-xs">
+                      <span className={`flex items-center gap-1 ${
+                        isOverAllocated ? 'text-orange-500' : 'text-blue-500'
+                      }`}>
+                        {isOverAllocated ? '↑' : '↓'}
+                        {Math.abs(difference).toFixed(1)}% {isOverAllocated ? 'over' : 'under'}
+                      </span>
+                      <span className="text-muted-foreground">
+                        TVL: ${(tierDistribution[index]?.tvl || 0).toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Summary */}
+            <div className="mt-4 pt-4 border-t border-border">
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground">Total Protocol TVL</span>
+                <span className="font-semibold">
+                  ${(tcoreState.totalTVL || 850000).toLocaleString()}
+                </span>
+              </div>
             </div>
           </CardContent>
         </Card>
