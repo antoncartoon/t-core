@@ -7,6 +7,7 @@ import { useRiskRange } from '@/contexts/RiskRangeContext';
 import { TIER_DEFINITIONS } from '@/types/riskTiers';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useSystemParameters } from '@/hooks/useSystemParameters';
 
 interface AutoDistributeButtonProps {
   amount: number;
@@ -17,6 +18,7 @@ const AutoDistributeButton = ({ amount, onDistribute }: AutoDistributeButtonProp
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const { protocolState } = useRiskRange();
+  const { parameters } = useSystemParameters();
 
   // Calculate current tier distribution
   const calculateCurrentDistribution = () => {
@@ -53,12 +55,18 @@ const AutoDistributeButton = ({ amount, onDistribute }: AutoDistributeButtonProp
     return tiers;
   };
   
-  // Target distribution from knowledge document
-  const TARGET_DISTRIBUTION = {
-    SAFE: 0.10,
+  // Dynamic target distribution from system parameters
+  const TARGET_DISTRIBUTION = parameters ? {
+    SAFE: parameters.target_tier_distribution.safe,
+    CONSERVATIVE: parameters.target_tier_distribution.conservative,
+    BALANCED: parameters.target_tier_distribution.balanced,
+    HERO: parameters.target_tier_distribution.hero
+  } : {
+    // Fallback values if parameters not loaded yet
+    SAFE: 0.40,
     CONSERVATIVE: 0.20,
-    BALANCED: 0.30,
-    HERO: 0.40
+    BALANCED: 0.20,
+    HERO: 0.20
   };
   
   // Mock current distribution for demo

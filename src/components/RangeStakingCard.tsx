@@ -6,7 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useRiskRange } from '@/contexts/RiskRangeContext';
-import { analyzeRiskRange } from '@/utils/riskRangeCalculations';
+import { analyzeRiskRange, calculateLossScenarios } from '@/utils/dynamicCalculations';
+import { useSystemParameters } from '@/hooks/useSystemParameters';
 import RiskTierSelector from './enhanced/RiskTierSelector';
 import AutoDistributeButton from './waterfall/AutoDistributeButton';
 import { Separator } from '@/components/ui/separator';
@@ -18,15 +19,16 @@ const RangeStakingCard = () => {
   
   const { toast } = useToast();
   const { getAvailableBalance, createLiquidityPosition, protocolState } = useRiskRange();
+  const { parameters } = useSystemParameters();
 
   const availableBalance = getAvailableBalance('TDD');
   const stakeAmount = parseFloat(amount) || 0;
 
-  // Calculate range analysis
-  const analysis = stakeAmount > 0 ? analyzeRiskRange(
-    stakeAmount,
+  // Calculate range analysis using dynamic parameters
+  const analysis = stakeAmount > 0 && parameters ? analyzeRiskRange(
     { min: riskRange[0], max: riskRange[1] },
-    protocolState.riskTicks
+    stakeAmount,
+    parameters
   ) : null;
 
   // Convert liquidity data for visualization using real protocol data
@@ -180,24 +182,36 @@ const RangeStakingCard = () => {
                 <span className="text-sm font-medium">Potential Loss Scenarios</span>
               </div>
               <div className="grid grid-cols-3 gap-3 text-sm">
-                <div className="bg-yellow-50 dark:bg-yellow-950/20 p-2 rounded text-center">
-                  <p className="text-xs text-muted-foreground">5% Protocol Loss</p>
-                  <p className="font-semibold text-yellow-700">
-                    -${analysis.potentialLoss.at5Percent.toFixed(2)}
-                  </p>
-                </div>
-                <div className="bg-orange-50 dark:bg-orange-950/20 p-2 rounded text-center">
-                  <p className="text-xs text-muted-foreground">10% Protocol Loss</p>
-                  <p className="font-semibold text-orange-700">
-                    -${analysis.potentialLoss.at10Percent.toFixed(2)}
-                  </p>
-                </div>
-                <div className="bg-red-50 dark:bg-red-950/20 p-2 rounded text-center">
-                  <p className="text-xs text-muted-foreground">20% Protocol Loss</p>
-                  <p className="font-semibold text-red-700">
-                    -${analysis.potentialLoss.at20Percent.toFixed(2)}
-                  </p>
-                </div>
+                {(() => {
+                  const lossScenarios = parameters ? calculateLossScenarios(
+                    stakeAmount,
+                    { min: riskRange[0], max: riskRange[1] },
+                    parameters
+                  ) : null;
+                  
+                  return (
+                    <>
+                      <div className="bg-yellow-50 dark:bg-yellow-950/20 p-2 rounded text-center">
+                        <p className="text-xs text-muted-foreground">5% Protocol Loss</p>
+                        <p className="font-semibold text-yellow-700">
+                          -${lossScenarios ? lossScenarios.scenario_5_decline.loss.toFixed(2) : '0.00'}
+                        </p>
+                      </div>
+                      <div className="bg-orange-50 dark:bg-orange-950/20 p-2 rounded text-center">
+                        <p className="text-xs text-muted-foreground">15% Protocol Loss</p>
+                        <p className="font-semibold text-orange-700">
+                          -${lossScenarios ? lossScenarios.scenario_15_decline.loss.toFixed(2) : '0.00'}
+                        </p>
+                      </div>
+                      <div className="bg-red-50 dark:bg-red-950/20 p-2 rounded text-center">
+                        <p className="text-xs text-muted-foreground">30% Protocol Loss</p>
+                        <p className="font-semibold text-red-700">
+                          -${lossScenarios ? lossScenarios.scenario_30_decline.loss.toFixed(2) : '0.00'}
+                        </p>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
             </div>
           )}
