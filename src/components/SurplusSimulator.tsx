@@ -38,7 +38,7 @@ const SurplusSimulator = () => {
     
     // Calculate user's share based on position size
     const avgRisk = (minRisk + maxRisk) / 2;
-    const baseAPY = 0.06; // 6% fixed base
+    const baseAPY = 0.0516; // 5.16% fixed base
     const bonusAPY = tierBonus * 0.000001; // Convert to APY
     
     // Risk-adjusted bonus

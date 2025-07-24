@@ -23,7 +23,7 @@ const MonteCarloSimulator = () => {
     const initialStake = 10000;
     
     const tierConfigs = {
-      1: { baseAPY: 0.06, volatility: 0.02, riskFactor: 0 },
+      1: { baseAPY: 0.0516, volatility: 0.02, riskFactor: 0 },
       2: { baseAPY: 0.092, volatility: 0.15, riskFactor: 0.1 },
       3: { baseAPY: 0.168, volatility: 0.25, riskFactor: 0.3 },
       4: { baseAPY: 0.274, volatility: 0.35, riskFactor: 0.8 }

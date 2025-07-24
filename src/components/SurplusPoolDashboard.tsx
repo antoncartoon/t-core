@@ -12,7 +12,7 @@ const SurplusPoolDashboard = () => {
   const [tier1Stake, setTier1Stake] = useState([25]);
   
   // Base curve vs surplus calculations
-  const minYield = 60000; // Fixed tier 1 minimum (6% on 25% of 1M)
+  const minYield = 51600; // Fixed tier 1 minimum (5.16% on 25% of 1M)
   const surplus = totalYield[0] - minYield;
   const tier4SurplusShare = surplus * 0.74; // 74% to tier 4
   const tier4BaseYield = 14.91; // From base curve
@@ -61,7 +61,7 @@ const SurplusPoolDashboard = () => {
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-sm">Tier 1:</span>
-                      <span className="font-medium">6.0% (Fixed)</span>
+                      <span className="font-medium">5.16% (Fixed)</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm">Tier 4:</span>
@@ -99,7 +99,7 @@ const SurplusPoolDashboard = () => {
                 </p>
                 <div className="grid grid-cols-3 gap-3">
                   <div className="text-center">
-                    <div className="text-lg font-semibold text-green-600">~6%</div>
+                    <div className="text-lg font-semibold text-green-600">~5.16%</div>
                     <div className="text-xs text-green-600">Tier 1 (Fixed)</div>
                   </div>
                   <div className="text-center">
@@ -122,7 +122,7 @@ const SurplusPoolDashboard = () => {
                 </p>
                 <div className="grid grid-cols-3 gap-3">
                   <div className="text-center">
-                    <div className="text-lg font-semibold text-red-600">6%</div>
+                    <div className="text-lg font-semibold text-red-600">5.16%</div>
                     <div className="text-xs text-red-600">Tier 1 (Protected)</div>
                   </div>
                   <div className="text-center">
@@ -274,7 +274,7 @@ const SurplusPoolDashboard = () => {
             <div className="p-4 bg-muted/50 rounded-lg">
               <h4 className="font-medium mb-2 text-sm">Distribution Logic</h4>
               <div className="space-y-2 text-sm text-muted-foreground">
-                <p>• Tier 1: Fixed 6% APY from guaranteed yield</p>
+                <p>• Tier 1: Fixed 5.16% APY from guaranteed yield</p>
                 <p>• Tier 2-4: Base curve + proportional surplus share</p>
                 <p>• Higher tiers earn more surplus as compensation for risk</p>
               </div>
@@ -360,7 +360,7 @@ const SurplusPoolDashboard = () => {
               <div>
                 <h4 className="font-medium mb-1">Minimum Yield First</h4>
                 <p className="text-sm text-muted-foreground">
-                  Tier 1 (levels 1-25) receives guaranteed 6% fixed yield from T-Bills + 20% buffer.
+                  Tier 1 (levels 1-25) receives guaranteed 5.16% fixed yield from T-Bills + 20% buffer.
                   This ensures zero-risk returns for conservative participants.
                 </p>
               </div>

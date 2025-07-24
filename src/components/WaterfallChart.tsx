@@ -12,7 +12,7 @@ const WaterfallChart = () => {
       value: distribution.tier1,
       percentage: '0%',
       color: '#22c55e',
-      description: 'Guaranteed 6% fixed yield from T-Bills'
+      description: 'Guaranteed 5.16% fixed yield from T-Bills'
     },
     {
       name: 'Tier 2\n(Low Bonus)',

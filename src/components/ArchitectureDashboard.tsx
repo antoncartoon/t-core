@@ -27,7 +27,7 @@ const ArchitectureDashboard: React.FC<ArchitectureDashboardProps> = ({ className
       title: 'Centralized Fixed Base',
       status: 'current',
       period: 'Now - Q4 2024',
-      description: 'Team manages T-Bills/oracles for fixed_base enforcement (6% guaranteed)',
+      description: 'Team manages T-Bills/oracles for fixed_base enforcement (5.16% guaranteed)',
       features: ['Centralized fixed_base = T-Bills * 1.2', 'Transparent on-chain tracking', 'Multisig governance'],
       progress: 100,
       icon: Building2
@@ -275,7 +275,7 @@ const ArchitectureDashboard: React.FC<ArchitectureDashboardProps> = ({ className
                 <ul className="space-y-2 text-sm">
                   <li className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500" />
-                    <span>Guaranteed fixed_base enforcement (6%)</span>
+                    <span>Guaranteed fixed_base enforcement (5.16%)</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500" />

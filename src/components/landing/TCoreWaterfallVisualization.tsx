@@ -41,7 +41,7 @@ const TCoreWaterfallVisualization: React.FC<TCoreWaterfallVisualizationProps> = 
       color: 'bg-green-500', 
       textColor: 'text-green-600',
       icon: Shield,
-      description: 'Fixed 6% guarantee'
+      description: 'Fixed 5.16% guarantee'
     },
     { 
       name: 'Conservative', 

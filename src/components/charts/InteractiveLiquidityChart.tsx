@@ -17,8 +17,8 @@ interface InteractiveLiquidityChartProps {
 
 // Use tier presets from unified formula library
 const TIER_PRESETS = [
-  { name: 'Safe', range: [0, 9] as [number, number], color: '#22c55e', bgColor: 'hsl(142, 76%, 36%)', description: 'Fixed 6% APY' },
-  { name: 'Conservative', range: [10, 29] as [number, number], color: '#3b82f6', bgColor: 'hsl(221, 83%, 53%)', description: 'Linear 6% → 7%' },
+   { name: 'Safe', range: [0, 9] as [number, number], color: '#22c55e', bgColor: 'hsl(142, 76%, 36%)', description: 'Fixed 5.16% APY' },
+   { name: 'Conservative', range: [10, 29] as [number, number], color: '#3b82f6', bgColor: 'hsl(221, 83%, 53%)', description: 'Linear 5.16% → 7%' },
   { name: 'Balanced', range: [30, 59] as [number, number], color: '#eab308', bgColor: 'hsl(48, 96%, 53%)', description: 'Quadratic 7% → 9.5%' },
   { name: 'Hero', range: [60, 99] as [number, number], color: '#ef4444', bgColor: 'hsl(0, 84%, 60%)', description: 'Exponential 9.5% × 1.03^(i-60)' }
 ];

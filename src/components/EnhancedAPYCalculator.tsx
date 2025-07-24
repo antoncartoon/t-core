@@ -265,7 +265,7 @@ const EnhancedAPYCalculator: React.FC<EnhancedAPYCalculatorProps> = ({ className
                         <Info className="h-4 w-4 text-muted-foreground" />
                       </TooltipTrigger>
                       <TooltipContent className="max-w-md">
-                        <p><strong>Tier1 (1-25):</strong> Fixed 6% APY, 0% loss risk (T-Bills collateral)</p>
+                        <p><strong>Tier1 (1-25):</strong> Fixed 5.16% APY, 0% loss risk (T-Bills collateral)</p>
                         <p><strong>Higher Tiers:</strong> Fixed + bonus APY, but insure pool via subordination</p>
                         <p><strong>Narrow High Range:</strong> Higher APY but more insurance responsibility</p>
                       </TooltipContent>
@@ -484,7 +484,7 @@ const EnhancedAPYCalculator: React.FC<EnhancedAPYCalculatorProps> = ({ className
                     </div>
                     <div className="mt-4 text-sm text-muted-foreground">
                       <p><strong>Subordination Model:</strong> Higher tiers absorb losses first, protecting Tier1 (T-Bills collateral)</p>
-                      <p><strong>2008 Analog:</strong> Tier1 maintained 6% APY, Tier4 faced 15-25% losses</p>
+                      <p><strong>2008 Analog:</strong> Tier1 maintained 5.16% APY, Tier4 faced 15-25% losses</p>
                     </div>
                   </CardContent>
                 </Card>
@@ -506,7 +506,7 @@ const EnhancedAPYCalculator: React.FC<EnhancedAPYCalculatorProps> = ({ className
                           <div className="p-3 bg-muted rounded-lg">
                             <div className="font-medium text-tier1">Tier1 (AAA-rated)</div>
                             <div className="text-sm text-muted-foreground">
-                              Fixed 6% APY from T-Bills × 1.2. Zero loss risk due to government collateral.
+                              Fixed 5.16% APY from T-Bills × 1.2. Zero loss risk due to government collateral.
                             </div>
                           </div>
                           <div className="p-3 bg-muted rounded-lg">

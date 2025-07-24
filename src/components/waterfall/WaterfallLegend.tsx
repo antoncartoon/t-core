@@ -7,7 +7,7 @@ const WaterfallLegend = () => {
     {
       icon: Shield,
       label: 'Safe Tier (1-25)',
-      description: 'Guaranteed 6% fixed yield',
+      description: 'Guaranteed 5.16% fixed yield',
       color: 'text-green-600'
     },
     {

@@ -35,7 +35,7 @@ const STAKING_TUTORIAL_STEPS: TutorialStep[] = [
   {
     id: 'risk-selection',
     title: 'Choose Your Risk Level',
-    description: 'Select from 4 simple tiers: Safe (6% APY), Conservative (8% APY), Balanced (12% APY), or Hero (25%+ APY). Higher risk means higher potential returns.',
+    description: 'Select from 4 simple tiers: Safe (5.16% APY), Conservative (8% APY), Balanced (12% APY), or Hero (25%+ APY). Higher risk means higher potential returns.',
     icon: Target,
     example: 'New users often start with Safe or Conservative tiers to get familiar with the system.'
   },
