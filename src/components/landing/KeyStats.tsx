@@ -35,10 +35,10 @@ const KeyStats = () => {
     <section className="py-16 sm:py-20 bg-muted/20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-light text-foreground mb-4">
+          <h2 className="heading-section text-foreground mb-4">
             Platform Stats
           </h2>
-          <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+          <p className="body-large text-muted-foreground max-w-3xl mx-auto">
             Real numbers from our transparent, on-chain protocol.
           </p>
         </div>
@@ -52,10 +52,10 @@ const KeyStats = () => {
                     <stat.icon className={`w-6 h-6 ${stat.color}`} />
                   </div>
                 </div>
-                <div className={`text-2xl font-bold mb-2 ${stat.color}`}>
+                <div className={`display-number mb-2 ${stat.color}`}>
                   {stat.value}
                 </div>
-                <div className="text-sm text-muted-foreground">
+                <div className="body-small text-muted-foreground">
                   {stat.label}
                 </div>
               </CardContent>
@@ -64,7 +64,7 @@ const KeyStats = () => {
         </div>
         
         <div className="text-center mt-12">
-          <p className="text-muted-foreground">
+          <p className="body-default text-muted-foreground">
             All yields backed by real assets including T-Bills, stablecoins, and verified DeFi protocols.
           </p>
         </div>

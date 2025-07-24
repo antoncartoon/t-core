@@ -19,34 +19,34 @@ const LandingHeader = ({ onStartTutorial }: LandingHeaderProps) => {
           <div className="w-5 h-5 sm:w-6 sm:h-6 bg-foreground rounded flex items-center justify-center">
             <span className="text-background font-bold text-xs sm:text-sm">T</span>
           </div>
-          <span className="text-base sm:text-lg font-medium">
+          <span className="text-base sm:text-lg font-brand font-semibold">
             T-Core
           </span>
         </NavLink>
         
         <nav className="hidden md:flex items-center space-x-8">
-          <a href="#how-it-works" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <a href="#how-it-works" className="body-small text-muted-foreground hover:text-foreground transition-colors">
             How it Works
           </a>
           <NavLink 
             to="/app" 
-            className="text-sm text-primary hover:text-primary/80 transition-colors font-medium flex items-center gap-1"
+            className="body-small text-primary hover:text-primary/80 transition-colors font-medium flex items-center gap-1"
           >
             <Calculator className="w-4 h-4" />
             Staking
           </NavLink>
-          <a href="#security" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          <a href="#security" className="body-small text-muted-foreground hover:text-foreground transition-colors">
             Security
           </a>
           <NavLink 
             to="/docs" 
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="body-small text-muted-foreground hover:text-foreground transition-colors"
           >
             Docs
           </NavLink>
           <NavLink 
             to="/faq" 
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            className="body-small text-muted-foreground hover:text-foreground transition-colors"
           >
             FAQ
           </NavLink>
@@ -55,7 +55,7 @@ const LandingHeader = ({ onStartTutorial }: LandingHeaderProps) => {
               variant="ghost" 
               size="sm" 
               onClick={onStartTutorial}
-              className="text-sm"
+              className="body-small font-brand"
             >
               <Play className="w-4 h-4 mr-2" />
               Tutorial
@@ -80,7 +80,7 @@ const LandingHeader = ({ onStartTutorial }: LandingHeaderProps) => {
             </Button>
           </NavLink>
           <NavLink to="/app">
-            <Button size={isMobile ? "sm" : "default"} className="text-xs sm:text-sm">
+            <Button size={isMobile ? "sm" : "default"} className="font-brand text-xs sm:text-sm">
               Launch App
               <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2" />
             </Button>

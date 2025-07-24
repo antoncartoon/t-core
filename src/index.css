@@ -116,7 +116,36 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-ui;
     font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Typography Utilities */
+  .heading-hero {
+    @apply font-brand text-4xl md:text-5xl lg:text-6xl font-bold;
+  }
+  
+  .heading-section {
+    @apply font-brand text-2xl md:text-3xl lg:text-4xl font-semibold;
+  }
+  
+  .heading-card {
+    @apply font-brand text-lg md:text-xl font-semibold;
+  }
+  
+  .display-number {
+    @apply font-brand text-2xl md:text-3xl font-bold;
+  }
+  
+  .body-large {
+    @apply font-ui text-lg font-medium;
+  }
+  
+  .body-default {
+    @apply font-ui text-base font-normal;
+  }
+  
+  .body-small {
+    @apply font-ui text-sm font-normal;
   }
 }
