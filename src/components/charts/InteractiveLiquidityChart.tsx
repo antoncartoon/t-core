@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, ReferenceLine, ReferenceArea, Tooltip, BarChart, Bar } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, ResponsiveContainer, ReferenceLine, ReferenceArea, Tooltip, Bar } from 'recharts';
 import { BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -359,7 +359,7 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
           <div className="border border-border bg-card rounded-lg p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
               <div className="flex items-center justify-center w-8 h-8 bg-primary/10 rounded-lg">
-                <BarChart className="w-4 h-4 text-primary" />
+                <BarChart3 className="w-4 h-4 text-primary" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold">Liquidity Distribution</h3>
