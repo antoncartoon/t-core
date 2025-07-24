@@ -268,8 +268,10 @@ export const SimplifiedStakingInterface = () => {
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-xs">
+                    <span className="text-muted-foreground">Current:</span>
                     <span className="font-medium">{tier.current}%</span>
-                    <span className="text-muted-foreground">→ {tier.target}%</span>
+                    <span className="text-muted-foreground">Target:</span>
+                    <span className="font-medium">{tier.target}%</span>
                   </div>
                 </div>
               ))}
