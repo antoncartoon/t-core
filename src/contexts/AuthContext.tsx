@@ -89,22 +89,65 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsLoading(true);
     
     try {
-      // Simulate wallet connection
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      let walletAddress = '';
       
-      // Generate mock wallet address
-      const mockAddress = '0x' + Math.random().toString(16).substr(2, 40);
+      // Real wallet connection based on provider
+      if (provider === 'metamask') {
+        if (typeof window.ethereum !== 'undefined') {
+          const accounts = await window.ethereum.request({
+            method: 'eth_requestAccounts',
+          });
+          walletAddress = accounts[0];
+        } else {
+          throw new Error('MetaMask not installed');
+        }
+      } else if (provider === 'walletconnect') {
+        // For now, generate a mock address for WalletConnect (real implementation would use WalletConnect SDK)  
+        walletAddress = '0x' + Math.random().toString(16).substr(2, 40);
+      } else if (provider === 'coinbase') {
+        // For now, generate a mock address for Coinbase (real implementation would use Coinbase SDK)
+        walletAddress = '0x' + Math.random().toString(16).substr(2, 40);
+      } else {
+        // Social login fallback - generate anonymous session
+        const { data, error } = await supabase.auth.signInAnonymously();
+        if (error) throw error;
+        return;
+      }
+
+      if (!walletAddress) {
+        throw new Error('Failed to get wallet address');
+      }
+
+      // Create a message for the user to sign
+      const message = `Sign this message to authenticate with TCore Finance.\n\nWallet: ${walletAddress}\nTimestamp: ${Date.now()}`;
       
-      // Sign up/in with Supabase using wallet address as identifier
+      let signature = '';
+      if (provider === 'metamask' && window.ethereum) {
+        try {
+          signature = await window.ethereum.request({
+            method: 'personal_sign',
+            params: [message, walletAddress],
+          });
+        } catch (signError) {
+          console.error('Signature failed:', signError);
+          throw new Error('User rejected signature request');
+        }
+      } else {
+        // For other providers, use a mock signature for now
+        signature = 'mock_signature_' + Math.random().toString(36);
+      }
+
+      // Authenticate with Supabase using wallet address
       const { data, error } = await supabase.auth.signUp({
-        email: `${mockAddress}@wallet.local`,
-        password: mockAddress, // In real implementation, use proper wallet signature
+        email: `${walletAddress.toLowerCase()}@wallet.local`,
+        password: signature.slice(0, 32), // Use first 32 chars of signature as password
         options: {
           emailRedirectTo: `${window.location.origin}/`,
           data: {
-            wallet_address: mockAddress,
+            wallet_address: walletAddress,
             wallet_provider: provider || 'unknown',
-            display_name: `Wallet ${mockAddress.slice(0, 8)}...`
+            display_name: `${walletAddress.slice(0, 6)}...${walletAddress.slice(-4)}`,
+            signature: signature
           }
         }
       });
@@ -113,8 +156,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         // If user exists, try to sign in instead
         if (error.message.includes('already registered')) {
           const { error: signInError } = await supabase.auth.signInWithPassword({
-            email: `${mockAddress}@wallet.local`,
-            password: mockAddress
+            email: `${walletAddress.toLowerCase()}@wallet.local`,
+            password: signature.slice(0, 32)
           });
           
           if (signInError) throw signInError;
