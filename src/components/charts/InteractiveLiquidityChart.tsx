@@ -156,7 +156,7 @@ const InteractiveLiquidityChart: React.FC<InteractiveLiquidityChartProps> = ({
                 />
                 <span className="font-medium text-sm">{preset.name}</span>
               </div>
-              <p className="text-xs text-muted-foreground">{preset.description}</p>
+              
               <div className="text-xs font-medium mt-1">
                 Buckets {preset.range[0]}-{preset.range[1]}
               </div>
