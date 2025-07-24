@@ -250,7 +250,7 @@ export const SimplifiedStakingInterface = () => {
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Active Positions</span>
-                <span className="font-semibold">847</span>
+                <span className="font-semibold">88</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Your TDD Balance</span>
