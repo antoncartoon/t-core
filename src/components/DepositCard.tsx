@@ -5,15 +5,15 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { useWallet } from '@/contexts/WalletContext';
+import { useFinancialOperations } from '@/hooks/useFinancialOperations';
 
 const DepositCard = () => {
   const [amount, setAmount] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  const { getAvailableBalance, mintTDD } = useWallet();
-
-  const availableUSDC = getAvailableBalance('USDC');
+  const { mintTDD, isLoading: financialLoading } = useFinancialOperations();
+  
+  const availableUSDC = 10000; // Mock balance - in real app, fetch from blockchain
 
   const handleMint = async () => {
     const mintAmount = parseFloat(amount);
@@ -38,25 +38,10 @@ const DepositCard = () => {
 
     setIsLoading(true);
     try {
-      // Simulate minting transaction
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      const success = mintTDD(mintAmount);
-      if (success) {
-        toast({
-          title: "Minting Successful!",
-          description: `${mintAmount} TDD has been minted from ${mintAmount} USDC.`,
-        });
-        setAmount('');
-      } else {
-        throw new Error('Minting failed');
-      }
+      await mintTDD(mintAmount, 'USDC');
+      setAmount('');
     } catch (error) {
-      toast({
-        title: "Minting Failed",
-        description: "There was an error minting your tokens. Please try again.",
-        variant: "destructive",
-      });
+      // Error handling is done in the hook
     } finally {
       setIsLoading(false);
     }
@@ -125,10 +110,10 @@ const DepositCard = () => {
 
         <Button 
           onClick={handleMint} 
-          disabled={!amount || isLoading || parseFloat(amount) > availableUSDC}
+          disabled={!amount || isLoading || financialLoading || parseFloat(amount) > availableUSDC}
           className="w-full bg-blue-600 hover:bg-blue-700"
         >
-          {isLoading ? (
+          {(isLoading || financialLoading) ? (
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               <span>Minting...</span>

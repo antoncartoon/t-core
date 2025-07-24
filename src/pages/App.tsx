@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { NavLink, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import AdminPanel from '@/components/AdminPanel';
 import { TCoreProvider } from '@/contexts/TCoreContext';
 import Header from '@/components/Header';
 import StatsOverview from '@/components/StatsOverview';
@@ -13,7 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TrendingUp, PlusCircle, ArrowRightLeft, BarChart3, Wallet } from 'lucide-react';
 
 const App = () => {
-  const { isConnected } = useAuth();
+  const { isConnected, userRole } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'overview';
 
@@ -40,16 +41,22 @@ const App = () => {
 
           {/* Main Dashboard Tabs */}
           <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="overview" className="flex items-center gap-2">
-                <BarChart3 className="h-4 w-4" />
-                TDD Mint/Redeem
+          <TabsList className={`grid w-full ${userRole === 'admin' ? 'grid-cols-3' : 'grid-cols-2'}`}>
+            <TabsTrigger value="overview" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              TDD Mint/Redeem
+            </TabsTrigger>
+            <TabsTrigger value="staking" className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4" />
+              Staking
+            </TabsTrigger>
+            {userRole === 'admin' && (
+              <TabsTrigger value="admin" className="flex items-center gap-2">
+                <Wallet className="h-4 w-4" />
+                Admin
               </TabsTrigger>
-              <TabsTrigger value="staking" className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4" />
-                Staking
-              </TabsTrigger>
-            </TabsList>
+            )}
+          </TabsList>
 
             {/* Overview Tab */}
             <TabsContent value="overview" className="space-y-8">
@@ -108,9 +115,15 @@ const App = () => {
             </TabsContent>
 
             {/* Staking Tab */}
-            <TabsContent value="staking" className="space-y-6">
-              <ComprehensiveStakingDashboard />
+          <TabsContent value="staking" className="space-y-6">
+            <ComprehensiveStakingDashboard />
+          </TabsContent>
+
+          {userRole === 'admin' && (
+            <TabsContent value="admin" className="space-y-6">
+              <AdminPanel />
             </TabsContent>
+          )}
           </Tabs>
         </div>
       </div>

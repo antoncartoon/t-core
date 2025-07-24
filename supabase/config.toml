@@ -59,3 +59,12 @@ verify_jwt = false
 
 [functions.update-tbills-rate]
 verify_jwt = false
+
+[functions.mint-tdd]
+verify_jwt = true
+
+[functions.create-staking-position]
+verify_jwt = true
+
+[functions.redeem-tdd]
+verify_jwt = true

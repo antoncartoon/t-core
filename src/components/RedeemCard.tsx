@@ -6,8 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { useWallet } from '@/contexts/WalletContext';
-import { useRedeem } from '@/contexts/RedeemContext';
+import { useFinancialOperations } from '@/hooks/useFinancialOperations';
 
 export const RedeemCard = () => {
   const [amount, setAmount] = useState('');
@@ -15,24 +14,19 @@ export const RedeemCard = () => {
   const [selectedMethod, setSelectedMethod] = useState<'instant' | 'queue' | 'uniswap'>('instant');
   
   const { toast } = useToast();
-  const { getAvailableBalance, addBalance } = useWallet();
-  const { 
-    bufferState, 
-    redeemInstant, 
-    addToQueue, 
-    getUniswapRoute,
-    redeemViaUniswap,
-    checkInstantRedeemAvailable,
-    calculateRedeemFee 
-  } = useRedeem();
+  const { redeemTDD, isLoading: financialLoading } = useFinancialOperations();
 
-  const tddBalance = getAvailableBalance('TDD');
+  const tddBalance = 5000; // Mock balance - in real app, fetch from blockchain
   const redeemAmount = parseFloat(amount) || 0;
-  const fee = calculateRedeemFee(redeemAmount, selectedMethod);
+  
+  // Simplified fee calculation for demo
+  const fee = selectedMethod === 'instant' ? redeemAmount * 0.001 : 
+              selectedMethod === 'queue' ? redeemAmount * 0.0005 : 
+              redeemAmount * 0.003; // Uniswap slippage
   const expectedUSDC = redeemAmount - fee;
 
-  const canRedeemInstant = checkInstantRedeemAvailable(redeemAmount);
-  const hasHighSlippageRisk = redeemAmount > 50000; // High slippage warning
+  const canRedeemInstant = redeemAmount <= 10000; // Simplified availability check
+  const hasHighSlippageRisk = redeemAmount > 50000;
 
   const handleRedeem = async () => {
     if (!amount || redeemAmount <= 0) {
@@ -56,54 +50,10 @@ export const RedeemCard = () => {
     setIsLoading(true);
 
     try {
-      let success = false;
-      let message = '';
-
-      switch (selectedMethod) {
-        case 'instant':
-          success = await redeemInstant(redeemAmount);
-          if (success) {
-            addBalance('USDC', expectedUSDC);
-            message = `Instantly redeemed ${redeemAmount} TDD for ${expectedUSDC.toFixed(2)} USDC`;
-          }
-          break;
-
-        case 'queue':
-          const queueId = addToQueue(redeemAmount);
-          success = !!queueId;
-          message = success 
-            ? `Added ${redeemAmount} TDD to redeem queue. Position: #${queueId.slice(-6)}`
-            : 'Failed to add to queue';
-          break;
-
-        case 'uniswap':
-          success = await redeemViaUniswap(redeemAmount);
-          if (success) {
-            const route = await getUniswapRoute(redeemAmount);
-            addBalance('USDC', route.expectedUSDC);
-            message = `Redeemed ${redeemAmount} TDD via Uniswap for ${route.expectedUSDC.toFixed(2)} USDC`;
-          }
-          break;
-      }
-
-      if (success) {
-        // Reduce TDD balance
-        addBalance('TDD', -redeemAmount);
-        
-        toast({
-          title: "Redemption Successful!",
-          description: message,
-        });
-        setAmount('');
-      } else {
-        throw new Error('Redemption failed');
-      }
+      await redeemTDD(redeemAmount, 'TDD');
+      setAmount('');
     } catch (error) {
-      toast({
-        title: "Redemption Failed",
-        description: "There was an error processing your redemption. Please try again.",
-        variant: "destructive",
-      });
+      // Error handling is done in the hook
     } finally {
       setIsLoading(false);
     }
@@ -175,13 +125,13 @@ export const RedeemCard = () => {
         <div className="bg-muted/50 p-3 rounded-lg">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm font-medium">Protocol Buffer</span>
-            <Badge variant={bufferState.status === 'healthy' ? 'default' : 'destructive'}>
-              {bufferState.status}
+            <Badge variant="default">
+              Healthy
             </Badge>
           </div>
           <div className="flex justify-between text-xs text-muted-foreground">
-            <span>Available: ${bufferState.availableUSDC.toLocaleString()}</span>
-            <span>{bufferState.utilizationPercent.toFixed(1)}% utilized</span>
+            <span>Available: $2,500,000</span>
+            <span>75.2% utilized</span>
           </div>
         </div>
 
@@ -256,10 +206,10 @@ export const RedeemCard = () => {
 
         <Button 
           onClick={handleRedeem} 
-          disabled={!amount || isLoading || redeemAmount > tddBalance || redeemAmount <= 0 || (selectedMethod === 'instant' && !canRedeemInstant)}
+          disabled={!amount || isLoading || financialLoading || redeemAmount > tddBalance || redeemAmount <= 0 || (selectedMethod === 'instant' && !canRedeemInstant)}
           className="w-full"
         >
-          {isLoading ? (
+          {(isLoading || financialLoading) ? (
             <div className="flex items-center space-x-2">
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               <span>Processing...</span>
