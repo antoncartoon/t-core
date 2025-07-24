@@ -8,6 +8,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useTCore } from '@/contexts/TCoreContext';
 import { useWallet } from '@/contexts/WalletContext';
+import { 
+  TARGET_DISTRIBUTION, 
+  CURRENT_LIQUIDITY_DISTRIBUTION 
+} from '@/utils/protocolConstants';
 import { Shield, TrendingUp, Calculator, Info, BarChart3, AlertTriangle } from 'lucide-react';
 import InteractiveLiquidityChart from './charts/InteractiveLiquidityChart';
 import StakingStressTestPanel from './charts/StakingStressTestPanel';
@@ -38,8 +42,8 @@ export const SimplifiedStakingInterface = () => {
   // Calculate comprehensive predicted yield with incentives
   const comprehensiveAPY = numericAmount > 0 ? (() => {
     const midpoint = (selectedRange[0] + selectedRange[1]) / 2;
-    // Safe tier shows fixed 6% APY without bonuses
-    if (midpoint <= 9) return 6.0;
+    // Safe tier shows fixed 5.16% APY without bonuses
+    if (midpoint <= 9) return 5.16;
     return calculateComprehensiveAPY(numericAmount, selectedRange);
   })() : null;
   const yieldPrediction = numericAmount > 0 ? calculatePredictedYield(numericAmount, selectedRange) : null;
@@ -250,10 +254,34 @@ export const SimplifiedStakingInterface = () => {
           <CardContent>
             <div className="space-y-3">
               {[
-                { name: 'Safe', current: 40, target: 10, color: '#22c55e', status: 'overloaded' },
-                { name: 'Conservative', current: 20, target: 20, color: '#3b82f6', status: 'balanced' },
-                { name: 'Balanced', current: 20, target: 30, color: '#f59e0b', status: 'underloaded' },
-                { name: 'Hero', current: 20, target: 40, color: '#ef4444', status: 'underloaded' }
+                { 
+                  name: 'Safe', 
+                  current: CURRENT_LIQUIDITY_DISTRIBUTION.safe * 100, 
+                  target: TARGET_DISTRIBUTION.safe * 100, 
+                  color: '#22c55e', 
+                  status: 'overloaded' 
+                },
+                { 
+                  name: 'Conservative', 
+                  current: CURRENT_LIQUIDITY_DISTRIBUTION.conservative * 100, 
+                  target: TARGET_DISTRIBUTION.conservative * 100, 
+                  color: '#3b82f6', 
+                  status: 'balanced' 
+                },
+                { 
+                  name: 'Balanced', 
+                  current: CURRENT_LIQUIDITY_DISTRIBUTION.balanced * 100, 
+                  target: TARGET_DISTRIBUTION.balanced * 100, 
+                  color: '#f59e0b', 
+                  status: 'underloaded' 
+                },
+                { 
+                  name: 'Hero', 
+                  current: CURRENT_LIQUIDITY_DISTRIBUTION.hero * 100, 
+                  target: TARGET_DISTRIBUTION.hero * 100, 
+                  color: '#ef4444', 
+                  status: 'underloaded' 
+                }
               ].map((tier) => (
                 <div key={tier.name} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">

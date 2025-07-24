@@ -1,13 +1,22 @@
 import { NFTPosition, ProtocolParams, YieldDistribution } from '@/types/tcore';
 
-// Define constants that were imported from riskTiers
+// Import unified constants from protocolConstants
+import { 
+  T_BILLS_RATE, 
+  SAFE_MULTIPLIER, 
+  FIXED_BASE_APY,
+  TIER_BREAKPOINTS,
+  PERFORMANCE_FEE
+} from '@/utils/protocolConstants';
+
+// Define distribution parameters
 export const DISTRIBUTION_PARAMS = {
-  FIXED_BASE_MULTIPLIER: 1.2, // T-Bills × 1.2
+  FIXED_BASE_MULTIPLIER: SAFE_MULTIPLIER, // T-Bills × 1.2
   OPTIMAL_K: 1.03, // k=1.03 for f(i) calculation
   VARIANCE_TARGET: 2.9e-7, // Target variance for liquidity uniformity
-  TIER1_WIDTH: 25, // Width of tier1 (levels 1-25)
+  TIER1_WIDTH: 10, // Width of safe tier (segments 0-9)
   INSURANCE_POOL_TARGET: 0.05, // 5% of TVL target for insurance pool
-  PERFORMANCE_FEE: 0.20, // 20% performance fee
+  PERFORMANCE_FEE: PERFORMANCE_FEE, // 20% performance fee
   FEE_ALLOCATION: {
     BONUS: 0.25, // 25% to bonus yield
     BUYBACK: 0.25, // 25% to buyback
@@ -25,10 +34,10 @@ export interface LossDistribution {
   remainingStake: number;
 }
 
-// Constants
-export const MIN_RISK_LEVEL = 1;
-export const MAX_RISK_LEVEL = 100;
-export const FIXED_BASE_APY = 0.05 * DISTRIBUTION_PARAMS.FIXED_BASE_MULTIPLIER; // T-Bills × 1.2
+// Constants (use unified values from protocolConstants)
+export const MIN_RISK_LEVEL = 0;
+export const MAX_RISK_LEVEL = 99;
+export { FIXED_BASE_APY } from '@/utils/protocolConstants';
 export const OPTIMAL_K = DISTRIBUTION_PARAMS.OPTIMAL_K;
 
 /**
@@ -40,17 +49,13 @@ export const calculateBonusFactor = (riskLevel: number): number => {
 };
 
 /**
- * Calculate APY for a risk level using T-Core formula
+ * @deprecated Use calculatePiecewiseAPY from tzFormulas.ts instead
+ * This function is kept for backward compatibility only
  */
 export const calculateRiskLevelAPY = (riskLevel: number): number => {
-  // Tier1 (1-25): guaranteed fixed APY
-  if (riskLevel <= DISTRIBUTION_PARAMS.TIER1_WIDTH) {
-    return FIXED_BASE_APY;
-  }
-  
-  // Higher tiers: fixed_base + bonus using f(i)
-  const bonusFactor = calculateBonusFactor(riskLevel);
-  return FIXED_BASE_APY + (bonusFactor - 1) * FIXED_BASE_APY * 0.5;
+  // Import and use the unified APY calculation
+  const { calculatePiecewiseAPY } = require('@/utils/tzFormulas');
+  return calculatePiecewiseAPY(riskLevel);
 };
 
 /**

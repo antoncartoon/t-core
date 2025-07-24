@@ -1,5 +1,6 @@
 import { RiskRange, RiskTick, LiquidityPosition, RangeCalculationResult } from '@/types/riskRange';
-import { calculatePiecewiseAPY, calculateRangeWeightedAPY, getTierForSegment, TARGET_APYS } from '@/utils/tzFormulas';
+import { calculatePiecewiseAPY, calculateRangeWeightedAPY, getTierForSegment } from '@/utils/tzFormulas';
+import { TARGET_APYS } from '@/utils/protocolConstants';
 import { 
   TOTAL_TDD_SUPPLY,
   STAKED_TDD_AMOUNT,
@@ -14,19 +15,19 @@ import {
   MAX_RISK_LEVEL
 } from '@/utils/protocolConstants';
 
-// Export the new piecewise calculation as the main APY calculator
+// Export the unified piecewise calculation as the main APY calculator
 export const calculateTCoreAPY = calculatePiecewiseAPY;
 export const calculateRiskLevelAPR = calculatePiecewiseAPY;
 
-// Update constants to match new model
+// Update constants to match unified model
 export const RISK_SCALE_MIN = MIN_RISK_LEVEL;
 export const RISK_SCALE_MAX = MAX_RISK_LEVEL;
 export const T_BILL_RATE = T_BILLS_RATE;
-export const FIXED_BASE_MULTIPLIER = 1.2; // T-Bills * 1.2 for Safe tier
+export { SAFE_MULTIPLIER as FIXED_BASE_MULTIPLIER } from '@/utils/protocolConstants';
 
-// Legacy constants for backward compatibility
+// Legacy constants for backward compatibility (updated to match unified model)
 export const TIER1_WIDTH = 9; // Safe tier end (0-9)
-export const OPTIMAL_K = 75; // Optimal risk level for balanced positioning
+export const OPTIMAL_K = 45; // Optimal risk level for balanced positioning (middle of balanced tier)
 
 // Export FIXED_BASE_APY for component usage
 export { FIXED_BASE_APY } from '@/utils/protocolConstants';

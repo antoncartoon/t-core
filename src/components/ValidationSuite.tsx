@@ -21,15 +21,15 @@ import {
 const ValidationSuite = () => {
   // Test 1: APY Calculation Edge Cases
   const apyTests = [
-    { name: 'Safe tier start (0)', segment: 0, expected: TARGET_APYS.SAFE },
-    { name: 'Safe tier end (9)', segment: 9, expected: TARGET_APYS.SAFE },
-    { name: 'Conservative start (10)', segment: 10, expected: TARGET_APYS.CONSERVATIVE_START },
-    { name: 'Conservative end (29)', segment: 29, expected: TARGET_APYS.CONSERVATIVE_END },
-    { name: 'Balanced start (30)', segment: 30, expected: TARGET_APYS.BALANCED_START },
-    { name: 'Balanced end (59)', segment: 59, expected: TARGET_APYS.BALANCED_END },
-    { name: 'Hero start (60)', segment: 60, expected: TARGET_APYS.HERO_START },
-    { name: 'Hero high (80)', segment: 80, expected: TARGET_APYS.HERO_START * Math.pow(1.03, 20) },
-    { name: 'Hero max (99)', segment: 99, expected: TARGET_APYS.HERO_START * Math.pow(1.03, 39) }
+    { name: 'Safe tier start (0)', segment: 0, expected: TARGET_APYS.safe },
+    { name: 'Safe tier end (9)', segment: 9, expected: TARGET_APYS.safe },
+    { name: 'Conservative start (10)', segment: 10, expected: TARGET_APYS.safe }, // Should start at 5.16%
+    { name: 'Conservative end (29)', segment: 29, expected: TARGET_APYS.conservative }, // Should end at 7%
+    { name: 'Balanced start (30)', segment: 30, expected: TARGET_APYS.conservative }, // Should start at 7%
+    { name: 'Balanced end (59)', segment: 59, expected: TARGET_APYS.balanced }, // Should end at 9.5%
+    { name: 'Hero start (60)', segment: 60, expected: TARGET_APYS.balanced }, // Should start at 9.5%
+    { name: 'Hero high (80)', segment: 80, expected: 0.095 * Math.pow(1.03, 20) }, // Exponential formula
+    { name: 'Hero max (99)', segment: 99, expected: 0.095 * Math.pow(1.03, 39) } // Exponential formula
   ];
 
   // Test 2: Stress Testing Validation

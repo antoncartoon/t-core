@@ -18,14 +18,16 @@
 // SECTION 1: PROTOCOL CONSTANTS & CONFIGURATION
 // ============================================================================
 
-import { T_BILLS_RATE, TARGET_APYS as GLOBAL_TARGET_APYS, TIER_BREAKPOINTS as GLOBAL_TIER_BREAKPOINTS } from '@/utils/protocolConstants';
+import { T_BILLS_RATE, TARGET_APYS as GLOBAL_TARGET_APYS, TIER_BREAKPOINTS as GLOBAL_TIER_BREAKPOINTS, FIXED_BASE_APY } from '@/utils/protocolConstants';
 
 /**
  * Base economic parameters derived from T-Bills rate
  */
-export { T_BILLS_RATE } from '@/utils/protocolConstants';
-export const SAFE_MULTIPLIER = 1.2; // T-Bills × 1.2 for safe tier
-export const SAFE_APY = T_BILLS_RATE * SAFE_MULTIPLIER; // 6% effective safe rate
+export { T_BILLS_RATE, SAFE_MULTIPLIER, FIXED_BASE_APY } from '@/utils/protocolConstants';
+export const SAFE_APY = FIXED_BASE_APY; // 5.16% effective safe rate (T-Bills × 1.2)
+
+// Export TARGET_APYS from protocolConstants for backward compatibility
+export { TARGET_APYS } from '@/utils/protocolConstants';
 
 /**
  * 4-Tier structure breakpoints (segments 0-99)
@@ -44,7 +46,7 @@ export const TIER_BREAKPOINTS = {
 /**
  * Target APY rates for each tier's mathematical formula
  */
-export const TARGET_APYS = {
+export const TIER_TARGET_APYS = {
   SAFE: 0.0516,                   // 5.16% fixed (T-Bills × 1.2)
   CONSERVATIVE_START: 0.0516,     // 5.16% starting point
   CONSERVATIVE_END: 0.07,         // 7% ending point
@@ -98,18 +100,18 @@ export const calculatePiecewiseAPY = (segment: number): number => {
   // Input validation and normalization
   const i = Math.max(0, Math.min(99, Math.round(segment)));
   
-  // Tier 1: Safe (0-9) - Fixed Rate (T-Bills × 1.2 = 6%)
+  // Tier 1: Safe (0-9) - Fixed Rate (T-Bills × 1.2 = 5.16%)
   if (i <= 9) {
-    return 0.06; // 6% fixed (T-Bills × 1.2)
+    return FIXED_BASE_APY; // 5.16% fixed (T-Bills × 1.2)
   }
   
-  // Tier 2: Conservative (10-29) - Linear Progression
+  // Tier 2: Conservative (10-29) - Linear Progression (5.16% → 7%)
   if (i <= 29) {
     const progress = (i - 10) / 19;
-    return 0.06 + (0.01 * progress); // 6% to 7%
+    return FIXED_BASE_APY + ((0.07 - FIXED_BASE_APY) * progress); // 5.16% to 7%
   }
   
-  // Tier 3: Balanced (30-59) - Quadratic Progression  
+  // Tier 3: Balanced (30-59) - Quadratic Progression (7% → 9.5%)
   if (i <= 59) {
     const progress = (i - 30) / 29;
     return 0.07 + (0.025 * Math.pow(progress, 2)); // 7% to 9.5%
@@ -139,7 +141,7 @@ export const calculateRangeWeightedAPY = (startSegment: number, endSegment: numb
     segmentCount++;
   }
   
-  return segmentCount > 0 ? totalAPY / segmentCount : 0.06;
+  return segmentCount > 0 ? totalAPY / segmentCount : FIXED_BASE_APY;
 };
 
 /**
@@ -277,7 +279,7 @@ export const getTierForSegment = (segment: number): {
     return {
       name: 'Safe',
       range: [0, 9],
-      formula: 'Fixed 6%',
+      formula: 'Fixed 5.16%',
       color: 'text-green-600',
       targetWeight: TARGET_TIER_WEIGHTS.safe
     };
@@ -287,7 +289,7 @@ export const getTierForSegment = (segment: number): {
     return {
       name: 'Conservative',
       range: [10, 29],
-      formula: 'Linear: 6% → 7%',
+      formula: 'Linear: 5.16% → 7%',
       color: 'text-blue-600',
       targetWeight: TARGET_TIER_WEIGHTS.conservative
     };
@@ -517,9 +519,13 @@ export function calculateTierBonusAPY(
 export function calculateComprehensiveAPY(
   amount: number,
   selectedRange: [number, number],
-  currentTierDistribution: TierDistribution = { safe: 0.40, conservative: 0.20, balanced: 0.20, hero: 0.20 },
+  currentTierDistribution?: TierDistribution,
   performanceFeeRate: number = 0.25
 ): number {
+  // Import current distribution from protocolConstants
+  const { CURRENT_LIQUIDITY_DISTRIBUTION } = require('@/utils/protocolConstants');
+  const distribution = currentTierDistribution || CURRENT_LIQUIDITY_DISTRIBUTION;
+  
   // Base APY from piecewise formula
   const baseAPY = calculateRangeWeightedAPY(selectedRange[0], selectedRange[1]);
   
@@ -527,7 +533,7 @@ export function calculateComprehensiveAPY(
   const performanceFeePool = performanceFeeRate;
   
   // Calculate tier-level bonus
-  const tierBonus = calculateTierBonusAPY(selectedRange, currentTierDistribution, performanceFeePool);
+  const tierBonus = calculateTierBonusAPY(selectedRange, distribution, performanceFeePool);
   
   // Return combined APY as percentage
   return (baseAPY + tierBonus) * 100;

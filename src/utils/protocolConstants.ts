@@ -63,20 +63,20 @@ export const TARGET_DISTRIBUTION = {
   hero: 0.40          // 40% target allocation
 };
 
-// Current actual distribution (for bonus yield calculations)
+// Current actual distribution (for demo/prototype)
 export const CURRENT_LIQUIDITY_DISTRIBUTION = {
-  safe: 0.15,      // 15% currently staked
-  conservative: 0.25, // 25% currently staked
-  balanced: 0.35,     // 35% currently staked  
-  hero: 0.25          // 25% currently staked
+  safe: 0.40,      // 40% currently staked
+  conservative: 0.20, // 20% currently staked
+  balanced: 0.20,     // 20% currently staked  
+  hero: 0.20          // 20% currently staked
 };
 
-// TDD distribution by tier (for stress testing)
+// TDD distribution by tier (matches current distribution)
 export const TIER_TDD_DISTRIBUTION = {
-  safe: 0.15,
-  conservative: 0.25,
-  balanced: 0.35,
-  hero: 0.25
+  safe: 0.40,
+  conservative: 0.20,
+  balanced: 0.20,
+  hero: 0.20
 };
 
 // =============================================================================
@@ -95,17 +95,18 @@ export const BONUS_YIELD_ALLOCATION = {
 // =============================================================================
 
 export const T_BILLS_RATE = 0.05; // 5% risk-free rate
+export const SAFE_MULTIPLIER = 1.2; // T-Bills multiplier for Safe tier
 export const MIN_RISK_LEVEL = 0;
 export const MAX_RISK_LEVEL = 99;
-export const FIXED_BASE_APY = 0.06; // 6% base APY (T-Bills × 1.2)
+export const FIXED_BASE_APY = T_BILLS_RATE * SAFE_MULTIPLIER; // 5.16% (T-Bills × 1.2)
 export const SELF_INSURANCE_POOL = 5000; // $5K self-insurance pool
 
-// Target APYs by tier
+// Target APYs by tier (updated to match confirmed values)
 export const TARGET_APYS = {
-  safe: 0.06,        // 6% target APY (T-Bills × 1.2)
-  conservative: 0.12, // 12% target APY
-  balanced: 0.18,     // 18% target APY  
-  hero: 0.28          // 28% target APY
+  safe: 0.0516,       // 5.16% target APY (T-Bills × 1.2)
+  conservative: 0.07, // 7% target APY
+  balanced: 0.095,    // 9.5% target APY  
+  hero: 0.15          // ~15% max target APY (exponential)
 };
 
 // =============================================================================
@@ -210,7 +211,11 @@ const validateDistributions = () => {
   }
 };
 
-// Run validation in development
+// Import and run comprehensive validation in development
 if (import.meta.env.DEV) {
-  validateDistributions();
+  // Defer validation to avoid circular imports
+  import('./validationUtils').then(({ validateProtocolConstants, logValidationResults }) => {
+    const result = validateProtocolConstants();
+    logValidationResults(result);
+  });
 }
